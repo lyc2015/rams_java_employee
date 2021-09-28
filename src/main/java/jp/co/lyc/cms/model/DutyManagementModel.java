@@ -8,7 +8,7 @@ public class DutyManagementModel {
 	String customerName;
 	String stationName;
 	String payOffRange;
-	Integer workTime;
+	String workTime;
 	String unitPrice;
 	String deductionsAndOvertimePay;
 	String deductionsAndOvertimePayOfUnitPrice;
@@ -16,6 +16,7 @@ public class DutyManagementModel {
 	String updateTime;
 	String updateUser;
 	String approvalStatus;
+	String workingTimeReport;
 
 	public int getRowNo() {
 		return rowNo;
@@ -65,11 +66,11 @@ public class DutyManagementModel {
 		this.payOffRange = payOffRange;
 	}
 
-	public Integer getWorkTime() {
+	public String getWorkTime() {
 		return workTime;
 	}
 
-	public void setWorkTime(Integer workTime) {
+	public void setWorkTime(String workTime) {
 		this.workTime = workTime;
 	}
 
@@ -127,6 +128,14 @@ public class DutyManagementModel {
 
 	public void setApprovalStatus(String approvalStatus) {
 		this.approvalStatus = approvalStatus;
+	}
+
+	public String getWorkingTimeReport() {
+		return workingTimeReport;
+	}
+
+	public void setWorkingTimeReport(String workingTimeReport) {
+		this.workingTimeReport = workingTimeReport;
 	}
 
 }
