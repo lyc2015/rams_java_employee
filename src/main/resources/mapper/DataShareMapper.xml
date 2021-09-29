@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jp.co.lyc.cms.mapper.DataShareMapper">
+	<resultMap id="DataShare"
+		type="jp.co.lyc.cms.model.DataShareModel" />
+	<select id="selectDataShareFile" resultMap="DataShare"
+		parameterType="String">
+		SELECT * FROM T023DataShare;
+	</select>
+	<update id="updateDataShare" parameterType="String">
+		UPDATE
+		T023DataShare
+		SET
+		shareStatus = "1"
+		WHERE
+		fileNo = #{fileNo}
+	</update>
+	<update id="updateDataShareFile" parameterType="String">
+		insert into
+		T023DataShare
+		(fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser)
+		values(#{fileNo},#{filePath},#{shareUser},"0",date_add(now(), interval 9 hour),date_add(now(), interval 9 hour),#{employeeName})
+		ON DUPLICATE KEY
+		update
+		filePath = #{filePath},
+		shareUser = #{shareUser},
+		shareStatus = #{shareStatus},
+		updateTime = date_add(now(), interval 9 hour),
+		updateUser =
+		#{employeeName}
+	</update>
+</mapper>

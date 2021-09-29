@@ -415,10 +415,13 @@
 		T006.employeeNo,
 		CONCAT( T001.employeeFristName,
 		T001.employeeLastName ) as
-		employeeName,T006.admissionStartDate,T006.unitPrice,T005.reflectYearAndMonth,T005.salary,
+		employeeName,T006.admissionStartDate,T006.unitPrice,T005.reflectYearAndMonth,
+		if(T011.bpUnitPrice is null or T011.bpUnitPrice =
+		"",T005.salary,T011.bpUnitPrice) as salary,
 		T005.insuranceFeeAmount,
 		T005.fristTimeBonusAmount +
-		T005.secondTimeBonusAmount as scheduleOfBonusAmount,
+		T005.secondTimeBonusAmount as
+		scheduleOfBonusAmount,
 		if(T005.secondBonusMonth >
 		T005.fristBonusMonth,T005.secondBonusMonth,T005.fristBonusMonth) as
 		nextBonusMonth FROM T006EmployeeSiteInfo AS T006
@@ -429,6 +432,22 @@
 		LEFT JOIN
 		T005WagesInfo AS T005
 		ON T005.employeeNo = T006.employeeNo
+		LEFT JOIN
+		(SELECT
+		T011.bpEmployeeNo,T011.unitPriceStartMonth,round(T011.bpUnitPrice *
+		10000) as bpUnitPrice FROM T011BpInfoSupplement as T011
+		inner
+		join(
+		SELECT bpEmployeeNo,max(unitPriceStartMonth) as
+		unitPriceStartMonth FROM
+		T011BpInfoSupplement
+		group by
+		bpEmployeeNo
+		) as temp011
+		on T011.bpEmployeeNo = temp011.bpEmployeeNo
+		and T011.unitPriceStartMonth = temp011.unitPriceStartMonth) as T011
+		on
+		T011.bpEmployeeNo = T006.employeeNo
 		left
 		Join
 		(SELECT
@@ -443,7 +462,6 @@
 		and T005.reflectYearAndMonth =
 		temp.reflectYearAndMonth
 		where admissionEndDate is null
-		and left(T006.employeeNo,2) != "BP"
 		order by
 		employeeNo,reflectYearAndMonth
 		desc) as newTable
