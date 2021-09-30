@@ -74,16 +74,16 @@
 		<if test="approvalStatus == 0">
 		</if>
 		<if test="approvalStatus == 1">
-			and T018.approvalStatus!=1
+			and T018.approvalStatus is null
 		</if>
 		<if test="approvalStatus == 2">
-			and T018.approvalStatus=1
+			and T018.approvalStatus is not null
 		</if>
 		<if test="approvalStatus == 3">
-			and T018.sumWorkTime>0
+			and T018.approvalStatus = "0"
 		</if>
 		<if test="approvalStatus == 4">
-			and T016.employeeWorkTimeHaveData=1
+			and T018.approvalStatus = "1"
 		</if>
 		order by T018.attendanceYearAndMonth desc,t001.employeeNo
 	</select>

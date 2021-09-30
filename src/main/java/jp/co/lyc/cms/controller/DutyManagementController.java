@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sun.mail.handlers.image_gif;
+
 import jp.co.lyc.cms.model.DutyManagementModel;
 import jp.co.lyc.cms.service.DutyManagementService;
 
@@ -44,6 +46,7 @@ public class DutyManagementController {
 				checkMod.get(i).setDeductionsAndOvertimePayOfUnitPrice(
 						checkMod.get(i).getDeductionsAndOvertimePayOfUnitPrice().replace(".0", ""));
 			}
+			checkMod.get(i).setRowNo(i + 1);
 		}
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索終了");
 		return checkMod;

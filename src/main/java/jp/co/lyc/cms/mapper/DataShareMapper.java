@@ -15,16 +15,16 @@ public interface DataShareMapper {
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	public void selectCheckWorkRepot(WorkRepotModel workRepotModel);
-
 	public List<DataShareModel> selectDataShareFile();
+
+	public List<DataShareModel> selectDataShareFileOnly();
 
 	/**
 	 * アップデート
 	 * 
 	 * @param sendMap
 	 */
-	public void updateDataShare(String fileNo);
+	public void updateDataShare(DataShareModel dataShareModel);
 
 	/**
 	 * ファイル名入力
@@ -32,4 +32,20 @@ public interface DataShareMapper {
 	 * @param sendMap
 	 */
 	public void updateDataShareFile(DataShareModel dataShareModel);
+
+	/**
+	 * 削除
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public void deleteDataShare(String fileNo);
+
+	/**
+	 * 削除後更新
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public void updateDataShareAfterDelete(String fileNo);
 }

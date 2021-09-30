@@ -16,17 +16,6 @@ public class DataShareService {
 	DataShareMapper dataShareMapper;
 
 	/**
-	 * 画面情報検索 本月
-	 * 
-	 * @param TopCustomerNo
-	 * @return
-	 */
-
-	public void selectCheckWorkRepot(WorkRepotModel workRepotModel) {
-		dataShareMapper.selectCheckWorkRepot(workRepotModel);
-	}
-
-	/**
 	 * 画面情報検索
 	 * 
 	 * @param TopCustomerNo
@@ -39,15 +28,26 @@ public class DataShareService {
 	}
 
 	/**
+	 * 画面情報検索
+	 * 
+	 * @param TopCustomerNo
+	 * @return
+	 */
+	public List<DataShareModel> selectDataShareFileOnly() {
+		List<DataShareModel> resultMod = dataShareMapper.selectDataShareFileOnly();
+		return resultMod;
+	}
+
+	/**
 	 * アップデート
 	 * 
 	 * @param sendMap
 	 */
 
-	public boolean updateDataShare(String fileNo) {
+	public boolean updateDataShare(DataShareModel dataShareModel) {
 		boolean result = true;
 		try {
-			dataShareMapper.updateDataShare(fileNo);
+			dataShareMapper.updateDataShare(dataShareModel);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -66,6 +66,25 @@ public class DataShareService {
 		boolean result = true;
 		try {
 			dataShareMapper.updateDataShareFile(dataShareModel);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return result = false;
+		}
+		return result;
+	}
+
+	/**
+	 * 削除
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public boolean deleteDataShare(String fileNo) {
+		boolean result = true;
+		try {
+			dataShareMapper.deleteDataShare(fileNo);
+			dataShareMapper.updateDataShareAfterDelete(fileNo);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

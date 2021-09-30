@@ -30,7 +30,7 @@ public class DataShareController extends BaseController {
 	@Autowired
 	DataShareService dataShareService;
 	/**
-	 * 登録ボタン
+	 * 検索
 	 * @param topCustomerMod
 	 * @return
 	 */
@@ -39,6 +39,20 @@ public class DataShareController extends BaseController {
 	public List<DataShareModel> selectDataShareFile() {
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
 		List<DataShareModel> checkMod = dataShareService.selectDataShareFile();
+		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
+		return checkMod;
+	}
+	
+	/**
+	 * 検索(共有のみ)
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/selectDataShareFileOnly", method = RequestMethod.POST)
+	@ResponseBody
+	public List<DataShareModel> selectDataShareFileOnly() {
+		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
+		List<DataShareModel> checkMod = dataShareService.selectDataShareFileOnly();
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
 		return checkMod;
 	}
@@ -53,7 +67,7 @@ public class DataShareController extends BaseController {
 	public boolean updateDataShare(@RequestBody DataShareModel dataShareModel){
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート開始");
 		boolean result = false;	
-		result  = dataShareService.updateDataShare(dataShareModel.getFileNo());
+		result  = dataShareService.updateDataShare(dataShareModel);
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート終了");
 		return result;	
 	}
@@ -108,5 +122,20 @@ public class DataShareController extends BaseController {
 			return "";
 		}
 		return realPath + "/" + fileName;
+	}
+	
+	/**
+	 * 削除
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteDataShare", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean deleteDataShare(@RequestBody DataShareModel dataShareModel){
+		logger.info("DutyManagementController.updateworkRepot:" + "アップデート開始");
+		boolean result = false;	
+		result  = dataShareService.deleteDataShare(dataShareModel.getFileNo());
+		logger.info("DutyManagementController.updateworkRepot:" + "アップデート終了");
+		return result;	
 	}
 }

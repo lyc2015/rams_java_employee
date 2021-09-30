@@ -3,30 +3,57 @@
 <mapper namespace="jp.co.lyc.cms.mapper.DataShareMapper">
 	<resultMap id="DataShare"
 		type="jp.co.lyc.cms.model.DataShareModel" />
+
 	<select id="selectDataShareFile" resultMap="DataShare"
 		parameterType="String">
 		SELECT * FROM T023DataShare;
 	</select>
+
+	<select id="selectDataShareFileOnly" resultMap="DataShare"
+		parameterType="String">
+		SELECT * FROM T023DataShare
+		WHERE shareStatus = "1";
+	</select>
+
 	<update id="updateDataShare" parameterType="String">
 		UPDATE
 		T023DataShare
 		SET
-		shareStatus = "1"
+		shareStatus = #{shareStatus}
 		WHERE
 		fileNo = #{fileNo}
 	</update>
+
 	<update id="updateDataShareFile" parameterType="String">
 		insert into
 		T023DataShare
 		(fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser)
-		values(#{fileNo},#{filePath},#{shareUser},"0",date_add(now(), interval 9 hour),date_add(now(), interval 9 hour),#{employeeName})
-		ON DUPLICATE KEY
+		values(#{fileNo},#{filePath},#{shareUser},"0",date_add(now(), interval
+		9 hour),date_add(now(), interval 9 hour),#{employeeName})
+		ON DUPLICATE
+		KEY
 		update
 		filePath = #{filePath},
 		shareUser = #{shareUser},
-		shareStatus = #{shareStatus},
-		updateTime = date_add(now(), interval 9 hour),
+		updateTime =
+		date_add(now(), interval 9 hour),
 		updateUser =
 		#{employeeName}
+	</update>
+
+	<delete id="deleteDataShare" parameterType="String">
+		DELETE FROM
+		T023DataShare
+		WHERE
+		fileNo = #{fileNo}
+	</delete>
+
+	<update id="updateDataShareAfterDelete" parameterType="String">
+		UPDATE
+		T023DataShare
+		SET
+		fileNo = fileNo - 1
+		WHERE
+		fileNo &gt; #{fileNo}
 	</update>
 </mapper>
