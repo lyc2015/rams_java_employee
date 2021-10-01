@@ -6,6 +6,8 @@
 		SELECT
 			(@rowNo:=@rowNo + 1) AS rowNo,
 			employeeNo,
+			yearMonth,
+			regularStatus,
 			happendDate,
 			costClassificationCode,
 			dueDate,
@@ -37,6 +39,7 @@
 			T020CostInfo
 		WHERE
 			employeeNo = #{employeeNo} AND
+			yearMonth = #{yearMonth} AND
 			happendDate = #{happendDate} AND
 			costClassificationCode = #{costClassificationCode}
     </select>
@@ -44,6 +47,8 @@
     <insert id="insertCostRegistration" parameterType="map">
 		INSERT INTO T020CostInfo(
 			employeeNo,
+			yearMonth,
+			regularStatus,
 			happendDate,
 			costClassificationCode,
 			dueDate,
@@ -61,6 +66,8 @@
 			updateUser)
 		VALUE(
 			#{employeeNo},
+			#{yearMonth},
+			#{regularStatus},
 			#{happendDate},
 			#{costClassificationCode},
 			#{dueDate},
@@ -80,6 +87,7 @@
 	<update id="updateCostRegistration" parameterType="map">
 		UPDATE T020CostInfo
 		SET 
+			regularStatus = #{regularStatus},
 			happendDate = #{happendDate},
 			costClassificationCode = #{costClassificationCode},
 			dueDate = #{dueDate},
@@ -97,6 +105,7 @@
 			updateUser = #{employeeName}
 		WHERE 
 			employeeNo = #{employeeNo}
+			and yearMonth = #{yearMonth}
 			and happendDate = #{oldHappendDate}
 			and costClassificationCode = #{oldCostClassificationCode}
     </update>
@@ -105,6 +114,8 @@
     		T020CostInfo
 		WHERE
 			employeeNo = #{employeeNo}
+		AND 
+			yearMonth = #{yearMonth}
 		AND 
 			happendDate = #{oldHappendDate}
 		AND 
