@@ -1,5 +1,7 @@
 package jp.co.lyc.cms.model;
 
+import java.util.List;
+
 public class DutyManagementModel {
 
 	int rowNo;
@@ -17,6 +19,24 @@ public class DutyManagementModel {
 	String updateUser;
 	String approvalStatus;
 	String workingTimeReport;
+	String cost;
+	List<CostRegistrationModel> costRegistrationModel;
+
+	public String getCost() {
+		return cost;
+	}
+
+	public void setCost(String cost) {
+		this.cost = cost;
+	}
+
+	public List<CostRegistrationModel> getCostRegistrationModel() {
+		return costRegistrationModel;
+	}
+
+	public void setCostRegistrationModel(List<CostRegistrationModel> costRegistrationModel) {
+		this.costRegistrationModel = costRegistrationModel;
+	}
 
 	public int getRowNo() {
 		return rowNo;

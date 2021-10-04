@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jp.co.lyc.cms.model.CostRegistrationModel;
 import jp.co.lyc.cms.model.DutyManagementModel;
 import jp.co.lyc.cms.mapper.DutyManagementMapper;
 
@@ -23,6 +24,16 @@ public class DutyManagementService {
 	
 	public List<DutyManagementModel> selectDutyManagement(HashMap<String, String> sendMap) {
 		List<DutyManagementModel> resultMod = dutyManagementMapper.selectDutyManagement(sendMap);
+		return resultMod;
+	}
+	
+	/**
+	 * 費用詳細情報検索
+	 * @param TopCustomerNo
+	 * @return
+	 */
+	public List<CostRegistrationModel> selectCostRegistration(HashMap<String, String> sendMap) {
+		List<CostRegistrationModel> resultMod = dutyManagementMapper.selectCostRegistration(sendMap);
 		return resultMod;
 	}
 	/**

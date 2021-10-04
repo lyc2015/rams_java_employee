@@ -36,7 +36,7 @@ public class CostRegistrationController extends BaseController {
 	 */
 	@RequestMapping(value = "/selectCostRegistration", method = RequestMethod.POST)
 	@ResponseBody
-	public List<CostRegistrationModel> selectCostRegistration(CostRegistrationModel costRegistrationModel) {
+	public List<CostRegistrationModel> selectCostRegistration(@RequestBody CostRegistrationModel costRegistrationModel) {
 		costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
 		logger.info("CostRegistrationController.selectCostRegistration:" + "検索開始");
 		List<CostRegistrationModel> checkMod = costRegistrationService.selectCostRegistration(costRegistrationModel);

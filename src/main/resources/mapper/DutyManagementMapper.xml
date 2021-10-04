@@ -3,6 +3,8 @@
 <mapper namespace="jp.co.lyc.cms.mapper.DutyManagementMapper">
 	<resultMap id="DutyManagement"
 		type="jp.co.lyc.cms.model.DutyManagementModel" />
+	<resultMap id="CostRegistration"
+		type="jp.co.lyc.cms.model.CostRegistrationModel" />
 	<select id="selectDutyManagement" resultMap="DutyManagement"
 		parameterType="String">
 		SELECT
@@ -10,13 +12,23 @@
 		t001.employeeNo,
 		concat_ws("
 		",t001.employeeFristName,t001.employeeLastName) as employeeName,
-		if(t007.customerAbbreviation is null or t007.customerAbbreviation = "",t007.customerName,t007.customerAbbreviation) as customerName,
+		if(t007.customerAbbreviation is null or t007.customerAbbreviation =
+		"",t007.customerName,t007.customerAbbreviation) as customerName,
 		m013.stationName,
-		if(t006.payOffRange1 is null or t006.payOffRange1 = "0","固定",if(t006.payOffRange1 = "1" and t006.payOffRange2 = "1","出勤日",concat_ws("-",if(t006.payOffRange1 = "1","出勤日",t006.payOffRange1),if(t006.payOffRange2 = "1","出勤日",t006.payOffRange2)))) as payOffRange,
-		T018.sumWorkTime workTime,
+		if(t006.payOffRange1 is null or t006.payOffRange1 =
+		"0","固定",if(t006.payOffRange1 = "1" and t006.payOffRange2 =
+		"1","出勤日",concat_ws("-",if(t006.payOffRange1 =
+		"1","出勤日",t006.payOffRange1),if(t006.payOffRange2 =
+		"1","出勤日",t006.payOffRange2)))) as payOffRange,
+		T018.sumWorkTime
+		workTime,
 		T018.workingTimeReport,
-		if(T018.DeductionsAndOvertimePay is null or T018.DeductionsAndOvertimePay = "",if(T018.sumWorkTime>t006.payOffRange2,round(t005.salary/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t005.salary/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePay)deductionsAndOvertimePay,
-		if(T018.DeductionsAndOvertimePayOfUnitPrice is null or T018.DeductionsAndOvertimePayOfUnitPrice = "",if(T018.sumWorkTime>t006.payOffRange2,round(t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePayOfUnitPrice)deductionsAndOvertimePayOfUnitPrice,
+		if(T018.DeductionsAndOvertimePay is
+		null or T018.DeductionsAndOvertimePay =
+		"",if(T018.sumWorkTime>t006.payOffRange2,round(t005.salary/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t005.salary/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePay)deductionsAndOvertimePay,
+		if(T018.DeductionsAndOvertimePayOfUnitPrice is null or
+		T018.DeductionsAndOvertimePayOfUnitPrice =
+		"",if(T018.sumWorkTime>t006.payOffRange2,round(t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePayOfUnitPrice)deductionsAndOvertimePayOfUnitPrice,
 		<!-- FORMAT(if(T018.sumWorkTime>t006.payOffRange2,t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2),if(t006.payOffRange1>T018.sumWorkTime,t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1),0)),0)deductionsAndOvertimePayOfUnitPrice, -->
 		if(T016.employeeWorkTimeHaveData=1,'0',if(T018.attendanceRegisterFlag=1,'1','2'))checkSection,
 		T018.updateTime,
@@ -38,15 +50,21 @@
 		employeeNo,max(admissionStartDate) as admissionStartDate FROM
 		T006EmployeeSiteInfo
 		where
-		admissionStartDate &lt;= concat(#{yearAndMonth},"99")
-		and (admissionEndDate is null or admissionEndDate &gt;= concat(#{yearAndMonth},"00"))
-		and (systemName != "休暇" or systemName is null)
-		and (typteOfContractCode != "4" or typteOfContractCode is null)
+		admissionStartDate &lt;=
+		concat(#{yearAndMonth},"99")
+		and (admissionEndDate is null or
+		admissionEndDate &gt;= concat(#{yearAndMonth},"00"))
+		and (systemName !=
+		"休暇" or systemName is null)
+		and (typteOfContractCode != "4" or
+		typteOfContractCode is null)
 		group by employeeNo
 		) as temp
-		on T006.employeeNo = temp.employeeNo
+		on
+		T006.employeeNo = temp.employeeNo
 		and
-		T006.admissionStartDate = temp.admissionStartDate
+		T006.admissionStartDate =
+		temp.admissionStartDate
 		)t006
 		on
 		t001.employeeNo=t006.employeeNo
@@ -58,19 +76,25 @@
 		t006.stationCode=m013.stationCode
 		left join
 		(SELECT
-		employeeNo,updateTime,yearAndMonth,1 as employeeWorkTimeHaveData FROM
-		T016EmployeeWorkTime group by employeeNo)T016 on
-		t001.employeeNo=T016.employeeNo and T016.yearAndMonth=#{yearAndMonth}
+		employeeNo,updateTime,yearAndMonth,1 as
+		employeeWorkTimeHaveData FROM
+		T016EmployeeWorkTime group by
+		employeeNo)T016 on
+		t001.employeeNo=T016.employeeNo and
+		T016.yearAndMonth=#{yearAndMonth}
 		left join
-		T018WorkTotalTime as T018 on t001.employeeNo=T018.employeeNo
+		T018WorkTotalTime as T018 on
+		t001.employeeNo=T018.employeeNo
 		and
 		T018.attendanceYearAndMonth=#{yearAndMonth}
 		,(SELECT @rowNo:=0) AS
 		rowNo
 		WHERE
 		(T018.attendanceYearAndMonth = #{yearAndMonth}
-		or T018.attendanceYearAndMonth is null)
-		and left(t001.employeeNo,2) != "BP"
+		or
+		T018.attendanceYearAndMonth is null)
+		and left(t001.employeeNo,2) !=
+		"BP"
 		<if test="approvalStatus == 0">
 		</if>
 		<if test="approvalStatus == 1">
@@ -87,6 +111,14 @@
 		</if>
 		order by T018.attendanceYearAndMonth desc,t001.employeeNo
 	</select>
+
+	<select id="selectCostRegistration" resultMap="CostRegistration"
+		parameterType="String">
+		SELECT * FROM T020CostInfo
+		where yearMonth = #{yearAndMonth}
+		order by employeeNo,costClassificationCode != "0",happendDate;
+	</select>
+
 	<update id="updateDutyManagement" parameterType="String">
 		UPDATE
 		T018WorkTotalTime

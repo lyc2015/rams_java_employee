@@ -1,5 +1,6 @@
 package jp.co.lyc.cms.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sun.mail.handlers.image_gif;
 
+import jp.co.lyc.cms.model.CostRegistrationModel;
 import jp.co.lyc.cms.model.DutyManagementModel;
 import jp.co.lyc.cms.service.DutyManagementService;
 
@@ -37,6 +39,8 @@ public class DutyManagementController {
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索開始");
 		logger.info(dutyManagementModel.toString());
 		List<DutyManagementModel> checkMod = dutyManagementService.selectDutyManagement(dutyManagementModel);
+		List<CostRegistrationModel> costRegistrationModelList = dutyManagementService
+				.selectCostRegistration(dutyManagementModel);
 		for (int i = 0; i < checkMod.size(); i++) {
 			if (checkMod.get(i).getDeductionsAndOvertimePay() != null) {
 				checkMod.get(i)
@@ -47,6 +51,38 @@ public class DutyManagementController {
 						checkMod.get(i).getDeductionsAndOvertimePayOfUnitPrice().replace(".0", ""));
 			}
 			checkMod.get(i).setRowNo(i + 1);
+			List<CostRegistrationModel> newCostRegistrationModelList = new ArrayList<CostRegistrationModel>();
+			for (int j = 0; j < costRegistrationModelList.size(); j++) {
+				if (checkMod.get(i).getEmployeeNo().equals(costRegistrationModelList.get(j).getEmployeeNo())) {
+					CostRegistrationModel costRegistrationModel = new CostRegistrationModel();
+					costRegistrationModel.setHappendDate(costRegistrationModelList.get(j).getHappendDate());
+					costRegistrationModel.setDueDate(costRegistrationModelList.get(j).getDueDate());
+					costRegistrationModel
+							.setCostClassificationCode(costRegistrationModelList.get(j).getCostClassificationCode());
+					costRegistrationModel.setRegularStatus(costRegistrationModelList.get(j).getRegularStatus());
+					costRegistrationModel
+							.setDetailedNameOrLine(costRegistrationModelList.get(j).getDetailedNameOrLine() == null ? ""
+									: costRegistrationModelList.get(j).getDetailedNameOrLine());
+					costRegistrationModel.setCost(costRegistrationModelList.get(j).getCost());
+					costRegistrationModel.setRemark(costRegistrationModelList.get(j).getRemark() == null ? ""
+							: costRegistrationModelList.get(j).getRemark());
+					costRegistrationModel.setCostFile(costRegistrationModelList.get(j).getCostFile());
+					newCostRegistrationModelList.add(costRegistrationModel);
+				}
+			}
+			int cost = 0;
+			int costTotal = 0;
+			for (int j = 0; j < newCostRegistrationModelList.size(); j++) {
+				cost += Integer.parseInt(newCostRegistrationModelList.get(j).getCost());
+				if (!newCostRegistrationModelList.get(j).getCostClassificationCode().equals("0")) {
+					costTotal += Integer.parseInt(newCostRegistrationModelList.get(j).getCost());
+				}
+				if (j == newCostRegistrationModelList.size() - 1) {
+					newCostRegistrationModelList.get(j).setCostTotal(String.valueOf(costTotal));
+				}
+			}
+			checkMod.get(i).setCostRegistrationModel(newCostRegistrationModelList);
+			checkMod.get(i).setCost(String.valueOf(cost));
 		}
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索終了");
 		return checkMod;

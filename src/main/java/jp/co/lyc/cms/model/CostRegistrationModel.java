@@ -19,6 +19,7 @@ public class CostRegistrationModel {
 	String transportationCode;
 	String destinationCode;
 	String cost;
+	String costTotal;
 	String remark;
 	String roundCode;
 	String costFile;
@@ -27,6 +28,14 @@ public class CostRegistrationModel {
 	String updateTime;
 	String createTime;
 	boolean changeFile;
+
+	public String getCostTotal() {
+		return costTotal;
+	}
+
+	public void setCostTotal(String costTotal) {
+		this.costTotal = costTotal;
+	}
 
 	public String getYearMonth() {
 		return yearMonth;
