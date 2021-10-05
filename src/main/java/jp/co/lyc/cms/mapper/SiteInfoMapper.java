@@ -22,6 +22,12 @@ public interface SiteInfoMapper {
 	 * 
 	 */
 	public void siteUpdate(Map<String, Object> sendMap);
+	
+	/**
+	 * 営業文章を修正
+	 * 
+	 */
+	public void salesSentenceUpdate(Map<String, Object> sendMap);
 
 	/**
 	 * 現場情報を削除 社員画面から
@@ -42,5 +48,6 @@ public interface SiteInfoMapper {
 	public void deleteSiteInfo(Map<String, Object> sendMap);
 
 	public List<SiteModel> getDevelopLanguage();
+
 
 }

@@ -27,6 +27,15 @@
 		where employeeNo=#{employeeNo} AND admissionStartDate=#{workDate}
 	</update>
 
+	<update id="salesSentenceUpdate" parameterType="map">
+		update
+		T019SalesSentence
+		set
+		unitPrice = "",
+		theMonthOfStartWork = ""
+		where employeeNo=#{employeeNo}
+	</update>
+
 	<select id="getSiteInfo" parameterType="java.lang.String"
 		resultType="jp.co.lyc.cms.model.SiteModel">
 		SELECT

@@ -69,6 +69,9 @@ public class SiteInfoService {
 
 			} else {
 				siteInfoMapper.siteUpdate(sendMap);
+				if(sendMap.get("workState").equals("1")) {
+					siteInfoMapper.salesSentenceUpdate(sendMap);
+				}
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
