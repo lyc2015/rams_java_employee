@@ -214,6 +214,11 @@ public class SalesSituationController extends BaseController {
 			// T010
 			for (int j = 0; j < T010SalesSituationList.size(); j++) {
 				if (salesSituationList.get(i).getEmployeeNo().equals(T010SalesSituationList.get(j).getEmployeeNo())) {
+					if (salesSituationList.get(i).getAdmissionEndDate() == null
+							&& salesSituationList.get(i).getScheduledEndDate() != null) {
+						salesSituationList.get(i).setAdmissionEndDate(salesSituationList.get(i).getScheduledEndDate());
+					}
+
 					// 現在の日付を取得
 					Date date = new Date();
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
@@ -247,7 +252,10 @@ public class SalesSituationController extends BaseController {
 					} else {
 						if (!(salesSituationList.get(i).getAdmissionEndDate() != null && Integer
 								.parseInt(salesSituationList.get(i).getAdmissionEndDate().substring(0, 6)) >= Integer
-										.parseInt(T010SalesSituationList.get(j).getSalesYearAndMonth()))) {
+										.parseInt(T010SalesSituationList.get(j).getSalesYearAndMonth()))
+								|| (salesSituationList.get(i).getAdmissionEndDate() != null
+										&& Integer.parseInt(salesSituationList.get(i).getAdmissionEndDate().substring(0,
+												6)) == Integer.parseInt(model.getSalesYearAndMonth()))) {
 							salesSituationList.get(i)
 									.setSalesProgressCode(T010SalesSituationList.get(j).getSalesProgressCode());
 							salesSituationList.get(i)

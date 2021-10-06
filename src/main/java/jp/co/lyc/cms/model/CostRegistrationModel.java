@@ -21,7 +21,6 @@ public class CostRegistrationModel {
 	String cost;
 	String costTotal;
 	String remark;
-	String roundCode;
 	String costFile;
 	String oldCostFile;
 	String updateUser;
@@ -155,14 +154,6 @@ public class CostRegistrationModel {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	public String getRoundCode() {
-		return roundCode;
-	}
-
-	public void setRoundCode(String roundCode) {
-		this.roundCode = roundCode;
 	}
 
 	public String getCostFile() {

@@ -55,6 +55,7 @@ public class DutyManagementController {
 			for (int j = 0; j < costRegistrationModelList.size(); j++) {
 				if (checkMod.get(i).getEmployeeNo().equals(costRegistrationModelList.get(j).getEmployeeNo())) {
 					CostRegistrationModel costRegistrationModel = new CostRegistrationModel();
+					costRegistrationModel.setRowNo(j);
 					costRegistrationModel.setHappendDate(costRegistrationModelList.get(j).getHappendDate());
 					costRegistrationModel.setDueDate(costRegistrationModelList.get(j).getDueDate());
 					costRegistrationModel
