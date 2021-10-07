@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jp.co.lyc.cms.mapper.SalaryDetailSendMapper">
+	<resultMap id="detailsInfo"
+		type="jp.co.lyc.cms.model.EmployeeInformationModel" />
+
+	<select id="getEmployee" parameterType="map"
+		resultMap="detailsInfo">
+		SELECT
+		T001.employeeNo,concat(T001.employeeFristName,T001.employeeLastName)
+		as employeeName FROM T001Employee as T001
+		left join
+		T002EmployeeDetail
+		as T002
+		on T001.employeeNo = T002.employeeNo
+		where
+		left(T001.employeeNo,2) != "BP"
+		and ((T002.employeeFormCode !=
+		"4" or
+		T002.retirementYearAndMonth > now()
+		or
+		T002.retirementResonClassification = "2"))
+	</select>
+</mapper>
