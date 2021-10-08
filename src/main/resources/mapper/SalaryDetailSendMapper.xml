@@ -7,8 +7,11 @@
 	<select id="getEmployee" parameterType="map"
 		resultMap="detailsInfo">
 		SELECT
-		T001.employeeNo,concat(T001.employeeFristName,T001.employeeLastName)
-		as employeeName FROM T001Employee as T001
+		T001.employeeNo,
+		T001.employeeFristName,
+		concat(T001.employeeFristName,T001.employeeLastName) as employeeName,
+		T002.companyMail
+		FROM T001Employee as T001
 		left join
 		T002EmployeeDetail
 		as T002
@@ -17,7 +20,7 @@
 		left(T001.employeeNo,2) != "BP"
 		and ((T002.employeeFormCode !=
 		"4" or
-		T002.retirementYearAndMonth > now()
+		T002.retirementYearAndMonth &gt; now()
 		or
 		T002.retirementResonClassification = "2"))
 	</select>

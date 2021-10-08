@@ -13,13 +13,31 @@ public class EmployeeInformationModel {
 	int birthdayDate; // 誕生日
 	String employeeNo;// 社員・BP番号
 	String employeeName;// 社員・BP名
+	String employeeFristName;// 社員・BP名
 	String birthday;// 誕生日
 	String stayPeriod;// 在留期間
 	String passportStayPeriod;// パスポート期限
 	String contractDeadline;// 契約期限
 	String dealDistinctioCode;// 処理区分
+	String companyMail; // メールアドレス
 	String[] employeeNos;// 社員・BP番号
 	String[] dealDistinctioCodes;// 処理区分
+
+	public String getCompanyMail() {
+		return companyMail;
+	}
+
+	public void setCompanyMail(String companyMail) {
+		this.companyMail = companyMail;
+	}
+
+	public String getEmployeeFristName() {
+		return employeeFristName;
+	}
+
+	public void setEmployeeFristName(String employeeFristName) {
+		this.employeeFristName = employeeFristName;
+	}
 
 	public int getStayPeriodDate() {
 		return stayPeriodDate;

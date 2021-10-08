@@ -67,6 +67,11 @@ import net.sf.json.JSONObject;
 @Controller
 public class UtilsController {
 
+	// 防止附件名字亂碼
+	static {
+		System.getProperties().setProperty("mail.mime.splitlongparameters", "false");
+	}
+
 	@Autowired
 	UtilsService utilsService;
 
@@ -1350,21 +1355,24 @@ public class UtilsController {
 			// 设置主题内容
 			message.setSubject(emailMod.getMailTitle());
 			// message.setContent(emailMod.getContext(), "text/html;charset=utf-8");
-			String[] addresssCC = emailMod.getSelectedMailCC();
-			int lenCC = addresssCC.length;
-			Address[] addsCC = new Address[lenCC];
-			for (int i = 0; i < lenCC; i++) {
-				addsCC[i] = new InternetAddress(addresssCC[i]);
+			if (emailMod.getSelectedMailCC() != null) {
+				String[] addresssCC = emailMod.getSelectedMailCC();
+				int lenCC = addresssCC.length;
+				Address[] addsCC = new Address[lenCC];
+				for (int i = 0; i < lenCC; i++) {
+					addsCC[i] = new InternetAddress(addresssCC[i]);
+				}
+				// InternetAddress[] sendCC = new InternetAddress[] {new
+				// InternetAddress("jyw.fendou@gmail.com", "", "UTF-8")};
+				message.addRecipients(MimeMessage.RecipientType.CC, addsCC);
 			}
-			// InternetAddress[] sendCC = new InternetAddress[] {new
-			// InternetAddress("jyw.fendou@gmail.com", "", "UTF-8")};
-			message.addRecipients(MimeMessage.RecipientType.CC, addsCC);
 
 			// 向multipart对象中添加邮件的各个部分内容，包括文本内容和附件
 			MimeMultipart multipart = new MimeMultipart();
 			// 设置邮件的文本内容
 			MimeBodyPart contentPart = new MimeBodyPart();
-			contentPart.setContent(emailMod.getMailConfirmContont(), "text/html;charset=UTF-8");
+			String mailConfirmContont = emailMod.getMailConfirmContont();
+			contentPart.setContent(mailConfirmContont, "text/html;charset=UTF-8");
 			multipart.addBodyPart(contentPart);
 
 			for (int i = 0; i < emailMod.getPaths().length; i++) {
@@ -1376,7 +1384,9 @@ public class UtilsController {
 				// 添加附件的内容
 				filePart.setDataHandler(new DataHandler(source));
 				// 添加附件的标题
-				filePart.setFileName(MimeUtility.encodeText(emailMod.getNames()[i]));
+				String filenames = MimeUtility.encodeText(source.getName());
+				filenames = filenames.replace("\\r", "").replace("\\n", "").replace(" ", "");
+				filePart.setFileName(filenames);
 				multipart.addBodyPart(filePart);
 			}
 			// multipart.addBodyPart(filePart);
@@ -1471,7 +1481,7 @@ public class UtilsController {
 		List<ModelClass> list = utilsService.getSituationChange();
 		return list;
 	}
-	
+
 	/**
 	 * 非稼働理由取得
 	 * 
