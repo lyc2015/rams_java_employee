@@ -18,6 +18,7 @@
 		on T001.employeeNo = T002.employeeNo
 		where
 		left(T001.employeeNo,2) != "BP"
+		and left(T001.employeeNo,2) != "SP"
 		and ((T002.employeeFormCode !=
 		"4" or
 		T002.retirementYearAndMonth &gt; now()

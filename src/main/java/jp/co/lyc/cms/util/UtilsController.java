@@ -1272,7 +1272,7 @@ public class UtilsController {
 			MimeMultipart multipart = new MimeMultipart();
 			// 设置邮件的文本内容
 			MimeBodyPart contentPart = new MimeBodyPart();
-			contentPart.setContent(emailMod.getMailConfirmContont(), "text/html;charset=UTF-8");
+			contentPart.setContent(emailMod.getMailConfirmContont(), "text/plain;charset=UTF-8");
 			multipart.addBodyPart(contentPart);
 
 			// multipart.addBodyPart(filePart);
@@ -1372,7 +1372,7 @@ public class UtilsController {
 			// 设置邮件的文本内容
 			MimeBodyPart contentPart = new MimeBodyPart();
 			String mailConfirmContont = emailMod.getMailConfirmContont();
-			contentPart.setContent(mailConfirmContont, "text/html;charset=UTF-8");
+			contentPart.setContent(mailConfirmContont, "text/plain;charset=UTF-8");
 			multipart.addBodyPart(contentPart);
 
 			for (int i = 0; i < emailMod.getPaths().length; i++) {
