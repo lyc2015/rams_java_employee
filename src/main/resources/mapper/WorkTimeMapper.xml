@@ -7,7 +7,7 @@
 			T018.attendanceYearAndMonth,
 			T006.systemName,
 			T006.stationCode as stationName,
-			concat(ifnull(T006.payOffRange1,""),"H - ",ifnull(T006.payOffRange2,""),"H") payOffRange,
+			if(T006.payOffRange1 = "0","固定",concat(if(T006.payOffRange1 = "1","出勤日",concat(ifnull(T006.payOffRange1,""),"H"))," - ",if(T006.payOffRange2 = "1","出勤日",concat(ifnull(T006.payOffRange2,""),"H")))) as payOffRange,
 			concat(T018.attendanceDays,"日") attendanceDays,
 			concat(T018.sumWorkTime,"H") sumWorkTime,
 			concat("NO.",T0.workTimeRank) workTimeRank,
@@ -40,6 +40,7 @@
 			T018.attendanceYearAndMonth >= #{yearAndMonth1} AND
 			T018.attendanceYearAndMonth &lt;= #{yearAndMonth2} AND
 			T018.employeeNo= #{employeeNo}
+			and T006.admissionStartDate is not null
 		ORDER BY
 			T018.attendanceYearAndMonth
     </select>

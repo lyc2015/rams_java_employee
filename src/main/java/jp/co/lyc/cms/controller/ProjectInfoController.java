@@ -138,7 +138,7 @@ public class ProjectInfoController extends BaseController {
 		Calendar cal = Calendar.getInstance();
 		String yearAndMonth = Integer.toString(cal.get(Calendar.YEAR));
 		int month = cal.get(Calendar.MONTH) + 1;
-		yearAndMonth += month > 10 ? month : "0" + month;
+		yearAndMonth += month >= 10 ? month : "0" + month;
 		ArrayList<String> saibanList = projectInfoMapper.saiban(yearAndMonth);
 		String saiban = "";
 		if (saibanList.size() == 0 || saibanList.get(0) == null) {

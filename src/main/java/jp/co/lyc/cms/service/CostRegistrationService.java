@@ -16,25 +16,32 @@ public class CostRegistrationService {
 
 	/**
 	 * 画面情報検索
+	 * 
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	
-	public List<CostRegistrationModel> selectCostRegistration(CostRegistrationModel costRegistrationModel)  {
+
+	public List<CostRegistrationModel> selectCostRegistration(CostRegistrationModel costRegistrationModel) {
 		List<CostRegistrationModel> resultMod = costRegistrationMapper.selectCostRegistration(costRegistrationModel);
 		return resultMod;
 	}
+
 	/**
 	 * アップデート
+	 * 
 	 * @param sendMap
 	 */
-	
+
 	public boolean updateCostRegistration(CostRegistrationModel costRegistrationModel) {
-		if(!costRegistrationModel.getCostClassificationCode().equals(costRegistrationModel.getOldCostClassificationCode())||
-		!costRegistrationModel.getHappendDate().equals(costRegistrationModel.getOldHappendDate())){
-			List<CostRegistrationModel> resultMod = costRegistrationMapper.selectCheckCostRegistration(costRegistrationModel);
-			if( resultMod.size() > 0){
-				return false;
+		if (!costRegistrationModel.getCostClassificationCode().equals("0")) {
+			if (!costRegistrationModel.getCostClassificationCode()
+					.equals(costRegistrationModel.getOldCostClassificationCode())
+					|| !costRegistrationModel.getHappendDate().equals(costRegistrationModel.getOldHappendDate())) {
+				List<CostRegistrationModel> resultMod = costRegistrationMapper
+						.selectCheckCostRegistration(costRegistrationModel);
+				if (resultMod.size() > 0) {
+					return false;
+				}
 			}
 		}
 		try {
@@ -46,9 +53,11 @@ public class CostRegistrationService {
 		}
 		return true;
 	}
+
 	public boolean insertCostRegistration(CostRegistrationModel costRegistrationModel) {
-		List<CostRegistrationModel> resultMod = costRegistrationMapper.selectCheckCostRegistration(costRegistrationModel);
-		if( resultMod.size() > 0){
+		List<CostRegistrationModel> resultMod = costRegistrationMapper
+				.selectCheckCostRegistration(costRegistrationModel);
+		if (resultMod.size() > 0) {
 			return false;
 		}
 		try {
@@ -60,6 +69,7 @@ public class CostRegistrationService {
 		}
 		return true;
 	}
+
 	public boolean deleteCostRegistration(CostRegistrationModel costRegistrationModel) {
 		boolean result = true;
 		try {

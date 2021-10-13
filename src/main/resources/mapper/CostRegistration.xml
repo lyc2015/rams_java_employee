@@ -103,8 +103,8 @@
 		cost = #{cost},
 		remark = #{remark},
 		costFile = #{costFile},
-		updateTime =now(),
-		createTime =now(),
+		updateTime = now(),
+		createTime = createTime,
 		updateUser = #{employeeName}
 		WHERE
 		employeeNo = #{employeeNo}

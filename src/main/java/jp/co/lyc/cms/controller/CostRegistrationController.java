@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
+import ch.qos.logback.core.joran.conditional.IfAction;
 import jp.co.lyc.cms.common.BaseController;
 import jp.co.lyc.cms.model.CostRegistrationModel;
 import jp.co.lyc.cms.service.CostRegistrationService;
@@ -111,8 +112,8 @@ public class CostRegistrationController extends BaseController {
 		//ファイルに変更がある
 		if(costRegistrationModel.isChangeFile()) {
 			//ファイル名に変更がある
-			if(!costRegistrationModel.getCostClassificationCode().equals(costRegistrationModel.getOldCostClassificationCode())||
-			!costRegistrationModel.getHappendDate().equals(costRegistrationModel.getOldHappendDate())){
+/*			if(!costRegistrationModel.getCostClassificationCode().equals(costRegistrationModel.getOldCostClassificationCode())||
+			!costRegistrationModel.getHappendDate().equals(costRegistrationModel.getOldHappendDate())){*/
 					//新しいファイルがない
 					if(costFile==null) {
 						if(!costRegistrationModel.getCostClassificationCode().equals(costRegistrationModel.getOldCostClassificationCode())){
@@ -136,9 +137,9 @@ public class CostRegistrationController extends BaseController {
 							return false;
 						}
 					}
-			}else {
+/*			}else {
 				costRegistrationModel.setCostFile(costRegistrationModel.getOldCostFile());
-			}
+			}*/
 		}
 		logger.info("CostRegistrationController.updateCostRegistration:" + "修正結束");
 		return true;
@@ -180,7 +181,7 @@ public class CostRegistrationController extends BaseController {
 		}
 		String fileName =costFile.getOriginalFilename();
 		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-		String newName =costRegistrationModel.getHappendDate().substring(4,8)+costRegistrationModel.getCostClassificationName()+ "." + suffix;
+		String newName =(costRegistrationModel.getCostClassificationCode().equals("0") ? costRegistrationModel.getHappendDate().substring(0,6) : costRegistrationModel.getHappendDate())+costRegistrationModel.getCostClassificationName()+ "." + suffix;
 	
 		try {
 			File newFile = new File(file.getAbsolutePath() + File.separator + newName);
@@ -208,7 +209,7 @@ public class CostRegistrationController extends BaseController {
 		
 		File oldFile = new File(oldRealPath);
 		String suffix = oldRealPath.substring(oldRealPath.lastIndexOf(".") + 1);
-		String newName =costRegistrationModel.getHappendDate().substring(4,8)+costRegistrationModel.getCostClassificationName()+ "." + suffix;
+		String newName = (costRegistrationModel.getCostClassificationCode().equals("0") ? costRegistrationModel.getHappendDate().substring(0,6) : costRegistrationModel.getHappendDate()) +costRegistrationModel.getCostClassificationName()+ "." + suffix;
 		try {
 		oldFile.renameTo(new File(realPath+File.separator + newName));
 		} catch (Exception e) {
@@ -227,7 +228,7 @@ public class CostRegistrationController extends BaseController {
 			if (suffix.equals("")) {
 				return "";
 			}
-			String newName =costRegistrationModel.getHappendDate().substring(4,8)+costRegistrationModel.getCostClassificationName()+ "." + suffix;
+			String newName =(costRegistrationModel.getCostClassificationCode().equals("0") ? costRegistrationModel.getHappendDate().substring(0,6) : costRegistrationModel.getHappendDate())+costRegistrationModel.getCostClassificationName()+ "." + suffix;
 			return realPath+File.separator+newName;
 		}else {
 			//新ファイル名
