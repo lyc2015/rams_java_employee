@@ -232,11 +232,18 @@ public class CostRegistrationController extends BaseController {
 			return realPath+File.separator+newName;
 		}else {
 			//新ファイル名
-			String oldRealPath= new String(costRegistrationModel.getOldCostFile());
-			String suffix = oldRealPath.substring(oldRealPath.lastIndexOf(".") + 1);
-			if (suffix.equals("")) {
+			String oldRealPath= "";
+			String suffix = "";
+			if(costRegistrationModel.getOldCostFile()!=null) {
+				oldRealPath= new String(costRegistrationModel.getOldCostFile());
+				suffix = oldRealPath.substring(oldRealPath.lastIndexOf(".") + 1);
+				if (suffix.equals("")) {
+					return "";
+				}
+			}else {
 				return "";
 			}
+
 			String newName =costRegistrationModel.getHappendDate().substring(4,8)+costRegistrationModel.getCostClassificationName()+ "." + suffix;
 			return realPath+File.separator+newName;
 		}
