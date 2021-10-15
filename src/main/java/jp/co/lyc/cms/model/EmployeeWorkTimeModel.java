@@ -28,117 +28,155 @@ public class EmployeeWorkTimeModel {
 	public String getEmployeeNo() {
 		return employeeNo;
 	}
+
 	public void setEmployeeNo(String employeeNo) {
 		this.employeeNo = employeeNo;
 	}
+
 	public String getYearAndMonth() {
 		return yearAndMonth;
 	}
+
 	public void setYearAndMonth(String yearAndMonth) {
 		this.yearAndMonth = yearAndMonth;
 	}
+
 	public String getDay() {
 		return day;
 	}
+
 	public void setDay(String day) {
 		this.day = day;
 	}
+
 	public String getWeek() {
 		return week;
 	}
+
 	public void setWeek(String week) {
 		this.week = week;
 	}
+
 	public String getMorningTime() {
 		return morningTime;
 	}
+
 	public void setMorningTime(String morningTime) {
 		this.morningTime = morningTime.replace(":", "");
 	}
+
 	public String getAfternoonTime() {
 		return afternoonTime;
 	}
+
 	public void setAfternoonTime(String afternoonTime) {
 		this.afternoonTime = afternoonTime.replace(":", "");
 	}
+
 	public String getHolidayFlag() {
 		return holidayFlag;
 	}
+
 	public void setHolidayFlag(String holidayFlag) {
 		this.holidayFlag = holidayFlag;
 	}
+
 	public String getWorkTime() {
 		return workTime;
 	}
+
 	public void setWorkTime(String workTime) {
 		this.workTime = workTime;
 	}
+
 	public String getConfirmFlag() {
 		return confirmFlag;
 	}
+
 	public void setConfirmFlag(String confirmFlag) {
 		this.confirmFlag = confirmFlag;
 	}
+
 	public String getSiteCustomer() {
 		return siteCustomer;
 	}
+
 	public void setSiteCustomer(String siteCustomer) {
 		this.siteCustomer = siteCustomer;
 	}
+
 	public String getCustomer() {
 		return customer;
 	}
+
 	public void setCustomer(String customer) {
 		this.customer = customer;
 	}
+
 	public String getSiteResponsiblePerson() {
 		return siteResponsiblePerson;
 	}
+
 	public void setSiteResponsiblePerson(String siteResponsiblePerson) {
 		this.siteResponsiblePerson = siteResponsiblePerson;
 	}
+
 	public String getSystemName() {
 		return systemName;
 	}
+
 	public void setSystemName(String systemName) {
 		this.systemName = systemName;
 	}
+
 	public String getBreakTime() {
 		return breakTime;
 	}
+
 	public void setBreakTime(String breakTime) {
 		this.breakTime = breakTime;
 	}
+
 	public String getCreateTime() {
 		return createTime;
 	}
+
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
+
 	public String getUpdateTime() {
 		return updateTime;
 	}
+
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
 	}
+
 	public String getUpdateUser() {
 		return updateUser;
 	}
+
 	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
 	}
+
 	public String getWorkContent() {
 		return workContent;
 	}
+
 	public void setWorkContent(String workContent) {
 		this.workContent = workContent;
 	}
+
 	public String getRemark() {
 		return remark;
 	}
+
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
 	public Map<String, Object> toHashMap() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("employeeNo", this.getEmployeeNo());
@@ -162,7 +200,8 @@ public class EmployeeWorkTimeModel {
 		map.put("updateUser", this.getUpdateUser());
 		return map;
 	}
-	public static EmployeeWorkTimeModel fromHashMap (Map<String, Object> map)	{
+
+	public static EmployeeWorkTimeModel fromHashMap(Map<String, Object> map) {
 		EmployeeWorkTimeModel employeeWorkTimeModel = new EmployeeWorkTimeModel();
 		employeeWorkTimeModel.setEmployeeNo(String.valueOf(map.get("employeeNo")));
 		employeeWorkTimeModel.setYearAndMonth(String.valueOf(map.get("yearAndMonth")));
@@ -172,15 +211,15 @@ public class EmployeeWorkTimeModel {
 		employeeWorkTimeModel.setAfternoonTime(String.valueOf(map.get("afternoonTime")));
 		employeeWorkTimeModel.setHolidayFlag(String.valueOf(map.get("holidayFlag")));
 		try {
-			Integer.valueOf(String.valueOf(map.get("workTime")));
-			employeeWorkTimeModel.setWorkTime(String.valueOf(map.get("workTime")));
-		} catch (Exception e)	{
+			Double.valueOf(String.valueOf(map.get("workHour")));
+			employeeWorkTimeModel.setWorkTime(String.valueOf(map.get("workHour")));
+		} catch (Exception e) {
 			employeeWorkTimeModel.setWorkTime("0");
 		}
 		try {
 			Integer.valueOf(String.valueOf(map.get("confirmFlag")));
 			employeeWorkTimeModel.setConfirmFlag(String.valueOf(map.get("confirmFlag")));
-		} catch (Exception e)	{
+		} catch (Exception e) {
 			employeeWorkTimeModel.setConfirmFlag("0");
 		}
 		employeeWorkTimeModel.setSiteCustomer(String.valueOf(map.get("siteCustomer")));
@@ -195,7 +234,7 @@ public class EmployeeWorkTimeModel {
 		employeeWorkTimeModel.setUpdateUser(String.valueOf(map.get("updateUser")));
 		return employeeWorkTimeModel;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "EmployeeWorkTimeModel [employeeNo=" + employeeNo + ", yearAndMonth=" + yearAndMonth + ", day=" + day
@@ -206,6 +245,7 @@ public class EmployeeWorkTimeModel {
 				+ workContent + ", remark=" + remark + ", createTime=" + createTime + ", updateTime=" + updateTime
 				+ ", updateUser=" + updateUser + "]";
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,6 +255,7 @@ public class EmployeeWorkTimeModel {
 		result = prime * result + ((yearAndMonth == null) ? 0 : yearAndMonth.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

@@ -129,26 +129,27 @@ public class LoginEmployeeController extends BaseController {
 		passwordResetMapper.deleteAll(loginModel.getEmployeeNo());
 		//受信人のメール
 		emailModel.setToAddress(mail);
+		emailModel.setSelectedmail(mail);
 		emailModel.setUserName("mail@lyc.co.jp");
 		emailModel.setPassword("Lyc2020-0908-");
-		emailModel.setFromAddress("mail@lyc.co.jp");
+		emailModel.setMailFrom("info@lyc.co.jp");
 		emailModel.setSubject("パスワードリセット");
+		emailModel.setMailTitle("パスワードリセット");
 		UUID uuid = UUID.randomUUID();
 		String passwordResetId = uuid.toString();
 		HashMap<String, String> sendMap = new HashMap<String, String>();
 		sendMap.put("passwordResetId", passwordResetId);
 		sendMap.put("idForEmployeeNo", loginModel.getEmployeeNo());
 		es.insert(sendMap);
-		String context = loginModel.getEmployeeNo() + " さん<br/>" + 
-				"お疲れ様でした！<br/>" +
-				"自動設定メールになります、ご返事しないでください。<br/>"+
-				"以下のリンクからパスワードの再設定を行って下さい。<br/>" +
-				"<br/>"+
-				"[パスワードを再設定する]<br/>" + 
-				"http://127.0.0.1:3000/passwordReset?id=" + passwordResetId + "<br/>" +
-				"※ご利用の方は上記URLを24時間内クリックしてお願いします。<br/>";
-		emailModel.setContext(context);
-		emailModel.setContextType("text/html;charset=utf-8");
+		String context = loginModel.getEmployeeNo() + " さん\r\n" + 
+				"お疲れ様でした！\r\n" +
+				"自動設定メールになります、ご返事しないでください。\r\n"+
+				"以下のリンクからパスワードの再設定を行って下さい。\r\n" +
+				"\r\n"+
+				"[パスワードを再設定する]\r\n" + 
+				"http://127.0.0.1:3000/passwordReset?id=" + passwordResetId + "\r\n" +
+				"※ご利用の方は上記URLを24時間内クリックしてお願いします。\r\n";
+		emailModel.setMailConfirmContont(context);
 		utils.EmailSend(emailModel);
 		return result;
 	}

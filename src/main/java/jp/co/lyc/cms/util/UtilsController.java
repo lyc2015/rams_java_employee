@@ -1259,15 +1259,16 @@ public class UtilsController {
 			message.setSubject(emailMod.getMailTitle());
 			// message.setContent(emailMod.getContext(), "text/html;charset=utf-8");
 			String[] addresssCC = emailMod.getSelectedMailCC();
-			int lenCC = addresssCC.length;
-			Address[] addsCC = new Address[lenCC];
-			for (int i = 0; i < lenCC; i++) {
-				addsCC[i] = new InternetAddress(addresssCC[i]);
+			if (emailMod.getSelectedMailCC() != null) {
+				int lenCC = addresssCC.length;
+				Address[] addsCC = new Address[lenCC];
+				for (int i = 0; i < lenCC; i++) {
+					addsCC[i] = new InternetAddress(addresssCC[i]);
+				}
+				// InternetAddress[] sendCC = new InternetAddress[] {new
+				// InternetAddress("jyw.fendou@gmail.com", "", "UTF-8")};
+				message.addRecipients(MimeMessage.RecipientType.CC, addsCC);
 			}
-			// InternetAddress[] sendCC = new InternetAddress[] {new
-			// InternetAddress("jyw.fendou@gmail.com", "", "UTF-8")};
-			message.addRecipients(MimeMessage.RecipientType.CC, addsCC);
-
 			// 向multipart对象中添加邮件的各个部分内容，包括文本内容和附件
 			MimeMultipart multipart = new MimeMultipart();
 			// 设置邮件的文本内容

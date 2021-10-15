@@ -62,6 +62,22 @@ public class WorkRepotController extends BaseController {
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート終了");
 		return result;	
 	}
+	
+	/**
+	 * ファイルをクリア
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/clearworkRepot", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean clearWorkRepotModel(@RequestBody WorkRepotModel emp){
+		emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		logger.info("DutyManagementController.updateworkRepot:" + "クリア開始");
+		boolean result = false;	
+		result  = workRepotService.clearworkRepot(emp);
+		logger.info("DutyManagementController.updateworkRepot:" + "クリア終了");
+		return result;	
+	}
 	/**
 	 * 作業報告書アップロード
 	 * 

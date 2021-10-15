@@ -10,6 +10,7 @@ import java.util.Comparator;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.filters.AddDefaultCharsetFilter;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class DutyRegistrationController extends BaseController {
 			tempJsonObject.put("morningTime", tempJsonObject.getOrDefault("startTime", ""));
 			tempJsonObject.put("afternoonTime", tempJsonObject.getOrDefault("endTime", ""));
 			tempJsonObject.put("holidayFlag", tempJsonObject.getOrDefault("isWork", ""));
-			tempJsonObject.put("workTime", tempJsonObject.getOrDefault("workHour", ""));
+			tempJsonObject.put("workHour", tempJsonObject.getOrDefault("workHour", ""));
 			tempJsonObject.put("breakTime", tempJsonObject.getOrDefault("sleepHour", ""));
 			tempJsonObject.put("confirmFlag", "0");
 			tempJsonObject.put("siteCustomer", jsonObject.getOrDefault("siteCustomer", ""));
@@ -105,7 +106,6 @@ public class DutyRegistrationController extends BaseController {
 			tempJsonObject.put("siteResponsiblePerson", jsonObject.getOrDefault("siteResponsiblePerson", ""));
 			tempJsonObject.put("systemName", jsonObject.getOrDefault("systemName", ""));
 			tempJsonObject.put("updateUser", super.getSession().getAttribute("employeeNo"));
-
 			EmployeeWorkTimeModel employeeWorkTimeModel = EmployeeWorkTimeModel
 					.fromHashMap(tempJsonObject.getInnerMap());
 			EmployeeWorkTimeModel[] checkMod = dutyRegistrationService.selectDuty(employeeWorkTimeModel.toHashMap());
@@ -230,7 +230,9 @@ public class DutyRegistrationController extends BaseController {
 			tempMap.put("yearMonth", employeeWorkTimeModel.getYearAndMonth());
 			tempMap.put("startTime", employeeWorkTimeModel.getMorningTime());
 			tempMap.put("endTime", employeeWorkTimeModel.getAfternoonTime());
-			tempMap.put("isWork", Float.parseFloat(employeeWorkTimeModel.getWorkTime()) > 0.0 ? "1" : "0");
+			// tempMap.put("isWork", Float.parseFloat(employeeWorkTimeModel.getWorkTime()) >
+			// 0.0 ? "1" : "0");
+			tempMap.put("isWork", employeeWorkTimeModel.getHolidayFlag());
 			tempMap.put("workHour", employeeWorkTimeModel.getWorkTime());
 			tempMap.put("workContent", employeeWorkTimeModel.getWorkContent());
 			tempMap.put("remark", employeeWorkTimeModel.getRemark());
