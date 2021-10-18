@@ -22,7 +22,7 @@
 		0,
 		date_add(now(), interval 9 hour),
 		date_add(now(), interval 9 hour),
-		#{employeeName}
+		""
 		FROM DUAL
 		WHERE NOT EXISTS
 		(SELECT
@@ -58,7 +58,8 @@
 		T018WorkTotalTime
 		SET
 		updateTime= date_add(now(), interval 9 hour),
-		sumWorkTime = #{sumWorkTime}
+		sumWorkTime = #{sumWorkTime},
+		updateUser = #{employeeName}
 		WHERE
 		employeeNo = #{employeeNo}
 		and attendanceYearAndMonth = #{attendanceYearAndMonth}
@@ -71,7 +72,8 @@
 		workingTimeReport = null,
 		sumWorkTime = null,
 		approvalStatus = 0,
-		sentReportStatus = 0
+		sentReportStatus = 0,
+		updateUser = ""
 		WHERE
 		employeeNo = #{employeeNo}
 		and attendanceYearAndMonth = #{attendanceYearAndMonth}
@@ -80,7 +82,8 @@
 		UPDATE T018WorkTotalTime
 		SET
 		workingTimeReport= #{workingTimeReport},
-		updateTime= date_add(now(), interval 9 hour)
+		updateTime= date_add(now(), interval 9 hour),
+		updateUser = #{employeeName}
 		WHERE
 		employeeNo = #{employeeNo}
 		and attendanceYearAndMonth = #{attendanceYearAndMonth}

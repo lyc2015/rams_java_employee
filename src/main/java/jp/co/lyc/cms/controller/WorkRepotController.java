@@ -56,6 +56,7 @@ public class WorkRepotController extends BaseController {
 	@ResponseBody
 	public boolean updateWorkRepotModel(@RequestBody WorkRepotModel emp){
 		emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		emp.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート開始");
 		boolean result = false;	
 		result  = workRepotService.updateWorkRepot(emp);

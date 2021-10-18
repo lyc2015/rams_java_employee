@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import jp.co.lyc.cms.mapper.DutyRegistrationMapper;
 import jp.co.lyc.cms.model.BreakTimeModel;
+import jp.co.lyc.cms.model.DutyRegistrationModel;
 import jp.co.lyc.cms.model.EmployeeWorkTimeModel;
 
 @Component
@@ -32,6 +33,16 @@ public class DutyRegistrationService {
 	 */
 	public EmployeeWorkTimeModel[] selectDuty(Map<String, Object> sendMap) {
 		EmployeeWorkTimeModel[] resultMod = dutyRegistrationMapper.selectDuty(sendMap);
+		return resultMod;
+	}
+	
+	/**
+	 * 
+	 * @param sendMap
+	 * @return
+	 */
+	public BreakTimeModel selectBreakTime(Map<String, Object> sendMap) {
+		BreakTimeModel resultMod = dutyRegistrationMapper.selectDutyRegistration(sendMap);
 		return resultMod;
 	}
 	

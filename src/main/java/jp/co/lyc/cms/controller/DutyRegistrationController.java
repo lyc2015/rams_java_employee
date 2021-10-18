@@ -100,7 +100,7 @@ public class DutyRegistrationController extends BaseController {
 			tempJsonObject.put("holidayFlag", tempJsonObject.getOrDefault("isWork", ""));
 			tempJsonObject.put("workHour", tempJsonObject.getOrDefault("workHour", ""));
 			tempJsonObject.put("breakTime", tempJsonObject.getOrDefault("sleepHour", ""));
-			tempJsonObject.put("confirmFlag", "0");
+			tempJsonObject.put("confirmFlag", tempJsonObject.getOrDefault("confirmFlag", ""));
 			tempJsonObject.put("siteCustomer", jsonObject.getOrDefault("siteCustomer", ""));
 			tempJsonObject.put("customer", jsonObject.getOrDefault("customer", ""));
 			tempJsonObject.put("siteResponsiblePerson", jsonObject.getOrDefault("siteResponsiblePerson", ""));
@@ -232,6 +232,7 @@ public class DutyRegistrationController extends BaseController {
 			tempMap.put("endTime", employeeWorkTimeModel.getAfternoonTime());
 			// tempMap.put("isWork", Float.parseFloat(employeeWorkTimeModel.getWorkTime()) >
 			// 0.0 ? "1" : "0");
+			tempMap.put("confirmFlag", employeeWorkTimeModel.getConfirmFlag());
 			tempMap.put("isWork", employeeWorkTimeModel.getHolidayFlag());
 			tempMap.put("workHour", employeeWorkTimeModel.getWorkTime());
 			tempMap.put("workContent", employeeWorkTimeModel.getWorkContent());
