@@ -248,7 +248,7 @@ public class MonthlySalesSearchController {
 
 							int unitprice = (int) (Double.parseDouble(bpMonthlySalesModelList.get(i).getUnitPrice())
 									* percent);
-							int cost = (int) (Double.parseDouble(bpMonthlySalesModelList.get(i).getSalary()) * percent);
+							int cost = (int) (Double.parseDouble(bpMonthlySalesModelList.get(i).getSalary() == null ? "0" : bpMonthlySalesModelList.get(i).getSalary()) * percent);
 							bpMonthlySalesModelList.get(i).setUnitPrice(String.valueOf(unitprice));
 							bpMonthlySalesModelList.get(i).setSalary(String.valueOf(cost));
 						} else {

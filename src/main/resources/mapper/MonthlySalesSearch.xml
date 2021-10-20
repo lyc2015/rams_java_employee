@@ -116,7 +116,12 @@
 			)
 
 			<if test="employeeClassification != null">
-				AND T002.employeeStatus = #{employeeClassification}
+				<if test="employeeClassification == '023'">
+					AND (T002.employeeStatus = "0" OR T002.employeeStatus = "2" OR T002.employeeStatus = "3")
+				</if>
+				<if test="employeeClassification != '023'">
+					AND T002.employeeStatus = #{employeeClassification}
+				</if>
 			</if>
 			<if test="employeeForms != null">
 				AND T002.employeeFormCode = #{employeeForms}
@@ -251,9 +256,13 @@
 			or (#{getYandM} &gt;= left(T006.admissionStartDate,6) and
 			left(T006.admissionEndDate,6) is null)
 			)
-
 			<if test="employeeClassification != null">
-				AND T002.employeeStatus = #{employeeClassification}
+				<if test="employeeClassification == '023'">
+					AND (T002.employeeStatus = "0" OR T002.employeeStatus = "2" OR T002.employeeStatus = "3")
+				</if>
+				<if test="employeeClassification != '023'">
+					AND T002.employeeStatus = #{employeeClassification}
+				</if>
 			</if>
 			<if test="employeeForms != null">
 				AND T002.employeeFormCode = #{employeeForms}
