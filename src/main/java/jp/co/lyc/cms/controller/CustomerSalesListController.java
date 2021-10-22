@@ -406,6 +406,18 @@ public class CustomerSalesListController {
 			}
 		}
 
+		// ソート(合計単価降順)
+		for (int i = 0; i < newResultData.size() - 1; i++) {
+			for (int j = 0; j < newResultData.size() - 1 - i; j++) {
+				if (Integer.parseInt(newResultData.get(j).getTotalUnitPrice()) < Integer
+						.parseInt(newResultData.get(j + 1).getTotalUnitPrice())) {
+					CustomerSalesListModel temp = newResultData.get(j + 1);
+					newResultData.set(j + 1, newResultData.get(j));
+					newResultData.set(j, temp);
+				}
+			}
+		}
+
 		for (int i = 0; i < newResultData.size(); i++) {
 			newResultData.get(i).setRowNo(String.valueOf(i + 1));
 		}
