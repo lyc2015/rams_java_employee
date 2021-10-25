@@ -159,6 +159,7 @@ public class DutyRegistrationController extends BaseController {
 				String nowDate = yearMonth.substring(0, 4) + "-" + yearMonth.substring(4, 6) + "-"
 						+ StringUtils.leftPad((String) dutyDate.get(i).get("day"), 2, "0");
 				rowData.put("isBreak", UtilsController.isHoliday(nowDate));
+				rowData.put("isWorkSleep", UtilsController.isHoliday(nowDate) ? false : (rowData.get("isWork").equals("1") ? false : true));
 				tableData.add(rowData);
 				totalWorkTime += Double.valueOf((String) dutyDate.get(i).get("workHour"));
 				if (rowData.get("isWork").equals("1"))
