@@ -19,10 +19,16 @@
 		where
 		left(T001.employeeNo,2) != "BP"
 		and left(T001.employeeNo,2) != "SP"
-		and ((T002.employeeFormCode !=
+		and
+		((T002.employeeFormCode !=
 		"4" or
-		T002.retirementYearAndMonth &gt; now()
+		T002.retirementYearAndMonth &gt;
+		timestampadd(day,-dayofmonth(DATE_ADD(now(), INTERVAL -1
+		MONTH)),DATE_ADD(now(), INTERVAL -1 MONTH)) <!-- 前々月の最後の日 -->
 		or
 		T002.retirementResonClassification = "2"))
+		and
+		T002.intoCompanyYearAndMonth &lt;
+		timestampadd(day,-dayofmonth(now()),now()) <!-- 前月最後の日 -->
 	</select>
 </mapper>
