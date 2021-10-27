@@ -17,7 +17,7 @@ public interface DataShareMapper {
 	 */
 	public List<DataShareModel> selectDataShareFile();
 
-	public List<DataShareModel> selectDataShareFileOnly();
+	public List<DataShareModel> selectDataShareFileOnly(DataShareModel dataShareModel);
 
 	/**
 	 * アップデート
@@ -48,4 +48,12 @@ public interface DataShareMapper {
 	 * @return
 	 */
 	public void updateDataShareAfterDelete(String fileNo);
+
+	/**
+	 * return maxFileNo + 1
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public DataShareModel getMaxFileNo();
 }

@@ -12,7 +12,9 @@
 	<select id="selectDataShareFileOnly" resultMap="DataShare"
 		parameterType="String">
 		SELECT * FROM T023DataShare
-		WHERE shareStatus = "1";
+		WHERE shareStatus = "1"
+		or
+		(shareUser = #{shareUser} and shareStatus != "0");
 	</select>
 
 	<update id="updateDataShare" parameterType="String">
@@ -28,7 +30,7 @@
 		insert into
 		T023DataShare
 		(fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser)
-		values(#{fileNo},#{filePath},#{shareUser},"0",date_add(now(), interval
+		values(#{fileNo},#{filePath},#{shareUser},#{shareStatus},date_add(now(), interval
 		9 hour),date_add(now(), interval 9 hour),#{employeeName})
 		ON DUPLICATE
 		KEY
@@ -56,4 +58,10 @@
 		WHERE
 		fileNo &gt; #{fileNo}
 	</update>
+
+	<select id="getMaxFileNo" resultMap="DataShare">
+		SELECT (SELECT
+		Max(fileNo)
+		FROM T023DataShare) + 1 as fileNo
+	</select>
 </mapper>

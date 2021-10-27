@@ -214,6 +214,22 @@ public class DutyRegistrationController extends BaseController {
 		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
 		return result;
 	}
+	
+	/**	初期化する
+	 */
+	@RequestMapping(value = "/clearData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> clearData(@RequestBody String requestJson) {
+		logger.info("DutyRegistrationController.dutySelect:" + "検索開始");
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject jsonObject = JSON.parseObject(requestJson);
+		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		jsonObject.put("yearAndMonth", jsonObject.getOrDefault("yearMonth", ""));
+		dutyRegistrationService.clearData(jsonObject.getInnerMap());
+		
+		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
+		return result;
+	}
 
 	public ArrayList<Map<String, Object>> dutySelect(String requestJson) {
 		logger.info("DutyRegistrationController.dutySelect:" + "検索開始");

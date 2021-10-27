@@ -29,12 +29,13 @@ public class DataShareService {
 
 	/**
 	 * 画面情報検索
+	 * @param dataShareModel 
 	 * 
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	public List<DataShareModel> selectDataShareFileOnly() {
-		List<DataShareModel> resultMod = dataShareMapper.selectDataShareFileOnly();
+	public List<DataShareModel> selectDataShareFileOnly(DataShareModel dataShareModel) {
+		List<DataShareModel> resultMod = dataShareMapper.selectDataShareFileOnly(dataShareModel);
 		return resultMod;
 	}
 
@@ -91,5 +92,15 @@ public class DataShareService {
 			return result = false;
 		}
 		return result;
+	}
+
+	/**
+	 * return maxFileNo + 1
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public DataShareModel getMaxFileNo() {
+		return dataShareMapper.getMaxFileNo();
 	}
 }

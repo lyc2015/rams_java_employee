@@ -126,4 +126,14 @@ public class DutyRegistrationService {
 		}
 		return result;
 	}
+	
+	
+	/**
+	 * 初期化する
+	 * @param sendMap
+	 * @return
+	 */
+	public void clearData(Map<String, Object> sendMap) {
+		dutyRegistrationMapper.clearData(sendMap);		
+	}
 }

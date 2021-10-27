@@ -87,39 +87,43 @@ public class SalaryDetailSendController extends BaseController {
 
 	@RequestMapping(value = "/sendMailWithFile", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> sendMailWithFile(@RequestBody EmailModel emailModel) {
+	public Map<String, Object> sendMailWithFile(@RequestBody ArrayList<EmailModel> emailModel) {
 		String errorsMessage = "";
 		Map<String, Object> resulterr = new HashMap<>();
-		if (emailModel.getMailFrom() == null || emailModel.getMailFrom().equals("")) {
-			errorsMessage = "登録者メールアドレス入力されてない、確認してください。";
+		for (int i = 0; i < emailModel.size(); i++) {
+			if (emailModel.get(i).getMailFrom() == null || emailModel.get(i).getMailFrom().equals("")) {
+				errorsMessage = "登録者メールアドレス入力されてない、確認してください。";
 
-			resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
-			return resulterr;
+				resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
+				return resulterr;
+			}
+
+			logger.info("sendMailWithFile:" + "送信開始");
+
+			// 受信人のメール
+			emailModel.get(i).setUserName(getSession().getAttribute("employeeName").toString());
+			emailModel.get(i).setPassword("Lyc2020-0908-");
+			emailModel.get(i).setContextType("text/html;charset=utf-8");
+			String[] names = { emailModel.get(i).getResumePath() };
+			String[] paths = { "c:/file/salaryDetailSend/" + emailModel.get(i).getResumePath() };
+			emailModel.get(i).setNames(names);
+			emailModel.get(i).setPaths(paths);
+			try {
+				// 送信
+				utils.sendMailWithFile(emailModel.get(i));
+			} catch (Exception e) {
+				errorsMessage = "送信エラー発生しました。";
+
+				resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
+				return resulterr;
+			}
 		}
 
-		logger.info("sendMailWithFile:" + "送信開始");
-
-		// 受信人のメール
-		emailModel.setUserName(getSession().getAttribute("employeeName").toString());
-		emailModel.setPassword("Lyc2020-0908-");
-		emailModel.setContextType("text/html;charset=utf-8");
-		String[] names = { emailModel.getResumePath() };
-		String[] paths = { "c:/file/salaryDetailSend/" + emailModel.getResumePath() };
-		emailModel.setNames(names);
-		emailModel.setPaths(paths);
-		try {
-			// 送信
-			utils.sendMailWithFile(emailModel);
-
+		// ファイル削除
+		for (int i = 0; i < emailModel.size(); i++) {
 			// 送信後削除
-			File file = new File("c:/file/salaryDetailSend/" + emailModel.getResumePath());
+			File file = new File("c:/file/salaryDetailSend/" + emailModel.get(i).getResumePath());
 			file.delete();
-
-		} catch (Exception e) {
-			errorsMessage = "送信エラー発生しました。";
-
-			resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
-			return resulterr;
 		}
 
 		logger.info("sendMailWithFile" + "送信結束");

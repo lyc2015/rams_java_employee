@@ -4,6 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class DataShareModel {
 
+	String rowNo;
 	String fileNo;
 	String employeeNo;
 	String employeeName;
@@ -13,6 +14,14 @@ public class DataShareModel {
 	String updateTime;
 	String shareStatus;
 	MultipartFile dataShareFile;
+
+	public String getRowNo() {
+		return rowNo;
+	}
+
+	public void setRowNo(String rowNo) {
+		this.rowNo = rowNo;
+	}
 
 	public String getFileNo() {
 		return fileNo;

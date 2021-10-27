@@ -61,4 +61,11 @@ public interface DutyRegistrationMapper {
 	 * @param customerNo
 	 */
 	public void deleteDutyRegistration(String dutyRegistrationNo);
+
+	/**
+	 * 初期化する
+	 * 
+	 * @param customerNo
+	 */
+	public void clearData(Map<String, Object> sendMap);
 }

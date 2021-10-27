@@ -39,6 +39,9 @@ public class DataShareController extends BaseController {
 	public List<DataShareModel> selectDataShareFile() {
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
 		List<DataShareModel> checkMod = dataShareService.selectDataShareFile();
+		for(int i = 0;i < checkMod.size();i++) {
+			checkMod.get(i).setRowNo(String.valueOf(i + 1));
+		}
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
 		return checkMod;
 	}
@@ -50,9 +53,13 @@ public class DataShareController extends BaseController {
 	 */
 	@RequestMapping(value = "/selectDataShareFileOnly", method = RequestMethod.POST)
 	@ResponseBody
-	public List<DataShareModel> selectDataShareFileOnly() {
+	public List<DataShareModel> selectDataShareFileOnly(@RequestParam(value = "emp", required = false) String JSONEmp) {
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
-		List<DataShareModel> checkMod = dataShareService.selectDataShareFileOnly();
+		JSONObject jsonObject = JSON.parseObject(JSONEmp);
+		DataShareModel dataShareModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<DataShareModel>() {
+		});
+		dataShareModel.setShareUser(getSession().getAttribute("employeeName").toString()); 
+		List<DataShareModel> checkMod = dataShareService.selectDataShareFileOnly(dataShareModel);
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
 		return checkMod;
 	}
@@ -79,9 +86,10 @@ public class DataShareController extends BaseController {
 ---	 */
 	@RequestMapping(value = "/updateDataShareFile", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean updateDataShareFile(@RequestParam(value = "emp", required = false) String JSONEmp,
+	public String updateDataShareFile(@RequestParam(value = "emp", required = false) String JSONEmp,
 			@RequestParam(value = "dataShareFile", required = false) MultipartFile dataShareFile,
-			@RequestParam(value = "rowNo", required = false) String rowNo) throws Exception {
+			@RequestParam(value = "fileNo", required = false) String fileNo,
+			@RequestParam(value = "shareStatus", required = false) String shareStatus) throws Exception {
 		logger.info("WorkRepotController.insertWorkRepot:" + "追加開始");
 		JSONObject jsonObject = JSON.parseObject(JSONEmp);
 		DataShareModel dataShareModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<DataShareModel>() {
@@ -93,14 +101,18 @@ public class DataShareController extends BaseController {
 		try {
 			getFilename=upload(dataShareFile);
 		} catch (Exception e) {
-			return false;
+			return null;
 		}
-		dataShareModel.setFileNo(rowNo);
+		if(fileNo == null || fileNo.equals("")) {
+			fileNo = dataShareService.getMaxFileNo().getFileNo();
+		}
+		dataShareModel.setFileNo(fileNo);
+		dataShareModel.setShareStatus(shareStatus);
 		dataShareModel.setFilePath(getFilename);
-		boolean result  = dataShareService.updateDataShareFile(dataShareModel);
+		dataShareService.updateDataShareFile(dataShareModel);
 
 		logger.info("WorkRepotController.insertWorkRepot:" + "追加結束");
-		return result;
+		return fileNo;
 	}
 	
 	public final static String UPLOAD_PATH_PREFIX = "C:"+File.separator+"file"+File.separator;

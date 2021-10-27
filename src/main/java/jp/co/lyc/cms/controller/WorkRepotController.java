@@ -43,6 +43,9 @@ public class WorkRepotController extends BaseController {
 		logger.info("WorkRepotController.selectCheckWorkRepot:" + "検索終了");
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
 		List<WorkRepotModel> checkMod = workRepotService.selectWorkRepot(workRepotModel);
+		for(int i = 0;i < checkMod.size();i++) {
+			checkMod.get(i).setId(i);
+		}
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
 		return checkMod;
 	}
