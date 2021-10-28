@@ -282,6 +282,18 @@ public class UtilsController {
 		List<ModelClass> list = utilsService.getBankInfo();
 		return list;
 	}
+	
+	/**
+	 * 銀行支店名、支店番号取得
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/getBankBranch", method = RequestMethod.POST)
+	@ResponseBody
+	public List<ModelClass> getBankBranch() {
+		List<ModelClass> list = utilsService.getBankBranch();
+		return list;
+	}
 
 	/**
 	 * 支店情報検索

@@ -31,4 +31,29 @@
 		T002.intoCompanyYearAndMonth &lt;
 		timestampadd(day,-dayofmonth(now()),now()) <!-- 前月最後の日 -->
 	</select>
+	
+	<select id="getEmployeeSameFile" parameterType="map"
+		resultMap="detailsInfo">
+		SELECT
+		T001.employeeNo,
+		T001.employeeFristName,
+		concat(T001.employeeFristName,T001.employeeLastName) as employeeName,
+		T002.companyMail
+		FROM T001Employee as T001
+		left join
+		T002EmployeeDetail
+		as T002
+		on T001.employeeNo = T002.employeeNo
+		where
+		left(T001.employeeNo,2) != "BP"
+		and left(T001.employeeNo,2) != "SP"
+		and
+		((T002.employeeFormCode !=
+		"4" or
+		T002.retirementYearAndMonth &gt;
+		timestampadd(day,-dayofmonth(DATE_ADD(now(), INTERVAL -1
+		MONTH)),DATE_ADD(now(), INTERVAL -1 MONTH)) <!-- 前々月の最後の日 -->
+		or
+		T002.retirementResonClassification = "2"))
+	</select>
 </mapper>

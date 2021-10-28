@@ -83,19 +83,24 @@
 	<select id="getEmployeeNameNoBP"
 		resultType="jp.co.lyc.cms.model.ModelClass">
 		SELECT
-		employeeNo CODE,
-		CONCAT( employeeFristName,
-		employeeLastName, '(',
-		employeeNo, ')' ) NAME,
+		T001.employeeNo CODE,
+		CONCAT( T001.employeeFristName,
+		T001.employeeLastName, '(',
+		T001.employeeNo, ')' ) NAME,
 		CONCAT(
-		employeeFristName,
-		employeeLastName )
-		TEXT
+		T001.employeeFristName,
+		T001.employeeLastName )
+		TEXT,
+		T002.companyMail
+		MAIL
 		FROM
-		T001Employee
+		T001Employee as T001
+		Left Join T002EmployeeDetail as T002
+		on
+		T001.employeeNo = T002.employeeNo
 		WHERE
 		<!-- employeeNo LIKE concat( '%', "LYC", '%' ) -->
-		left(employeeNo,2) != "BP";
+		left(T001.employeeNo,2) != "BP";
 	</select>
 
 	<!-- お客様名 -->
@@ -316,6 +321,17 @@
 		bankCode code
 		FROM
 		M001Bank
+	</select>
+
+	<!-- 銀行支店名、支店番号取得 -->
+	<select id="getBankBranch"
+		resultType="jp.co.lyc.cms.model.ModelClass">
+		SELECT
+		bankBranchName name,
+		bankBranchCode code,
+		bankCode value
+		FROM
+		M002BankBranch
 	</select>
 
 	<!-- 支店情報検索 -->

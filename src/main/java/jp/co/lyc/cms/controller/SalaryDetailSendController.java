@@ -51,6 +51,22 @@ public class SalaryDetailSendController extends BaseController {
 		logger.info("SalaryDetailSendController.getEmployee:" + "検索結束");
 		return result;
 	}
+	
+	@RequestMapping(value = "/getEmployeeSameFile", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getEmployeeSameFile() {
+		logger.info("SalaryDetailSendController.getEmployee:" + "検索開始");
+
+		List<EmployeeInformationModel> employeeList = new ArrayList<EmployeeInformationModel>();
+		employeeList = salaryDetailSendService.getEmployeeSameFile();
+		for (int i = 0; i < employeeList.size(); i++) {
+			employeeList.get(i).setRowNo(i + 1);
+		}
+		Map<String, Object> result = new HashMap<>();
+		result.put("data", employeeList);
+		logger.info("SalaryDetailSendController.getEmployee:" + "検索結束");
+		return result;
+	}
 
 	@RequestMapping(value = "/updatePDF", method = RequestMethod.POST)
 	@ResponseBody

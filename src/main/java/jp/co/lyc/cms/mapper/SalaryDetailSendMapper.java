@@ -10,4 +10,6 @@ import jp.co.lyc.cms.model.EmployeeInformationModel;
 public interface SalaryDetailSendMapper {
 
 	public List<EmployeeInformationModel> getEmployee();
+
+	public List<EmployeeInformationModel> getEmployeeSameFile();
 }

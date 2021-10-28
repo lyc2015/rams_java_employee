@@ -17,4 +17,8 @@ public class SalaryDetailSendService {
 	public List<EmployeeInformationModel> getEmployee() {
 		return salaryDetailSendMapper.getEmployee();
 	}
+	
+	public List<EmployeeInformationModel> getEmployeeSameFile() {
+		return salaryDetailSendMapper.getEmployeeSameFile();
+	}
 }

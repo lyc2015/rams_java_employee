@@ -275,6 +275,13 @@ public interface UtilsMapper {
 	 * @return
 	 */
 	public List<ModelClass> getBankInfo();
+	
+	/**
+	 * 銀行支店名、支店番号取得
+	 * 
+	 * @return
+	 */
+	public List<ModelClass> getBankBranch();
 
 	/**
 	 * 支店情報検索

@@ -388,6 +388,15 @@ public class UtilsService {
 	public List<ModelClass> getBankInfo() {
 		return utilsMapper.getBankInfo();
 	}
+	
+	/**
+	 * 銀行支店名、支店番号取得
+	 * 
+	 * @return
+	 */
+	public List<ModelClass> getBankBranch() {
+		return utilsMapper.getBankBranch();
+	}
 
 	/**
 	 * 支店情報検索

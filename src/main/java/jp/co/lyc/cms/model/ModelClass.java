@@ -12,6 +12,19 @@ public class ModelClass implements Serializable {
 	String text;
 	String columnName;
 	String typeName;
+	String mail;
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 	public String getValue() {
 		return value;
