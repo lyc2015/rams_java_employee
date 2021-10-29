@@ -1,5 +1,6 @@
 package jp.co.lyc.cms.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -15,7 +16,9 @@ public interface DataShareMapper {
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	public List<DataShareModel> selectDataShareFile();
+	public List<DataShareModel> selectDataShareFile(String updateTime);
+
+	public List<DataShareModel> selectDataShareFileUpload(String updateTime);
 
 	public List<DataShareModel> selectDataShareFileOnly(DataShareModel dataShareModel);
 
@@ -25,6 +28,8 @@ public interface DataShareMapper {
 	 * @param sendMap
 	 */
 	public void updateDataShare(DataShareModel dataShareModel);
+
+	public void updateDataShares(ArrayList<String> fileNoList);
 
 	/**
 	 * ファイル名入力
@@ -56,4 +61,13 @@ public interface DataShareMapper {
 	 * @return
 	 */
 	public DataShareModel getMaxFileNo();
+
+	/**
+	 * 削除
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public void deleteDataShares(ArrayList<String> fileNoList);
+
 }

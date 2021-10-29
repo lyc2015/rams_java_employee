@@ -6,7 +6,20 @@
 
 	<select id="selectDataShareFile" resultMap="DataShare"
 		parameterType="String">
-		SELECT * FROM T023DataShare;
+		SELECT * FROM T023DataShare
+		where (shareStatus = "0" or
+		shareStatus = "1")
+		and updateTime &gt;=
+		ifnull(#{updateTime},updateTime);
+	</select>
+
+	<select id="selectDataShareFileUpload" resultMap="DataShare"
+		parameterType="String">
+		SELECT * FROM T023DataShare
+		where (shareStatus = "2" or
+		shareStatus = "3")
+		and updateTime &gt;=
+		ifnull(#{updateTime},updateTime);
 	</select>
 
 	<select id="selectDataShareFileOnly" resultMap="DataShare"
@@ -26,13 +39,28 @@
 		fileNo = #{fileNo}
 	</update>
 
+	<update id="updateDataShares" parameterType="String">
+		UPDATE
+		T023DataShare
+		SET
+		shareStatus = "3"
+		WHERE
+		fileNo in
+		<foreach item="item" collection="list" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</update>
+
 	<update id="updateDataShareFile" parameterType="String">
 		insert into
 		T023DataShare
 		(fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser)
-		values(#{fileNo},#{filePath},#{shareUser},#{shareStatus},date_add(now(), interval
+		values(#{fileNo},#{filePath},#{shareUser},#{shareStatus},date_add(now(),
+		interval
 		9 hour),date_add(now(), interval 9 hour),#{employeeName})
-		ON DUPLICATE
+		ON
+		DUPLICATE
 		KEY
 		update
 		filePath = #{filePath},
@@ -64,4 +92,15 @@
 		Max(fileNo)
 		FROM T023DataShare) + 1 as fileNo
 	</select>
+
+	<delete id="deleteDataShares" parameterType="String">
+		DELETE FROM
+		T023DataShare
+		WHERE
+		fileNo in
+		<foreach item="item" collection="list" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</delete>
 </mapper>

@@ -1,5 +1,6 @@
 package jp.co.lyc.cms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +19,23 @@ public class DataShareService {
 	/**
 	 * 画面情報検索
 	 * 
+	 * @param string
+	 * 
 	 * @param TopCustomerNo
 	 * @return
 	 */
 
-	public List<DataShareModel> selectDataShareFile() {
-		List<DataShareModel> resultMod = dataShareMapper.selectDataShareFile();
+	public List<DataShareModel> selectDataShareFile(DataShareModel dataShareModel) {
+		List<DataShareModel> resultMod = dataShareModel.getDataStatus().equals("0")
+				? dataShareMapper.selectDataShareFile(dataShareModel.getUpdateTime())
+				: dataShareMapper.selectDataShareFileUpload(dataShareModel.getUpdateTime());
 		return resultMod;
 	}
 
 	/**
 	 * 画面情報検索
-	 * @param dataShareModel 
+	 * 
+	 * @param dataShareModel
 	 * 
 	 * @param TopCustomerNo
 	 * @return
@@ -49,6 +55,18 @@ public class DataShareService {
 		boolean result = true;
 		try {
 			dataShareMapper.updateDataShare(dataShareModel);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return result = false;
+		}
+		return result;
+	}
+
+	public boolean updateDataShares(ArrayList<String> fileNoList) {
+		boolean result = true;
+		try {
+			dataShareMapper.updateDataShares(fileNoList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -102,5 +120,23 @@ public class DataShareService {
 	 */
 	public DataShareModel getMaxFileNo() {
 		return dataShareMapper.getMaxFileNo();
+	}
+
+	/**
+	 * 削除
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public boolean deleteDataShares(ArrayList<String> fileNoList) {
+		boolean result = true;
+		try {
+			dataShareMapper.deleteDataShares(fileNoList);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return result = false;
+		}
+		return result;
 	}
 }

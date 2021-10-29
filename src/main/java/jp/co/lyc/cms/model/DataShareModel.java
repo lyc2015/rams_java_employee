@@ -13,7 +13,16 @@ public class DataShareModel {
 	String updateUser;
 	String updateTime;
 	String shareStatus;
+	String dataStatus;
 	MultipartFile dataShareFile;
+
+	public String getDataStatus() {
+		return dataStatus;
+	}
+
+	public void setDataStatus(String dataStatus) {
+		this.dataStatus = dataStatus;
+	}
 
 	public String getRowNo() {
 		return rowNo;

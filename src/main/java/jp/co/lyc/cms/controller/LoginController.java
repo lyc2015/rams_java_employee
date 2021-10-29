@@ -87,6 +87,7 @@ public class LoginController extends BaseController {
 			if(employeeModel.getAuthorityCode().equals("0") || employeeModel.getAuthorityCode().equals("1")) {
 				loginSession.invalidate();// 重置session
 				errorsMessage += "権限不足";
+				result.put("errorsMessage", errorsMessage);//重置session
 				return result;
 			}
 			loginSession.setAttribute("employeeNo", employeeModel.getEmployeeNo());
@@ -95,7 +96,9 @@ public class LoginController extends BaseController {
 			loginSession.setAttribute("employeeName",
 					employeeModel.getEmployeeFristName() + "" + employeeModel.getEmployeeLastName());
 		} else {
-			loginSession.invalidate();// 重置session
+			errorsMessage += "社員番号またはパスワードが間違いました！";
+			result.put("errorsMessage", errorsMessage);//重置session
+			//loginSession.invalidate();// 重置session
 		}
 		logger.info("LoginController.login:" + "ログイン終了");
 		return result;
