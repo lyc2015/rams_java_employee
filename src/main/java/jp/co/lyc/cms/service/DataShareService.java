@@ -27,8 +27,8 @@ public class DataShareService {
 
 	public List<DataShareModel> selectDataShareFile(DataShareModel dataShareModel) {
 		List<DataShareModel> resultMod = dataShareModel.getDataStatus().equals("0")
-				? dataShareMapper.selectDataShareFile(dataShareModel.getUpdateTime())
-				: dataShareMapper.selectDataShareFileUpload(dataShareModel.getUpdateTime());
+				? dataShareMapper.selectDataShareFile(dataShareModel)
+				: dataShareMapper.selectDataShareFileUpload(dataShareModel);
 		return resultMod;
 	}
 

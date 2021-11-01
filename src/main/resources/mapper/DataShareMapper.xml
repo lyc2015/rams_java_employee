@@ -6,20 +6,33 @@
 
 	<select id="selectDataShareFile" resultMap="DataShare"
 		parameterType="String">
-		SELECT * FROM T023DataShare
+		SELECT
+		fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser
+		as employeeNo FROM T023DataShare
 		where (shareStatus = "0" or
-		shareStatus = "1")
-		and updateTime &gt;=
-		ifnull(#{updateTime},updateTime);
+		shareStatus =
+		"1")
+		and updateTime between
+		ifnull(#{updateTime},updateTime) and
+		ifnull(#{nextMonthTime},updateTime)
+		and shareUser =
+		ifnull(#{shareUser},shareUser);
 	</select>
 
 	<select id="selectDataShareFileUpload" resultMap="DataShare"
 		parameterType="String">
-		SELECT * FROM T023DataShare
+		SELECT
+		fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser
+		as employeeNo FROM T023DataShare
 		where (shareStatus = "2" or
-		shareStatus = "3")
-		and updateTime &gt;=
-		ifnull(#{updateTime},updateTime);
+		shareStatus =
+		"3")
+		and updateTime between
+		ifnull(#{updateTime},updateTime) and
+		ifnull(#{nextMonthTime},updateTime)
+		and shareUser =
+		ifnull(#{shareUser},shareUser)
+		order by updateTime desc;
 	</select>
 
 	<select id="selectDataShareFileOnly" resultMap="DataShare"
@@ -58,7 +71,7 @@
 		(fileNo,filePath,shareUser,shareStatus,updateTime,createTime,updateUser)
 		values(#{fileNo},#{filePath},#{shareUser},#{shareStatus},date_add(now(),
 		interval
-		9 hour),date_add(now(), interval 9 hour),#{employeeName})
+		9 hour),date_add(now(), interval 9 hour),#{employeeNo})
 		ON
 		DUPLICATE
 		KEY
@@ -68,7 +81,7 @@
 		updateTime =
 		date_add(now(), interval 9 hour),
 		updateUser =
-		#{employeeName}
+		#{employeeNo}
 	</update>
 
 	<delete id="deleteDataShare" parameterType="String">

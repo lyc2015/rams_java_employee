@@ -41,7 +41,8 @@ public class DataShareController extends BaseController {
 		logger.info("dataShare.selectDataShareFile:" + "検索開始");
 		List<DataShareModel> checkMod = dataShareService.selectDataShareFile(dataShareModel);
 		for(int i = 0;i < checkMod.size();i++) {
-			checkMod.get(i).setRowNo(String.valueOf(i + 1));
+			String rowNo = (i + 1) < 10 ? ("0" + (i + 1)) : String.valueOf(i + 1);
+			checkMod.get(i).setRowNo(rowNo);
 		}
 		logger.info("dataShare.selectDataShareFile:" + "検索終了");
 		return checkMod;
@@ -120,7 +121,11 @@ public class DataShareController extends BaseController {
 			return null;
 		}
 		if(fileNo == null || fileNo.equals("")) {
-			fileNo = dataShareService.getMaxFileNo().getFileNo();
+			DataShareModel maxFileNo = dataShareService.getMaxFileNo();
+			if(maxFileNo == null)
+				fileNo = "1";
+			else
+				fileNo = dataShareService.getMaxFileNo().getFileNo();
 		}
 		dataShareModel.setFileNo(fileNo);
 		dataShareModel.setShareStatus(shareStatus);

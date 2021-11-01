@@ -12,9 +12,18 @@ public class DataShareModel {
 	String shareUser;
 	String updateUser;
 	String updateTime;
+	String nextMonthTime;
 	String shareStatus;
 	String dataStatus;
 	MultipartFile dataShareFile;
+
+	public String getNextMonthTime() {
+		return nextMonthTime;
+	}
+
+	public void setNextMonthTime(String nextMonthTime) {
+		this.nextMonthTime = nextMonthTime;
+	}
 
 	public String getDataStatus() {
 		return dataStatus;

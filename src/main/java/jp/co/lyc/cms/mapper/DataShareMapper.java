@@ -16,9 +16,9 @@ public interface DataShareMapper {
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	public List<DataShareModel> selectDataShareFile(String updateTime);
+	public List<DataShareModel> selectDataShareFile(DataShareModel dataShareModel);
 
-	public List<DataShareModel> selectDataShareFileUpload(String updateTime);
+	public List<DataShareModel> selectDataShareFileUpload(DataShareModel dataShareModel);
 
 	public List<DataShareModel> selectDataShareFileOnly(DataShareModel dataShareModel);
 
