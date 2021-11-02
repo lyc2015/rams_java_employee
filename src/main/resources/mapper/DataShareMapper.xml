@@ -38,9 +38,20 @@
 	<select id="selectDataShareFileOnly" resultMap="DataShare"
 		parameterType="String">
 		SELECT * FROM T023DataShare
-		WHERE shareStatus = "1"
-		or
-		(shareUser = #{shareUser} and shareStatus != "0");
+		<if test="dataStatus == 0">
+			WHERE shareStatus = "1"
+			or
+			(shareUser = #{shareUser} and
+			shareStatus in ("2","3"));
+		</if>
+		<if test="dataStatus == 1">
+			WHERE
+			shareUser = #{shareUser} and
+			shareStatus in ("2","3");
+		</if>
+		<if test="dataStatus == 2">
+			WHERE shareStatus = "1";
+		</if>
 	</select>
 
 	<update id="updateDataShare" parameterType="String">

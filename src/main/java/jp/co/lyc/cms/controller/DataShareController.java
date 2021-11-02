@@ -55,12 +55,14 @@ public class DataShareController extends BaseController {
 	 */
 	@RequestMapping(value = "/selectDataShareFileOnly", method = RequestMethod.POST)
 	@ResponseBody
-	public List<DataShareModel> selectDataShareFileOnly(@RequestParam(value = "emp", required = false) String JSONEmp) {
+	public List<DataShareModel> selectDataShareFileOnly(@RequestParam(value = "emp", required = false) String JSONEmp,
+														@RequestParam(value = "dataStatus", required = false) String dataStatus) {
 		logger.info("dataShare.selectDataShareFileOnly:" + "検索開始");
 		JSONObject jsonObject = JSON.parseObject(JSONEmp);
 		DataShareModel dataShareModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<DataShareModel>() {
 		});
 		dataShareModel.setShareUser(getSession().getAttribute("employeeName").toString()); 
+		dataShareModel.setDataStatus(dataStatus);
 		List<DataShareModel> checkMod = dataShareService.selectDataShareFileOnly(dataShareModel);
 		logger.info("dataShare.selectDataShareFileOnly:" + "検索終了");
 		return checkMod;
