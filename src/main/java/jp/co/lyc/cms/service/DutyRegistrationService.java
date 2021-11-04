@@ -127,7 +127,6 @@ public class DutyRegistrationService {
 		return result;
 	}
 	
-	
 	/**
 	 * 初期化する
 	 * @param sendMap
@@ -135,5 +134,15 @@ public class DutyRegistrationService {
 	 */
 	public void clearData(Map<String, Object> sendMap) {
 		dutyRegistrationMapper.clearData(sendMap);		
+	}
+	
+	/**
+	 * 判断承認済み
+	 * @param sendMap
+	 * @return
+	 */
+	public String getFlag(Map<String, Object> sendMap) {
+		// TODO Auto-generated method stub
+		return 	dutyRegistrationMapper.getFlag(sendMap);		
 	}
 }

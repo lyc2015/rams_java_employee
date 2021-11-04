@@ -139,4 +139,8 @@ public class DataShareService {
 		}
 		return result;
 	}
+
+	public boolean updateFileName(DataShareModel dataShareModel) {
+		return dataShareMapper.updateFileName(dataShareModel);
+	}
 }

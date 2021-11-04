@@ -50,15 +50,15 @@
 			#{resumeName1},
 			#{resumeInfo2},
 			#{resumeName2},
-			now(),
-			now(),
+			date_add(now(), interval 9 hour),
+			date_add(now(), interval 9 hour),
 			#{employeeName}
 		) ON DUPLICATE KEY UPDATE
 			resumeInfo1= #{resumeInfo1},
 			resumeName1= #{resumeName1},
 			resumeInfo2= #{resumeInfo2},
 			resumeName2= #{resumeName2},
-			updateTime=now(),
+			updateTime=	date_add(now(), interval 9 hour),
 			updateUser=#{employeeName};
     </insert> 
 </mapper>

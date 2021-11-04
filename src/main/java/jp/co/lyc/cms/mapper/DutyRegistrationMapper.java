@@ -68,4 +68,12 @@ public interface DutyRegistrationMapper {
 	 * @param customerNo
 	 */
 	public void clearData(Map<String, Object> sendMap);
+
+	/**
+	 * 判断承認済み
+	 * 
+	 * @param sendMap
+	 * @return
+	 */
+	public String getFlag(Map<String, Object> sendMap);
 }

@@ -70,4 +70,6 @@ public interface DataShareMapper {
 	 */
 	public void deleteDataShares(ArrayList<String> fileNoList);
 
+	public boolean updateFileName(DataShareModel dataShareModel);
+
 }

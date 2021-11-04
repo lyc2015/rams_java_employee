@@ -34,37 +34,39 @@ import jp.co.lyc.cms.validation.LoginEmployeeValidation;
 @Controller
 @RequestMapping(value = "/login2")
 public class LoginEmployeeController extends BaseController {
-	
+
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	LoginEmployeeService es;
 
 	@Autowired
 	UtilsController utils;
-	
+
 	@Autowired
 	PasswordResetMapper passwordResetMapper;
-	
+
 	String errorsMessage = "";
+
 	@RequestMapping(value = "/init", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean init() {
-		if(UtilsCheckMethod.isNullOrEmpty((String)getSession().getAttribute("employeeNo"))) {
+		if (UtilsCheckMethod.isNullOrEmpty((String) getSession().getAttribute("employeeNo"))) {
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * ログインボタン
+	 * 
 	 * @param loginModel
 	 * @param employeeModel
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> login(@RequestBody LoginEmployeeModel loginModel, EmployeeModel employeeModel ) {
+	public Map<String, Object> login(@RequestBody LoginEmployeeModel loginModel, EmployeeModel employeeModel) {
 		logger.info("LoginController.login:" + "ログイン開始");
 		errorsMessage = "";
 		DataBinder binder = new DataBinder(loginModel);
@@ -87,20 +89,20 @@ public class LoginEmployeeController extends BaseController {
 		sendMap.put("password", loginModel.password);
 		employeeModel = es.getEmployeeModel(sendMap);
 		resultMap.put("employeeModel", employeeModel);
-		if(employeeModel != null) {
+		if (employeeModel != null) {
 			loginSession.setAttribute("employeeNo", employeeModel.getEmployeeNo());
 			loginSession.setAttribute("authorityName", employeeModel.getAuthorityName());
 			loginSession.setAttribute("authorityCode", employeeModel.getAuthorityCode());
-			loginSession.setAttribute("employeeName", employeeModel.getEmployeeFristName() +
-					"" + employeeModel.getEmployeeLastName());
-		}else {
+			loginSession.setAttribute("employeeName",
+					employeeModel.getEmployeeFristName() + "" + employeeModel.getEmployeeLastName());
+		} else {
 			errorsMessage += "社員番号またはパスワードが間違いました！";
-			result.put("errorsMessage", errorsMessage);//重置session
+			result.put("errorsMessage", errorsMessage);// 重置session
 		}
 		logger.info("LoginController.login:" + "ログイン終了");
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/sendMail", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> sendMail(@RequestBody LoginEmployeeModel loginModel) {
@@ -121,13 +123,13 @@ public class LoginEmployeeController extends BaseController {
 		}
 		EmailModel emailModel = new EmailModel();
 		String mail = es.getEmployeeCompanyMail(loginModel.getEmployeeNo());
-		if(UtilsCheckMethod.isNullOrEmpty(mail)) {
+		if (UtilsCheckMethod.isNullOrEmpty(mail)) {
 			errorsMessage += "メール存在してないので、検索条件を確認してください。";
 			result.put("errorsMessage", errorsMessage);
 			return result;
 		}
 		passwordResetMapper.deleteAll(loginModel.getEmployeeNo());
-		//受信人のメール
+		// 受信人のメール
 		emailModel.setToAddress(mail);
 		emailModel.setSelectedmail(mail);
 		emailModel.setUserName("mail@lyc.co.jp");
@@ -141,14 +143,10 @@ public class LoginEmployeeController extends BaseController {
 		sendMap.put("passwordResetId", passwordResetId);
 		sendMap.put("idForEmployeeNo", loginModel.getEmployeeNo());
 		es.insert(sendMap);
-		String context = loginModel.getEmployeeNo() + " さん\r\n" + 
-				"お疲れ様でした！\r\n" +
-				"自動設定メールになります、ご返事しないでください。\r\n"+
-				"以下のリンクからパスワードの再設定を行って下さい。\r\n" +
-				"\r\n"+
-				"[パスワードを再設定する]\r\n" + 
-				"http://127.0.0.1:3000/passwordReset?id=" + passwordResetId + "\r\n" +
-				"※ご利用の方は上記URLを24時間内クリックしてお願いします。\r\n";
+		String context = loginModel.getEmployeeNo() + " さん\r\n" + "お疲れ様でした！\r\n" + "自動設定メールになります、ご返事しないでください。\r\n"
+				+ "以下のリンクからパスワードの再設定を行って下さい。\r\n" + "\r\n" + "[パスワードを再設定する]\r\n"
+				+ loginModel.getServerIP().substring(0, loginModel.getServerIP().lastIndexOf(":"))
+				+ ":3000/passwordReset?id=" + passwordResetId + "\r\n" + "※ご利用の方は上記URLを24時間内クリックしてお願いします。\r\n";
 		emailModel.setMailConfirmContont(context);
 		utils.EmailSend(emailModel);
 		return result;

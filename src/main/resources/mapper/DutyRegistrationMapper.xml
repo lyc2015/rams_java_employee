@@ -7,7 +7,7 @@
 		type="jp.co.lyc.cms.model.EmployeeWorkTimeModel" />
 	<resultMap id="BreakTime"
 		type="jp.co.lyc.cms.model.BreakTimeModel" />
-
+	<resultMap id="String" type="java.lang.String" />
 	<insert id="insertDutyRegistration" parameterType="String">
 		INSERT INTO
 		T017BreakTime(
@@ -215,4 +215,18 @@
 		yearAndMonth =
 		#{yearAndMonth}
 	</delete>
+
+	<select id="getFlag" parameterType="String"
+		resultMap="String">
+		SELECT
+		approvalStatus
+		FROM
+		T018WorkTotalTime
+		WHERE
+		employeeNo =
+		#{employeeNo}
+		and
+		attendanceYearAndMonth =
+		#{yearMonth}
+	</select>
 </mapper>

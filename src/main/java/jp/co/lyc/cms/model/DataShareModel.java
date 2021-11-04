@@ -8,6 +8,7 @@ public class DataShareModel {
 	String fileNo;
 	String employeeNo;
 	String employeeName;
+	String fileName;
 	String filePath;
 	String shareUser;
 	String updateUser;
@@ -16,6 +17,14 @@ public class DataShareModel {
 	String shareStatus;
 	String dataStatus;
 	MultipartFile dataShareFile;
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 	public String getNextMonthTime() {
 		return nextMonthTime;

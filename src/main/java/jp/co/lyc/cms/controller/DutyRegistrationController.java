@@ -159,7 +159,8 @@ public class DutyRegistrationController extends BaseController {
 				String nowDate = yearMonth.substring(0, 4) + "-" + yearMonth.substring(4, 6) + "-"
 						+ StringUtils.leftPad((String) dutyDate.get(i).get("day"), 2, "0");
 				rowData.put("isBreak", UtilsController.isHoliday(nowDate));
-				rowData.put("isWorkSleep", UtilsController.isHoliday(nowDate) ? false : (rowData.get("isWork").equals("1") ? false : true));
+				rowData.put("isWorkSleep", UtilsController.isHoliday(nowDate) ? false
+						: (rowData.get("isWork").equals("1") ? false : true));
 				tableData.add(rowData);
 				totalWorkTime += Double.valueOf((String) dutyDate.get(i).get("workHour"));
 				if (rowData.get("isWork").equals("1"))
@@ -214,8 +215,9 @@ public class DutyRegistrationController extends BaseController {
 		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
 		return result;
 	}
-	
-	/**	初期化する
+
+	/**
+	 * 初期化する
 	 */
 	@RequestMapping(value = "/clearData", method = RequestMethod.POST)
 	@ResponseBody
@@ -226,7 +228,27 @@ public class DutyRegistrationController extends BaseController {
 		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
 		jsonObject.put("yearAndMonth", jsonObject.getOrDefault("yearMonth", ""));
 		dutyRegistrationService.clearData(jsonObject.getInnerMap());
-		
+
+		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
+		return result;
+	}
+
+	/**
+	 * 判断承認済み
+	 */
+	@RequestMapping(value = "/getFlag", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getFlag(@RequestBody String requestJson) {
+		logger.info("DutyRegistrationController.dutySelect:" + "検索開始");
+		Map<String, Object> result = new HashMap<String, Object>();
+		JSONObject jsonObject = JSON.parseObject(requestJson);
+		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		String approvalStatus = dutyRegistrationService.getFlag(jsonObject.getInnerMap());
+		if (approvalStatus == null || approvalStatus.equals("0")) {
+			result.put("flag", false);
+		} else {
+			result.put("flag", true);
+		}
 		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
 		return result;
 	}

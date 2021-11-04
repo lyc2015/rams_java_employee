@@ -2,7 +2,10 @@ package jp.co.lyc.cms.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,5 +190,34 @@ public class DataShareController extends BaseController {
 		result  = dataShareService.deleteDataShares(fileNoList);
 		logger.info("dataShare.deleteDataShares:" + "削除終了");
 		return result;	
+	}
+	
+	/**
+	 * ファイル名更新
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateFileName(@RequestBody DataShareModel dataShareModel){
+		logger.info("dataShare.updateFileName:" + "ファイル名更新開始");
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		boolean result = false;	
+		
+		String filePath = dataShareModel.getFilePath().substring(0,dataShareModel.getFilePath().lastIndexOf("/") + 1);
+		String oldFileName = dataShareModel.getFilePath().substring(dataShareModel.getFilePath().lastIndexOf("/") + 1,dataShareModel.getFilePath().length());
+		String newFileName = dataShareModel.getFileName();
+
+		File oldFile = new File(filePath + oldFileName);
+		File newFile = new File(filePath + newFileName);
+		if(oldFile.exists() && oldFile.isFile()) {
+			oldFile.renameTo(newFile);
+			dataShareModel.setFilePath(filePath + newFileName);
+			result = dataShareService.updateFileName(dataShareModel);
+		}
+		returnMap.put("flag", result);
+		returnMap.put("newFilePath", filePath + newFileName);
+		logger.info("dataShare.updateFileName:" + "ファイル名更新終了");
+		return returnMap;	
 	}
 }
