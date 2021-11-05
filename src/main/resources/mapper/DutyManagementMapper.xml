@@ -115,8 +115,10 @@
 	<select id="selectCostRegistration" resultMap="CostRegistration"
 		parameterType="String">
 		SELECT * FROM T020CostInfo
-		where yearMonth = #{yearAndMonth}
-		order by employeeNo,costClassificationCode != "0",happendDate;
+		where yearMonth =
+		#{yearAndMonth}
+		order by employeeNo,costClassificationCode !=
+		"0",happendDate;
 	</select>
 
 	<update id="updateDutyManagement" parameterType="String">
@@ -136,4 +138,13 @@
 		#{employeeNo}
 		and attendanceYearAndMonth = #{yearAndMonth}
 	</update>
+
+	<select id="selectWorkTime" resultMap="DutyManagement"
+		parameterType="String">
+		SELECT employeeNo,yearAndMonth,sum(workTime) as workTime
+		FROM T016EmployeeWorkTime
+		where yearAndMonth = #{yearAndMonth}
+		group by
+		employeeNo
+	</select>
 </mapper>

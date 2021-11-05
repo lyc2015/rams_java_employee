@@ -90,4 +90,14 @@ public class WorkRepotService {
 		}
 		return result;
 	}
+
+	/**
+	 * 勤務時間入力有り無し判断
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public String selectWorkTime(WorkRepotModel workRepotModel) {
+		return workRepotMapper.selectWorkTime(workRepotModel);
+	}
 }

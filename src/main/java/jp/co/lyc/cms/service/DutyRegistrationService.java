@@ -142,7 +142,9 @@ public class DutyRegistrationService {
 	 * @return
 	 */
 	public String getFlag(Map<String, Object> sendMap) {
-		// TODO Auto-generated method stub
 		return 	dutyRegistrationMapper.getFlag(sendMap);		
+	}
+	public String selectWorkRepot(Map<String, Object> sendMap) {
+		return dutyRegistrationMapper.selectWorkRepot(sendMap);	
 	}
 }

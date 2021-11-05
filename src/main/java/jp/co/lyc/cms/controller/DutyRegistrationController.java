@@ -217,6 +217,23 @@ public class DutyRegistrationController extends BaseController {
 	}
 
 	/**
+	 */
+	@RequestMapping(value = "/selectWorkRepot", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean selectWorkRepot(@RequestBody String requestJson) {
+		logger.info("DutyRegistrationController.dutySelect:" + "検索開始");
+		JSONObject jsonObject = JSON.parseObject(requestJson);
+		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		jsonObject.put("breakTimeYearMonth", jsonObject.getOrDefault("yearMonth", ""));
+		boolean result = false;
+		String sumWorkTime = dutyRegistrationService.selectWorkRepot(jsonObject.getInnerMap());
+		if (!(sumWorkTime == null || sumWorkTime == ""))
+			result = true;
+		logger.info("DutyRegistrationController.dutySelect:" + "検索終了");
+		return result;
+	}
+
+	/**
 	 * 初期化する
 	 */
 	@RequestMapping(value = "/clearData", method = RequestMethod.POST)

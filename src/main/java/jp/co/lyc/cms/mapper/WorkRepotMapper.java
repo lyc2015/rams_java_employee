@@ -38,4 +38,12 @@ public interface WorkRepotMapper {
 	 * @param sendMap
 	 */
 	public void updateWorkRepotFile(WorkRepotModel workRepotModel);
+
+	/**
+	 * 勤務時間入力有り無し判断
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	public String selectWorkTime(WorkRepotModel workRepotModel);
 }

@@ -15,20 +15,22 @@ public class DutyManagementService {
 
 	@Autowired
 	DutyManagementMapper dutyManagementMapper;
-		
+
 	/**
 	 * 画面情報検索
+	 * 
 	 * @param TopCustomerNo
 	 * @return
 	 */
-	
+
 	public List<DutyManagementModel> selectDutyManagement(HashMap<String, String> sendMap) {
 		List<DutyManagementModel> resultMod = dutyManagementMapper.selectDutyManagement(sendMap);
 		return resultMod;
 	}
-	
+
 	/**
 	 * 費用詳細情報検索
+	 * 
 	 * @param TopCustomerNo
 	 * @return
 	 */
@@ -36,11 +38,13 @@ public class DutyManagementService {
 		List<CostRegistrationModel> resultMod = dutyManagementMapper.selectCostRegistration(sendMap);
 		return resultMod;
 	}
+
 	/**
 	 * アップデート
+	 * 
 	 * @param sendMap
 	 */
-	
+
 	public boolean updateDutyManagement(HashMap<String, String> sendMap) {
 		boolean result = true;
 		try {
@@ -51,5 +55,9 @@ public class DutyManagementService {
 			return result = false;
 		}
 		return result;
+	}
+
+	public List<DutyManagementModel> selectWorkTime(HashMap<String, String> dutyManagementModel) {
+		return dutyManagementMapper.selectWorkTime(dutyManagementModel);
 	}
 }

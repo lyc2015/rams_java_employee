@@ -76,4 +76,6 @@ public interface DutyRegistrationMapper {
 	 * @return
 	 */
 	public String getFlag(Map<String, Object> sendMap);
+
+	public String selectWorkRepot(Map<String, Object> sendMap);
 }

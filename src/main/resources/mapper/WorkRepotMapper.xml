@@ -3,6 +3,7 @@
 <mapper namespace="jp.co.lyc.cms.mapper.WorkRepotMapper">
 	<resultMap id="WorkRepot"
 		type="jp.co.lyc.cms.model.WorkRepotModel" />
+	<resultMap id="String" type="java.lang.String" />
 	<insert id="selectCheckWorkRepot" parameterType="String">
 		INSERT INTO
 		T018WorkTotalTime(
@@ -16,7 +17,8 @@
 		updateUser)
 		SELECT
 		#{employeeNo},
-		DATE_FORMAT(date_add(now(), interval 9 hour),'%Y%m'),
+		DATE_FORMAT(date_add(now(),
+		interval 9 hour),'%Y%m'),
 		0,
 		0,
 		0,
@@ -38,7 +40,8 @@
 		parameterType="String">
 		SELECT
 		attendanceYearAndMonth,
-		CONVERT (workingTimeReport USING utf8)workingTimeReport,
+		CONVERT (workingTimeReport
+		USING utf8)workingTimeReport,
 		sumWorkTime,
 		approvalStatus,
 		updateUser,
@@ -62,7 +65,8 @@
 		updateUser = #{employeeName}
 		WHERE
 		employeeNo = #{employeeNo}
-		and attendanceYearAndMonth = #{attendanceYearAndMonth}
+		and attendanceYearAndMonth =
+		#{attendanceYearAndMonth}
 	</update>
 	<update id="clearworkRepot" parameterType="String">
 		UPDATE
@@ -79,13 +83,22 @@
 		and attendanceYearAndMonth = #{attendanceYearAndMonth}
 	</update>
 	<update id="updateWorkRepotFile" parameterType="String">
-		UPDATE T018WorkTotalTime
+		UPDATE
+		T018WorkTotalTime
 		SET
 		workingTimeReport= #{workingTimeReport},
 		updateTime= date_add(now(), interval 9 hour),
-		updateUser = #{employeeName}
+		updateUser =
+		#{employeeName}
 		WHERE
 		employeeNo = #{employeeNo}
-		and attendanceYearAndMonth = #{attendanceYearAndMonth}
+		and
+		attendanceYearAndMonth = #{attendanceYearAndMonth}
 	</update>
+	<select id="selectWorkTime" resultMap="String"
+		parameterType="String">
+		SELECT count(*) FROM T016EmployeeWorkTime where
+		employeeNo = #{employeeNo} and yearAndMonth =
+		#{attendanceYearAndMonth}
+	</select>
 </mapper>

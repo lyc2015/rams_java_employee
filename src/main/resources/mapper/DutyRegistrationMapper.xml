@@ -216,8 +216,7 @@
 		#{yearAndMonth}
 	</delete>
 
-	<select id="getFlag" parameterType="String"
-		resultMap="String">
+	<select id="getFlag" parameterType="String" resultMap="String">
 		SELECT
 		approvalStatus
 		FROM
@@ -228,5 +227,16 @@
 		and
 		attendanceYearAndMonth =
 		#{yearMonth}
+	</select>
+
+
+	<select id="selectWorkRepot" parameterType="String"
+		resultMap="String">
+		SELECT sumWorkTime FROM T018WorkTotalTime WHERE
+		employeeNo =
+		#{employeeNo}
+		and
+		attendanceYearAndMonth =
+		#{yearMonth};
 	</select>
 </mapper>

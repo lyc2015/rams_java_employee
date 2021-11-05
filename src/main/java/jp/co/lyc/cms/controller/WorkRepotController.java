@@ -1,7 +1,11 @@
 package jp.co.lyc.cms.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,45 @@ public class WorkRepotController extends BaseController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	WorkRepotService workRepotService;
+	
+	/**
+	 * 勤務時間入力有り無し判断
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/selectWorkTime", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> selectWorkTime(@RequestBody WorkRepotModel workRepotModel) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		logger.info("WorkRepotController.selectWorkTime:" + "検索開始");
+		String count = workRepotService.selectWorkTime(workRepotModel);
+		if(Integer.parseInt(count) > 0)
+			result.put("nowMonth", true);
+		else
+			result.put("nowMonth", false);
+
+		String lastMonth = workRepotModel.getAttendanceYearAndMonth();
+		if(Integer.parseInt(lastMonth.substring(4, 6)) - 1 == 0) {
+			lastMonth = (Integer.parseInt(lastMonth.substring(0, 4)) - 1) + "12";
+		}else {
+			int month = Integer.parseInt(lastMonth.substring(4, 6)) - 1;
+			if(month < 10) 
+				lastMonth = lastMonth.substring(0, 4) + "0" + String.valueOf(month);
+			else
+				lastMonth = lastMonth.substring(0, 4) + String.valueOf(month);
+		}
+		workRepotModel.setAttendanceYearAndMonth(lastMonth);
+		count = workRepotService.selectWorkTime(workRepotModel);
+		if(Integer.parseInt(count) > 0)
+			result.put("lastMonth", true);
+		else
+			result.put("lastMonth", false);
+		logger.info("WorkRepotController.selectWorkTime:" + "検索終了");
+
+		return result;
+	}
+	
 	/**
 	 * 登録ボタン
 	 * @param topCustomerMod

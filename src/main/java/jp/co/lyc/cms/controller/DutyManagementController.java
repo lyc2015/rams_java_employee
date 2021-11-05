@@ -39,8 +39,21 @@ public class DutyManagementController {
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索開始");
 		logger.info(dutyManagementModel.toString());
 		List<DutyManagementModel> checkMod = dutyManagementService.selectDutyManagement(dutyManagementModel);
+		List<DutyManagementModel> workTimeList = dutyManagementService.selectWorkTime(dutyManagementModel);
 		List<CostRegistrationModel> costRegistrationModelList = dutyManagementService
 				.selectCostRegistration(dutyManagementModel);
+		for (int i = 0; i < checkMod.size(); i++) {
+			for (int j = 0; j < workTimeList.size(); j++) {
+				if (checkMod.get(i).getEmployeeNo().equals(workTimeList.get(j).getEmployeeNo())) {
+					if (checkMod.get(i).getWorkTime() == null || checkMod.get(i).getWorkTime().equals("")) {
+						String workTime = workTimeList.get(j).getWorkTime();
+						if (workTime != null)
+							checkMod.get(i).setWorkTime(workTime.replace(".0", ""));
+					}
+				}
+			}
+		}
+
 		for (int i = 0; i < checkMod.size(); i++) {
 			if (checkMod.get(i).getDeductionsAndOvertimePay() != null) {
 				checkMod.get(i)
