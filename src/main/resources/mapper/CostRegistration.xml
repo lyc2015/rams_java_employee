@@ -91,21 +91,21 @@
 		UPDATE
 		T020CostInfo
 		SET
-		regularStatus = #{regularStatus},
-		happendDate = #{happendDate},
-		costClassificationCode = #{costClassificationCode},
-		dueDate = #{dueDate},
-		detailedNameOrLine = #{detailedNameOrLine},
-		stationCode = #{stationCode},
-		originCode = #{originCode},
-		transportationCode = #{transportationCode},
-		destinationCode = #{destinationCode},
-		cost = #{cost},
-		remark = #{remark},
-		costFile = #{costFile},
+		regularStatus = ifnull(#{regularStatus},regularStatus),
+		happendDate = ifnull(#{happendDate},happendDate),
+		costClassificationCode = ifnull(#{costClassificationCode},costClassificationCode),
+		dueDate = ifnull(#{dueDate},dueDate),
+		detailedNameOrLine = ifnull(#{detailedNameOrLine},detailedNameOrLine),
+		stationCode = ifnull(#{stationCode},stationCode),
+		originCode = ifnull(#{originCode},originCode),
+		transportationCode = ifnull(#{transportationCode},transportationCode),
+		destinationCode = ifnull(#{destinationCode},destinationCode),
+		cost = ifnull(#{cost},cost),
+		remark = ifnull(#{remark},remark),
+		costFile = ifnull(#{costFile},costFile),
 		updateTime = now(),
 		createTime = createTime,
-		updateUser = #{employeeName}
+		updateUser = ifnull(#{employeeName},updateUser)
 		WHERE
 		employeeNo = #{employeeNo}
 		and yearMonth = #{yearMonth}
