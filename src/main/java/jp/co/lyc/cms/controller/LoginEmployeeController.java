@@ -129,6 +129,8 @@ public class LoginEmployeeController extends BaseController {
 			return result;
 		}
 		passwordResetMapper.deleteAll(loginModel.getEmployeeNo());
+		String employeeName = passwordResetMapper.getEmployeeNameByNo(loginModel.getEmployeeNo());
+
 		// 受信人のメール
 		emailModel.setToAddress(mail);
 		emailModel.setSelectedmail(mail);
@@ -143,10 +145,10 @@ public class LoginEmployeeController extends BaseController {
 		sendMap.put("passwordResetId", passwordResetId);
 		sendMap.put("idForEmployeeNo", loginModel.getEmployeeNo());
 		es.insert(sendMap);
-		String context = loginModel.getEmployeeNo() + " さん\r\n" + "お疲れ様でした！\r\n" + "自動設定メールになります、ご返事しないでください。\r\n"
-				+ "以下のリンクからパスワードの再設定を行って下さい。\r\n" + "\r\n" + "[パスワードを再設定する]\r\n"
+		String context = employeeName + " さん\r\n" + "お疲れ様でした。\r\n" + "自動設定メールになります、ご返事しないでください。\r\n"
+				+ "以下のリンクをクリックするとパスワードが再設定できます。\r\n" + "\r\n" + "[パスワードを再設定する]\r\n"
 				+ loginModel.getServerIP().substring(0, loginModel.getServerIP().lastIndexOf(":"))
-				+ ":3000/passwordReset?id=" + passwordResetId + "\r\n" + "※ご利用の方は上記URLを24時間内クリックしてお願いします。\r\n";
+				+ "/passwordReset?id=" + passwordResetId + "\r\n" + "※ご利用の方は上記URLを24時間内クリックしてお願いします。\r\n";
 		emailModel.setMailConfirmContont(context);
 		utils.EmailSend(emailModel);
 		return result;

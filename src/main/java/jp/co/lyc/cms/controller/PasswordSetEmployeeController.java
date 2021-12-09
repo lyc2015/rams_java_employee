@@ -34,20 +34,8 @@ public class PasswordSetEmployeeController extends BaseController{
 	@ResponseBody
 	public Map<String, Object> passwordReset(@RequestBody PasswordSetEmployeeModel passwordSetEmployeeModel ) {
 		logger.info("PasswordSetEmployeeController.passwordReset:" + "パスワードリセット開始");
-		errorsMessage = "";
-		DataBinder binder = new DataBinder(passwordSetEmployeeModel);
-		binder.setValidator(new PasswordSetEmployeeValidation());
-		binder.validate();
-		BindingResult results = binder.getBindingResult();
 		Map<String, Object> result = new HashMap<>();
-		if (results.hasErrors()) {
-			results.getAllErrors().forEach(o -> {
-				FieldError error = (FieldError) o;
-				errorsMessage += error.getDefaultMessage();// エラーメッセージ
-			});
-			result.put("errorsMessage", errorsMessage);// エラーメッセージ
-			return result;
-		}
+		errorsMessage = "";
 		ArrayList<String> checkList = passwordSetEmployeeMapper.selectPassword(
 				getMD5String(passwordSetEmployeeModel.getOldPassword()));
 		if(checkList.size() == 0) {
@@ -56,6 +44,19 @@ public class PasswordSetEmployeeController extends BaseController{
 			logger.info("PasswordSetEmployeeController.passwordReset:" + "パスワードリセット終了");
 			return result;
 		}
+		DataBinder binder = new DataBinder(passwordSetEmployeeModel);
+		binder.setValidator(new PasswordSetEmployeeValidation());
+		binder.validate();
+		BindingResult results = binder.getBindingResult();
+		if (results.hasErrors()) {
+			results.getAllErrors().forEach(o -> {
+				FieldError error = (FieldError) o;
+				errorsMessage += error.getDefaultMessage();// エラーメッセージ
+			});
+			result.put("errorsMessage", errorsMessage);// エラーメッセージ
+			return result;
+		}
+
 		HashMap<String, String> sendMap = new HashMap<String, String>();
 		sendMap.put("employeeNo", (String)getSession().getAttribute("employeeNo"));
 		sendMap.put("updateUser", (String)getSession().getAttribute("employeeName"));
