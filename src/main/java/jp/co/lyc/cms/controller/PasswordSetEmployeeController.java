@@ -40,7 +40,7 @@ public class PasswordSetEmployeeController extends BaseController{
 				getMD5String(passwordSetEmployeeModel.getOldPassword()));
 		if(checkList.size() == 0) {
 			errorsMessage += "既存パスワードが間違いました！";
-			result.put("errorMessage", errorsMessage);
+			result.put("errorsMessage", errorsMessage);
 			logger.info("PasswordSetEmployeeController.passwordReset:" + "パスワードリセット終了");
 			return result;
 		}
