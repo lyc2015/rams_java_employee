@@ -101,12 +101,12 @@ public class ResumeController extends BaseController {
 			String filePath = rename(resumeModel, false, 1);
 			filePath1.transferTo(new File(filePath));
 			if (resumeInfo != null && resumeInfo != "") {
-				if (!filePath1.equals("")) {
+				if (resumeInfo.indexOf("/file/") != -1) {
 					String deletefileKey = resumeInfo.split("/file/")[1];
 					s3Model.setFileKey(deletefileKey);
 					s3Controller.deleteFile(s3Model);
 				}
-				String fileKey = resumeInfo.split("file/")[1];
+				String fileKey = filePath.split("file/")[1];
 				s3Model.setFileKey(fileKey);
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
@@ -122,7 +122,7 @@ public class ResumeController extends BaseController {
 					s3Model.setFileKey(deletefileKey);
 					s3Controller.deleteFile(s3Model);
 				}
-				String fileKey = resumeInfo.split("file/")[1];
+				String fileKey = filePath.split("file/")[1];
 				s3Model.setFileKey(fileKey);
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);

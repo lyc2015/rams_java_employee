@@ -11,7 +11,7 @@ public abstract class StatusCodeToMsgMap {
 	static {
 		statusCodeToMsg.put("MSG001", "[0]入力してください。");
 		statusCodeToMsg.put("MSG002", "ユーザー名またはパースワード入力が間違いました。");
-		statusCodeToMsg.put("MSG003", "[0]が間違っているので、もう一度確認してください。");
+		statusCodeToMsg.put("MSG003", "新しい[0]と[0]再確認が不一致です、もう一度確認してください");
 		statusCodeToMsg.put("MSG004", "データ存在してないです、検索条件を確認してください。");
 		statusCodeToMsg.put("MSG005", "[0]を確認してください。");
 		statusCodeToMsg.put("MSG006", "削除できない、[0]を確認してください。");

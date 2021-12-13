@@ -418,7 +418,9 @@ public class EmployeeInfoController extends BaseController {
 			@RequestParam(value = "residentCardInfo", required = false) MultipartFile residentCardInfo,
 			@RequestParam(value = "passportInfo", required = false) MultipartFile passportInfo,
 			@RequestParam(value = "resumeInfo1URL", required = false) String resumeInfo1URL,
+			@RequestParam(value = "resumeInfo1Key", required = false) String resumeInfo1Key,
 			@RequestParam(value = "resumeInfo2URL", required = false) String resumeInfo2URL,
+			@RequestParam(value = "resumeInfo2Key", required = false) String resumeInfo2Key,
 			@RequestParam(value = "residentCardInfoURL", required = false) String residentCardInfoURL,
 			@RequestParam(value = "passportInfoURL", required = false) String passportInfoURL) throws Exception {
 		logger.info("GetEmployeeInfoController.updateEmployee:" + "修正開始");
@@ -504,6 +506,12 @@ public class EmployeeInfoController extends BaseController {
 				s3Model.setFileKey(fileKey);
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
+			} else {
+				if (!resumeInfo1Key.equals("")) {
+					String deletefileKey = resumeInfo1Key.split("/file/")[1];
+					s3Model.setFileKey(deletefileKey);
+					s3Controller.deleteFile(s3Model);
+				}
 			}
 			if (sendMap.get("resumeInfo2") != null && sendMap.get("resumeInfo2") != "") {
 				if (!resumeInfo2URL.equals("")) {
@@ -516,6 +524,12 @@ public class EmployeeInfoController extends BaseController {
 				s3Model.setFileKey(fileKey);
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
+			} else {
+				if (!resumeInfo2Key.equals("")) {
+					String deletefileKey = resumeInfo2Key.split("/file/")[1];
+					s3Model.setFileKey(deletefileKey);
+					s3Controller.deleteFile(s3Model);
+				}
 			}
 			result = employeeInfoService.updateEmployee(sendMap);
 			if (!emp.getNewEmployeeNo().equals(emp.getEmployeeNo())) {
