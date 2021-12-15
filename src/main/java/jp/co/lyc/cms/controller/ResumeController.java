@@ -1,6 +1,7 @@
 package jp.co.lyc.cms.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -45,9 +46,25 @@ public class ResumeController extends BaseController {
 	public List<ResumeModel> selectResume(ResumeModel resumeModel) {
 		resumeModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
 		logger.info("ResumeController.selectResume:" + "検索開始");
-		List<ResumeModel> checkMod = resumeService.selectResume(resumeModel);
+		List<ResumeModel> returnList = new ArrayList<ResumeModel>();
+		ResumeModel checkMod = resumeService.selectResume(resumeModel);
+		ResumeModel tempMod1 = new ResumeModel();
+		ResumeModel tempMod2 = new ResumeModel();
+		tempMod1.setRowNo(1);
+		tempMod1.setResumeInfo(checkMod.getResumeInfo1());
+		tempMod1.setResumeName(checkMod.getResumeName1());
+		tempMod1.setUpdateUser(checkMod.getUpdateUser());
+		tempMod1.setUpdateTime(checkMod.getUpdateTime());
+		tempMod2.setRowNo(2);
+		tempMod2.setResumeInfo(checkMod.getResumeInfo2());
+		tempMod2.setResumeName(checkMod.getResumeName2());
+		tempMod2.setUpdateUser(checkMod.getUpdateUser());
+		tempMod2.setUpdateTime(checkMod.getUpdateTime());
+
+		returnList.add(tempMod1);
+		returnList.add(tempMod2);
 		logger.info("ResumeController.selectResume:" + "検索終了");
-		return checkMod;
+		return returnList;
 	}
 
 	@RequestMapping(value = "/selectEmployeeName", method = RequestMethod.POST)
@@ -82,23 +99,17 @@ public class ResumeController extends BaseController {
 		});
 		resumeModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
 		resumeModel.setEmployeeName(getSession().getAttribute("employeeName").toString());
-		String realPath = new String(
-				UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_" + resumeModel.getEmployeeName());
-		// ファイル退避
-		/*
-		 * if(!resumeModel.getResumeInfo1().equals("")) { rename(resumeModel,true,1); }
-		 * if(!resumeModel.getResumeInfo2().equals("")) { rename(resumeModel,true,2); }
-		 */
 		String newFile1 = "";
 		String newFile2 = "";
 		S3Model s3Model = new S3Model();
 		if (filePath1 != null) {
-
-			// 新ファイルパス存在しない→改名 if(!resumeModel.getResumeInfo1().equals("")) {
-			// newFile1 = rename(resumeModel, false, 1);
-
 			String resumeInfo = resumeModel.getResumeInfo1();
-			String filePath = rename(resumeModel, false, 1);
+			String originalFilename = filePath1.getOriginalFilename();
+			String filePath = new String(
+					UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_" + resumeModel.getEmployeeName())
+					+ "/" + resumeModel.getResumeName1()
+					+ originalFilename.substring(originalFilename.indexOf("."), originalFilename.length());
+			newFile1 = filePath;
 			filePath1.transferTo(new File(filePath));
 			if (resumeInfo != null && resumeInfo != "") {
 				if (resumeInfo.indexOf("/file/") != -1) {
@@ -114,10 +125,15 @@ public class ResumeController extends BaseController {
 		}
 		if (filePath2 != null) {
 			String resumeInfo = resumeModel.getResumeInfo2();
-			String filePath = rename(resumeModel, false, 2);
+			String originalFilename = filePath2.getOriginalFilename();
+			String filePath = new String(
+					UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_" + resumeModel.getEmployeeName())
+					+ "/" + resumeModel.getResumeName2()
+					+ originalFilename.substring(originalFilename.indexOf("."), originalFilename.length());
+			newFile2 = filePath;
 			filePath2.transferTo(new File(filePath));
 			if (resumeInfo != null && resumeInfo != "") {
-				if (!filePath2.equals("")) {
+				if (resumeInfo.indexOf("/file/") != -1) {
 					String deletefileKey = resumeInfo.split("/file/")[1];
 					s3Model.setFileKey(deletefileKey);
 					s3Controller.deleteFile(s3Model);
@@ -128,14 +144,6 @@ public class ResumeController extends BaseController {
 				s3Controller.uploadFile(s3Model);
 			}
 		}
-		/*
-		 * if (filePath2 == null) { // 新ファイルパス存在しない→改名 if
-		 * (!resumeModel.getResumeInfo2().equals("")) { newFile2 = rename(resumeModel,
-		 * false, 2); } } else { // 新ファイルパス存在→新ファイルアップロード→旧ファイルパス削除 try { newFile2 =
-		 * upload(resumeModel.getResumeName2(), filePath2, realPath); if
-		 * (!resumeModel.getResumeInfo2().equals("")) { delete(resumeModel, 2); } }
-		 * catch (Exception e) { return false; } }
-		 */
 		// SQL実行
 		if (!newFile1.equals("")) {
 			resumeModel.setResumeInfo1(newFile1);

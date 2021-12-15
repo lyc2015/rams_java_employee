@@ -14,7 +14,7 @@ public interface ResumeMapper {
 	 * @return
 	 */
 	public void selectCheckResume(ResumeModel resumeModel) ;
-	public List<ResumeModel> selectResume(ResumeModel resumeModel) ;
+	public ResumeModel selectResume(ResumeModel resumeModel) ;
 	public String selectEmployeeName(String employeeNo) ;
 	/**
 	 *insert

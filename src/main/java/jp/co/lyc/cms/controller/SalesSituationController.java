@@ -203,9 +203,14 @@ public class SalesSituationController extends BaseController {
 							.setDevelopLanguage4(developLanguageList.get(j).getDevelopLanguageName() + ",");
 				// developLanguage += developLanguageList.get(j).getDevelopLanguageName() + ",";
 			}
-			String developLanguage = salesSituationList.get(i).getDevelopLanguage1()
-					+ salesSituationList.get(i).getDevelopLanguage2() + salesSituationList.get(i).getDevelopLanguage3()
-					+ salesSituationList.get(i).getDevelopLanguage4();
+			String developLanguage = (salesSituationList.get(i).getDevelopLanguage1().equals(",") ? ""
+					: salesSituationList.get(i).getDevelopLanguage1())
+					+ (salesSituationList.get(i).getDevelopLanguage2().equals(",") ? ""
+							: salesSituationList.get(i).getDevelopLanguage2())
+					+ (salesSituationList.get(i).getDevelopLanguage3().equals(",") ? ""
+							: salesSituationList.get(i).getDevelopLanguage3())
+					+ (salesSituationList.get(i).getDevelopLanguage4().equals(",") ? ""
+							: salesSituationList.get(i).getDevelopLanguage4());
 
 			if (developLanguage.length() > 0)
 				developLanguage = developLanguage.substring(0, developLanguage.length() - 1);
@@ -1055,7 +1060,7 @@ public class SalesSituationController extends BaseController {
 
 		if (model.getSalesProgressCode() != null && (model.getSalesProgressCode().equals("2"))) {
 			if (model.getCustomer() == null || model.getCustomer().equals("")) {
-				errorsMessage += "確定客様 ";
+				errorsMessage += "結果待ちお客様 ";
 			}
 			if (!errorsMessage.equals("")) {
 				errorsMessage += "を入力してください。";

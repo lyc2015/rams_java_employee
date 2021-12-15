@@ -28,8 +28,8 @@ public class ResumeService {
 	 * @return
 	 */
 	
-	public List<ResumeModel> selectResume(ResumeModel resumeModel)  {
-		List<ResumeModel> resultMod = resumeMapper.selectResume(resumeModel);
+	public ResumeModel selectResume(ResumeModel resumeModel)  {
+		ResumeModel resultMod = resumeMapper.selectResume(resumeModel);
 		return resultMod;
 	}
 	public String selectEmployeeName(String employeeNo)  {
