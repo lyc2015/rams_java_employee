@@ -108,7 +108,7 @@ public class ResumeController extends BaseController {
 			String filePath = new String(
 					UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_" + resumeModel.getEmployeeName())
 					+ "/" + resumeModel.getResumeName1()
-					+ originalFilename.substring(originalFilename.indexOf("."), originalFilename.length());
+					+ originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
 			newFile1 = filePath;
 			filePath1.transferTo(new File(filePath));
 			if (resumeInfo != null && resumeInfo != "") {
@@ -129,7 +129,7 @@ public class ResumeController extends BaseController {
 			String filePath = new String(
 					UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_" + resumeModel.getEmployeeName())
 					+ "/" + resumeModel.getResumeName2()
-					+ originalFilename.substring(originalFilename.indexOf("."), originalFilename.length());
+					+ originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
 			newFile2 = filePath;
 			filePath2.transferTo(new File(filePath));
 			if (resumeInfo != null && resumeInfo != "") {
@@ -147,9 +147,13 @@ public class ResumeController extends BaseController {
 		// SQL実行
 		if (!newFile1.equals("")) {
 			resumeModel.setResumeInfo1(newFile1);
+		} else {
+			resumeModel.setResumeInfo1(null);
 		}
 		if (!newFile2.equals("")) {
 			resumeModel.setResumeInfo2(newFile2);
+		} else {
+			resumeModel.setResumeInfo2(null);
 		}
 		boolean result = resumeService.insertResume(resumeModel);
 		logger.info("ResumeController.insertResume:" + "追加結束");

@@ -1,61 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jp.co.lyc.cms.mapper.ResumeMapper">
-<resultMap id="stringResult" type="String"/>
-    <resultMap id="Resume" type="jp.co.lyc.cms.model.ResumeModel"/>
-    <select id="selectEmployeeName" resultMap="stringResult" parameterType="String">
-  		SELECT 
-			CONCAT(IFNULL(t001.employeeFristName,''),IFNULL(upper(left(t002.alphabetName,1)),''))employeeName
+	<resultMap id="stringResult" type="String" />
+	<resultMap id="Resume" type="jp.co.lyc.cms.model.ResumeModel" />
+	<select id="selectEmployeeName" resultMap="stringResult"
+		parameterType="String">
+		SELECT
+		CONCAT(IFNULL(t001.employeeFristName,''),IFNULL(upper(left(t002.alphabetName,1)),''))employeeName
 		FROM
-			T001Employee t001
+		T001Employee t001
 		JOIN
-			T002EmployeeDetail t002
+		T002EmployeeDetail t002
 		ON
-			t001.employeeNo=t002.employeeNo
+		t001.employeeNo=t002.employeeNo
 		WHERE
-			t001.employeeNo = #{employeeNo}
-    </select>
-    <select id="selectResume" resultMap="Resume" parameterType="String">
-		SELECT 
-			IFNULL(resumeInfo1,'')resumeInfo1,
-			IFNULL(resumeName1,'')resumeName1,
-			IFNULL(resumeInfo2,'')resumeInfo2,
-			IFNULL(resumeName2,'')resumeName2,
-			IFNULL(updateTime,'')updateTime,
-			IFNULL(updateUser,'')updateUser
-		FROM 
-			T015ResumeManagement
+		t001.employeeNo = #{employeeNo}
+	</select>
+	<select id="selectResume" resultMap="Resume"
+		parameterType="String">
+		SELECT
+		IFNULL(resumeInfo1,'')resumeInfo1,
+		IFNULL(resumeName1,'')resumeName1,
+		IFNULL(resumeInfo2,'')resumeInfo2,
+		IFNULL(resumeName2,'')resumeName2,
+		IFNULL(updateTime,'')updateTime,
+		IFNULL(updateUser,'')updateUser
+		FROM
+		T015ResumeManagement
 		WHERE
-			employeeNo = #{employeeNo}
-    </select>
+		employeeNo = #{employeeNo}
+	</select>
 	<insert id="insertResume" parameterType="String">
 		INSERT INTO
-			T015ResumeManagement
-			(
-			employeeNo,
-			resumeInfo1,
-			resumeName1,
-			resumeInfo2,
-			resumeName2,
-			updateTime,
-			createTime,
-			updateUser
-			)
+		T015ResumeManagement
+		(
+		employeeNo,
+		resumeInfo1,
+		resumeName1,
+		resumeInfo2,
+		resumeName2,
+		updateTime,
+		createTime,
+		updateUser
+		)
 		VALUES(
-			#{employeeNo},
-			#{resumeInfo1},
-			#{resumeName1},
-			#{resumeInfo2},
-			#{resumeName2},
-			date_add(now(), interval 9 hour),
-			date_add(now(), interval 9 hour),
-			#{employeeName}
+		#{employeeNo},
+		#{resumeInfo1},
+		#{resumeName1},
+		#{resumeInfo2},
+		#{resumeName2},
+		date_add(now(), interval 9 hour),
+		date_add(now(), interval 9 hour),
+		#{employeeName}
 		) ON DUPLICATE KEY UPDATE
-			resumeInfo1= #{resumeInfo1},
-			resumeName1= #{resumeName1},
-			resumeInfo2= #{resumeInfo2},
-			resumeName2= #{resumeName2},
-			updateTime=	date_add(now(), interval 9 hour),
-			updateUser=#{employeeName};
-    </insert> 
+		resumeInfo1=
+		ifnull(#{resumeInfo1},resumeInfo1),
+		resumeName1= #{resumeName1},
+		resumeInfo2= ifnull(#{resumeInfo2},resumeInfo2),
+		resumeName2=
+		#{resumeName2},
+		updateTime= date_add(now(), interval 9 hour),
+		updateUser=#{employeeName};
+	</insert>
 </mapper>
