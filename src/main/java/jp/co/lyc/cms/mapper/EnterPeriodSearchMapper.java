@@ -60,10 +60,11 @@ public interface EnterPeriodSearchMapper {
 
 	public ArrayList<EnterPeriodSearchModel> getenterPeriodByEmp(ArrayList<String> employeeList);
 
+	public ArrayList<EnterPeriodSearchModel> getBonusByEmp(ArrayList<String> employeeList);
+
 	public ArrayList<SiteModel> getSiteInfoByEmp(ArrayList<String> employeeList, String yearAndMonth);
 
 	public ArrayList<EnterPeriodSearchModel> getSiteInfo(ArrayList<String> employeeList);
 
 	public ArrayList<EnterPeriodSearchModel> getWagesInfoByEmp(ArrayList<String> employeeList);
-
 }

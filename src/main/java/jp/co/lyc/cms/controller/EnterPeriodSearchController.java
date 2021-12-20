@@ -148,7 +148,7 @@ public class EnterPeriodSearchController extends BaseController {
 			employeeList = enterPeriodSearchService.getEmployeeSiteInfo(yearAndMonth);
 		} else if (enterPeriodSearchModel.getEnterPeriodKbn().equals("2")) {
 			// 区分はボーナスの場合
-			employeeList = enterPeriodSearchService.getBonusMonthInfo(bonusYearAndMonth);
+			employeeList = enterPeriodSearchService.getBonusMonthInfo(selectedYearAndMonth);
 		}
 
 		if (enterPeriodSearchModel.getEmployeeNo() != null) {
@@ -171,6 +171,8 @@ public class EnterPeriodSearchController extends BaseController {
 						}
 					}
 				}
+			} else if (enterPeriodSearchModel.getEnterPeriodKbn().equals("2")) {
+				resultList = enterPeriodSearchService.getBonusByEmp(employeeList);
 			} else {
 				resultList = enterPeriodSearchService.getenterPeriodByEmp(employeeList);
 			}
@@ -189,15 +191,12 @@ public class EnterPeriodSearchController extends BaseController {
 			}
 			// ボーナス
 			else if (enterPeriodSearchModel.getEnterPeriodKbn().equals("2")) {
-				for (int i = 0; i < resultList.size(); i++) {
-					int month = 0;
-					month = getMonthNum(resultList.get(i).getNextBonusMonth(), bonusYearAndMonth);
-					if (month > 0) {
-						// resultList.get(i).setIsRed("true");
-						resultList.remove(i);
-						i--;
-					}
-				}
+				/*
+				 * for (int i = 0; i < resultList.size(); i++) { int month = 0; month =
+				 * getMonthNum(resultList.get(i).getNextBonusMonth(), bonusYearAndMonth); if
+				 * (month > 0) { // resultList.get(i).setIsRed("true"); resultList.remove(i);
+				 * i--; } }
+				 */
 			}
 			// 昇格期限
 			else {

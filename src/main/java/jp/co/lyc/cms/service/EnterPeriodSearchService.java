@@ -180,6 +180,10 @@ public class EnterPeriodSearchService {
 	public ArrayList<EnterPeriodSearchModel> getenterPeriodByEmp(ArrayList<String> employeeList) {
 		return enterPeriodSearchMapper.getenterPeriodByEmp(employeeList);
 	}
+	
+	public ArrayList<EnterPeriodSearchModel> getBonusByEmp(ArrayList<String> employeeList) {
+		return enterPeriodSearchMapper.getBonusByEmp(employeeList);
+	}
 
 	public ArrayList<EnterPeriodSearchModel> getSiteInfo(ArrayList<String> employeeList) {
 		return enterPeriodSearchMapper.getSiteInfo(employeeList);

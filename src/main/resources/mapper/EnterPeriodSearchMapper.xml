@@ -316,10 +316,8 @@
 	<!-- 最新のボーナスを取得 -->
 	<select id="getBonusMonthInfo" parameterType="String"
 		resultType="String">
-		SELECT T005.employeeNo,
-		if(T005.secondBonusMonth >
-		T005.fristBonusMonth,T005.secondBonusMonth,T005.fristBonusMonth) as
-		nextBonusMonth FROM
+		SELECT T005.employeeNo
+		FROM
 		T005WagesInfo as T005
 		inner Join
 		(SELECT
@@ -335,10 +333,8 @@
 		temp.reflectYearAndMonth
 		where T005.fristBonusMonth != ""
 		and
-		if(T005.secondBonusMonth >
-		T005.fristBonusMonth,T005.secondBonusMonth,T005.fristBonusMonth)
-		&lt;=
-		#{bonusYearAndMonth};
+		(T005.fristBonusMonth =
+		#{bonusYearAndMonth} or T005.secondBonusMonth = #{bonusYearAndMonth});
 	</select>
 
 	<!-- データを取得 -->
@@ -408,6 +404,69 @@
 	</select>
 
 	<!-- データを取得 -->
+	<select id="getBonusByEmp" parameterType="String"
+		resultType="jp.co.lyc.cms.model.EnterPeriodSearchModel">
+		SELECT
+		T001.employeeNo,
+		CONCAT( T001.employeeFristName,
+		T001.employeeLastName ) as
+		employeeName,
+		T005.salary,
+		T005.insuranceFeeAmount,
+		T005.reflectYearAndMonth,
+		T005.fristTimeBonusAmount + T005.secondTimeBonusAmount as
+		scheduleOfBonusAmount,
+		if(T005.secondBonusMonth >
+		T005.fristBonusMonth,T005.secondBonusMonth,T005.fristBonusMonth) as
+		nextBonusMonth,
+		T005.nextRaiseMonth,
+		T006.admissionStartDate,
+		T006.unitPrice
+		FROM
+		T005WagesInfo
+		as T005
+		inner
+		Join
+		(SELECT
+		employeeNo,max(reflectYearAndMonth) as
+		reflectYearAndMonth
+		FROM
+		T005WagesInfo
+		GROUP BY employeeNo) as temp
+		on
+		T005.employeeNo =
+		temp.employeeNo
+		and T005.reflectYearAndMonth =
+		temp.reflectYearAndMonth
+		inner Join T001Employee as T001
+		on
+		T001.employeeNo = T005.employeeNo
+		left join
+		(SELECT
+		T006.employeeNo,T006.admissionStartDate,T006.unitPrice,T006.workState
+		FROM
+		T006EmployeeSiteInfo as T006
+		inner Join
+		(SELECT
+		employeeNo,max(admissionStartDate) as admissionStartDate FROM
+		T006EmployeeSiteInfo
+		group by employeeNo) as temp
+		on T006.employeeNo =
+		temp.employeeNo
+		and T006.admissionStartDate = temp.admissionStartDate
+		)
+		as T006
+		on T005.employeeNo =
+		T006.employeeNo
+		where
+		T005.employeeNo in
+		<foreach item="item" collection="list" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- データを取得 -->
 	<select id="getSiteInfo" parameterType="String"
 		resultType="jp.co.lyc.cms.model.EnterPeriodSearchModel">
 		SELECT * FROM
@@ -439,15 +498,19 @@
 		inner
 		join(
 		SELECT bpEmployeeNo,max(unitPriceStartMonth) as
-		unitPriceStartMonth FROM
+		unitPriceStartMonth
+		FROM
 		T011BpInfoSupplement
 		group by
 		bpEmployeeNo
 		) as temp011
-		on T011.bpEmployeeNo = temp011.bpEmployeeNo
-		and T011.unitPriceStartMonth = temp011.unitPriceStartMonth) as T011
 		on
-		T011.bpEmployeeNo = T006.employeeNo
+		T011.bpEmployeeNo = temp011.bpEmployeeNo
+		and T011.unitPriceStartMonth =
+		temp011.unitPriceStartMonth) as T011
+		on
+		T011.bpEmployeeNo =
+		T006.employeeNo
 		left
 		Join
 		(SELECT
