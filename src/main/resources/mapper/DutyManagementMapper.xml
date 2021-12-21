@@ -5,6 +5,8 @@
 		type="jp.co.lyc.cms.model.DutyManagementModel" />
 	<resultMap id="CostRegistration"
 		type="jp.co.lyc.cms.model.CostRegistrationModel" />
+	<resultMap id="String"
+		type="java.lang.String" />
 	<select id="selectDutyManagement" resultMap="DutyManagement"
 		parameterType="String">
 		SELECT
@@ -32,7 +34,8 @@
 		<!-- FORMAT(if(T018.sumWorkTime>t006.payOffRange2,t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2),if(t006.payOffRange1>T018.sumWorkTime,t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1),0)),0)deductionsAndOvertimePayOfUnitPrice, -->
 		if(T016.employeeWorkTimeHaveData=1,'0',if(T018.attendanceRegisterFlag=1,'1','2'))checkSection,
 		T018.updateTime,
-		if(T018.approvalStatus=1,"1","0")approvalStatus
+		if(T018.approvalStatus=1,"1","0")approvalStatus,
+		T018.approvalUser
 		FROM
 		T001Employee as t001
 		left join
@@ -50,12 +53,17 @@
 		employeeNo,max(admissionStartDate) as admissionStartDate FROM
 		T006EmployeeSiteInfo
 		where
+		customerNo = ifnull(#{customerNo},customerNo)
+		and
 		admissionStartDate &lt;=
 		concat(#{yearAndMonth},"99")
-		and (admissionEndDate is null or
-		admissionEndDate &gt;= concat(#{yearAndMonth},"00"))
+		and
+		(admissionEndDate is null or
+		admissionEndDate &gt;=
+		concat(#{yearAndMonth},"00"))
 		and (systemName !=
-		"休暇" or systemName is null)
+		"休暇" or systemName is
+		null)
 		and (typteOfContractCode != "4" or
 		typteOfContractCode is null)
 		group by employeeNo
@@ -109,7 +117,7 @@
 		<if test="approvalStatus == 4">
 			and T018.approvalStatus = "1"
 		</if>
-		order by T018.attendanceYearAndMonth desc,t001.employeeNo
+		order by t001.employeeNo,T018.attendanceYearAndMonth desc
 	</select>
 
 	<select id="selectCostRegistration" resultMap="CostRegistration"
@@ -131,6 +139,7 @@
 		<if test="approvalStatus != 2">
 			approvalStatus = #{approvalStatus},
 		</if>
+		approvalUser = #{approvalUser},
 		deductionsAndOvertimePayOfUnitPrice=#{deductionsAndOvertimePayOfUnitPrice},
 		deductionsAndOvertimePay=#{deductionsAndOvertimePay}
 		WHERE
@@ -146,5 +155,12 @@
 		where yearAndMonth = #{yearAndMonth}
 		group by
 		employeeNo
+	</select>
+
+	<select id="getFirstName" resultMap="String"
+		parameterType="String">
+		SELECT employeeFristName FROM T001Employee
+		where
+		employeeNo = #{employeeNo}
 	</select>
 </mapper>

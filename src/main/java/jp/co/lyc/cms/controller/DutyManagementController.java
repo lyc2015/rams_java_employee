@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sun.mail.handlers.image_gif;
 
+import jp.co.lyc.cms.common.BaseController;
 import jp.co.lyc.cms.model.CostRegistrationModel;
 import jp.co.lyc.cms.model.DutyManagementModel;
 import jp.co.lyc.cms.service.DutyManagementService;
 
 @Controller
 @RequestMapping(value = "/dutyManagement")
-public class DutyManagementController {
+public class DutyManagementController extends BaseController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
@@ -98,8 +99,36 @@ public class DutyManagementController {
 			checkMod.get(i).setCostRegistrationModel(newCostRegistrationModelList);
 			checkMod.get(i).setCost(String.valueOf(cost));
 		}
+
+		// ソート
+		List<DutyManagementModel> returnMod = new ArrayList<DutyManagementModel>();
+		// 承認済み
+		for (int i = 0; i < checkMod.size(); i++) {
+			if (checkMod.get(i).getApprovalStatus() != null && checkMod.get(i).getApprovalStatus().equals("1")) {
+				returnMod.add(checkMod.get(i));
+				checkMod.remove(i);
+				i--;
+			}
+		}
+		// 報告書あり
+		for (int i = 0; i < checkMod.size(); i++) {
+			if (checkMod.get(i).getWorkTime() != null) {
+				returnMod.add(checkMod.get(i));
+				checkMod.remove(i);
+				i--;
+			}
+		}
+		// 他
+		for (int i = 0; i < checkMod.size(); i++) {
+			returnMod.add(checkMod.get(i));
+		}
+		// 番号つけ
+		for (int i = 0; i < returnMod.size(); i++) {
+			returnMod.get(i).setRowNo(i + 1);
+		}
+
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索終了");
-		return checkMod;
+		return returnMod;
 	}
 
 	/**
@@ -114,6 +143,10 @@ public class DutyManagementController {
 		logger.info("DutyManagementController.updateDutyManagement:" + "アップデート開始");
 		boolean result = false;
 		HashMap<String, String> sendMap = dutyManagementModel;
+		String employeeFirstName = dutyManagementService
+				.getFirstName(getSession().getAttribute("employeeNo").toString());
+		sendMap.put("approvalUser", employeeFirstName);
+
 		result = dutyManagementService.updateDutyManagement(sendMap);
 		logger.info("DutyManagementController.updateDutyManagement:" + "アップデート終了");
 		return result;
