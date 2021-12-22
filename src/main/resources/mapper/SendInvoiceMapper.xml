@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jp.co.lyc.cms.mapper.SendInvoiceMapper">
+	<resultMap id="SendInvoice"
+		type="jp.co.lyc.cms.model.SendInvoiceModel" />
+	<resultMap id="CostRegistrationModel"
+		type="jp.co.lyc.cms.model.CostRegistrationModel" />
+	<resultMap id="SendInvoiceWorkTimeModel"
+		type="jp.co.lyc.cms.model.SendInvoiceWorkTimeModel" />
+
+	<select id="selectSendInvoice" resultMap="SendInvoice"
+		parameterType="String">
+		SELECT
+		T006.employeeNo,concat(T001.employeeFristName,T001.employeeLastName)
+		as
+		employeeName,T006.systemName,T006.unitPrice,ifnull(T006.payOffRange1,0)
+		as
+		payOffRange1,ifnull(T006.payOffRange2,ifnull(T006.payOffRange1,0))
+		as
+		payOffRange2,
+		T006.customerNo,T007.customerName,if(T007.customerAbbreviation is null
+		|| T007.customerAbbreviation =
+		"",T007.customerName,T007.customerAbbreviation) as
+		customerAbbreviation,
+		if(T009.responsiblePerson is null ||
+		T009.responsiblePerson = "" ||
+		T009.customerDepartmentMail is null ||
+		T009.customerDepartmentMail =
+		"",T007.purchasingManagers,T009.responsiblePerson) as
+		purchasingManagers,
+		if(T009.responsiblePerson is null ||
+		T009.responsiblePerson = "" || T009.customerDepartmentMail
+		is null ||
+		T009.customerDepartmentMail =
+		"",if(T007.purchasingManagersMail is null
+		||
+		T007.purchasingManagersMail =
+		"",T007.commonMail,T007.purchasingManagersMail),T009.customerDepartmentMail)
+		as purchasingManagersMail,
+		if(T018.sumWorkTime is null ||
+		T018.sumWorkTime =
+		"",temp.workTime,T018.sumWorkTime) as
+		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice
+		FROM
+		T006EmployeeSiteInfo as T006
+		left join T018WorkTotalTime as T018
+		on
+		T018.employeeNo = T006.employeeNo
+		and T018.attendanceYearAndMonth =
+		#{yearAndMonth}
+		left join
+		(SELECT employeeNo,yearAndMonth,sum(workTime)
+		as
+		workTime FROM
+		T016EmployeeWorkTime
+		group by employeeNo,yearAndMonth)
+		as
+		temp
+		on temp.employeeNo = T006.employeeNo
+		and temp.yearAndMonth =
+		#{yearAndMonth}
+		left join T007CustomerInfo as T007
+		on T007.customerNo =
+		T006.customerNo
+		left join T001Employee as T001
+		on T001.employeeNo =
+		T006.employeeNo
+		left join T009CustomerDepartmentInfo as T009
+		on
+		T009.customerNo = T007.customerNo
+		and T009.customerDepartmentCode = "8"
+		where T006.admissionStartDate &lt;=
+		concat(#{yearAndMonth},"31")
+		and
+		(T006.admissionEndDate &gt;=
+		concat(#{yearAndMonth},"00") or
+		T006.admissionEndDate is
+		null)
+		and
+		T006.customerNo =
+		ifnull(#{customerNo},T006.customerNo)
+		and T018.approvalStatus = "1"
+		order by
+		T006.customerNo
+	</select>
+
+	<select id="selectCostRegistration"
+		resultMap="CostRegistrationModel" parameterType="String">
+		SELECT
+		employeeNo,happendDate,T020.costClassificationCode,M028.costClassificationName,detailedNameOrLine,
+		originCode,destinationCode,
+		cost
+		FROM T020CostInfo as T020
+		left
+		join
+		M028CostClassification as M028
+		on
+		M028.costClassificationCode =
+		T020.costClassificationCode
+		where
+		yearMonth = #{yearAndMonth} and
+		T020.costClassificationCode != "0" and
+		T020.costClassificationCode !=
+		"3"
+	</select>
+
+	<select id="selectSendInvoiceByCustomerNo"
+		resultMap="SendInvoiceWorkTimeModel" parameterType="String">
+		SELECT
+		T024.*,T024.workContents as
+		systemName,T024.workContents
+		as
+		oldWorkContents,concat(T001.employeeFristName,T001.employeeLastName)
+		as
+		employeeName,
+		ifnull(T006.payOffRange1,0)
+		as
+		payOffRange1,ifnull(T006.payOffRange2,ifnull(T006.payOffRange1,0))
+		as
+		payOffRange2,
+		if(T018.sumWorkTime
+		is null || T018.sumWorkTime =
+		"",temp.workTime,T018.sumWorkTime) as
+		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice FROM
+		T024InvoiceData as T024
+		left join T001Employee as T001
+		on
+		T001.employeeNo = T024.employeeNo
+		left join
+		T006EmployeeSiteInfo as T006
+		on T006.employeeNo =
+		T024.employeeNo
+		and concat(T024.yearAndMonth,"31")
+		&gt;=
+		T006.admissionStartDate
+		and (T006.admissionEndDate is null or
+		T006.admissionEndDate &gt;=
+		concat(T024.yearAndMonth,"00"))
+		and
+		T024.requestUnitCode = "0"
+		left join T018WorkTotalTime as T018
+		on
+		T024.employeeNo = T018.employeeNo
+		and T024.yearAndMonth =
+		T018.attendanceYearAndMonth
+		and T024.requestUnitCode = "0"
+		left join
+		(SELECT employeeNo,yearAndMonth,sum(workTime) as workTime FROM
+		T016EmployeeWorkTime
+		group by employeeNo,yearAndMonth) as temp
+		on
+		temp.employeeNo = T024.employeeNo
+		and temp.yearAndMonth =
+		T024.yearAndMonth
+		and T024.requestUnitCode = "0"
+		where
+		T024.customerNo =
+		#{customerNo}
+		and
+		T024.yearAndMonth =
+		#{yearAndMonth}
+		order by
+		T024.employeeNo is null,T024.employeeNo,requestUnitCode;
+
+	</select>
+
+	<insert id="insertInvoiceData" parameterType="String">
+		INSERT INTO
+		T024InvoiceData VALUES (
+		#{customerNo},#{yearAndMonth},#{workContents},#{customerName},#{invoiceDate},"",
+		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},"1",#{unitPrice},
+		"0","",now(),now(),#{updateUser}
+		)
+	</insert>
+
+	<update id="updateInvoiceData" parameterType="String">
+		UPDATE
+		T024InvoiceData
+		SET
+		workContents = #{workContents},
+		employeeNo =
+		#{employeeNo},
+		workPeriod = #{workPeriod},
+		workingTime = #{workingTime},
+		requestUnitCode = #{requestUnitCode},
+		quantity = #{quantity},
+		unitPrice
+		= #{unitPrice},
+		updateTime = now(),
+		updateUser = #{updateUser}
+		WHERE
+		customerNo = #{customerNo}
+		and
+		yearAndMonth =
+		#{yearAndMonth}
+		and
+		workContents = #{oldWorkContents}
+	</update>
+
+	<insert id="insertNewInvoiceData" parameterType="String">
+		INSERT INTO
+		T024InvoiceData VALUES (
+		#{customerNo},#{yearAndMonth},#{workContents},"","","",
+		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},#{quantity},#{unitPrice},
+		"0","",now(),now(),#{updateUser}
+		)
+	</insert>
+
+	<delete id="deleteInvoiceData" parameterType="String">
+		DELETE FROM
+		T024InvoiceData WHERE
+		customerNo = #{customerNo}
+		and
+		yearAndMonth =
+		#{yearAndMonth}
+		and
+		workContents = #{oldWorkContents}
+	</delete>
+
+	<update id="updateAllInvoiceData" parameterType="String">
+		UPDATE
+		T024InvoiceData
+		SET
+		customerName = #{customerName},
+		invoiceDate =
+		#{invoiceDate},
+		deadLine = #{deadLine},
+		bankCode = #{bankCode},
+		remark =
+		#{remark},
+		updateTime = now(),
+		updateUser = #{updateUser}
+		WHERE
+		customerNo = #{customerNo}
+		and
+		yearAndMonth =
+		#{yearAndMonth}
+	</update>
+
+	<select id="selectBankAccountInfo"
+		resultType="jp.co.lyc.cms.model.ModelClass">
+		SELECT T004.bankCode as code,M001.bankName as name FROM
+		T004AccountInfo as T004
+		left join M001Bank as M001
+		on
+		M001.bankCode =
+		T004.bankCode
+		where employeeOrCustomerNo = "C000"
+	</select>
+
+	<select id="getAccountInfo"
+		resultType="jp.co.lyc.cms.model.AccountInfoModel">
+		SELECT
+		T004.bankCode,M001.bankName as
+		bankNameString,T004.bankBranchCode,M002.bankBranchName,T004.accountNo,T004.accountName
+		FROM T004AccountInfo as T004
+		left join M001Bank as M001
+		on M001.bankCode
+		= T004.bankCode
+		left join M002BankBranch as M002
+		on M002.bankCode =
+		T004.bankCode
+		and M002.bankBranchCode = T004.bankBranchCode
+		where
+		T004.employeeOrCustomerNo = "C000"
+		and T004.bankCode = #{bankCode}
+	</select>
+
+</mapper>

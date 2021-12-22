@@ -18,9 +18,18 @@ public class DutyManagementModel {
 	String updateTime;
 	String updateUser;
 	String approvalStatus;
+	String approvalUser;
 	String workingTimeReport;
 	String cost;
 	List<CostRegistrationModel> costRegistrationModel;
+
+	public String getApprovalUser() {
+		return approvalUser;
+	}
+
+	public void setApprovalUser(String approvalUser) {
+		this.approvalUser = approvalUser;
+	}
 
 	public String getCost() {
 		return cost;

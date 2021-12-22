@@ -33,4 +33,6 @@ public interface DutyManagementMapper {
 	public void updateDutyManagement(HashMap<String, String> sendMap);
 
 	public List<DutyManagementModel> selectWorkTime(HashMap<String, String> dutyManagementModel);
+
+	public String getFirstName(String employeeNo);
 }

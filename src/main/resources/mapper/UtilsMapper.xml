@@ -92,10 +92,12 @@
 		T001.employeeLastName )
 		TEXT,
 		T002.companyMail
-		MAIL
+		MAIL,
+		T001.employeeFristName VALUE
 		FROM
 		T001Employee as T001
-		Left Join T002EmployeeDetail as T002
+		Left Join
+		T002EmployeeDetail as T002
 		on
 		T001.employeeNo = T002.employeeNo
 		WHERE
@@ -329,7 +331,8 @@
 		SELECT
 		bankBranchName name,
 		bankBranchCode code,
-		bankCode value
+		bankCode
+		value
 		FROM
 		M002BankBranch
 	</select>

@@ -60,4 +60,8 @@ public class DutyManagementService {
 	public List<DutyManagementModel> selectWorkTime(HashMap<String, String> dutyManagementModel) {
 		return dutyManagementMapper.selectWorkTime(dutyManagementModel);
 	}
+
+	public String getFirstName(String employeeNo) {
+		return dutyManagementMapper.getFirstName(employeeNo);
+	}
 }

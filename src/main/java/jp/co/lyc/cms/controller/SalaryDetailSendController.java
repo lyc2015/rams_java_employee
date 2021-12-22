@@ -51,7 +51,7 @@ public class SalaryDetailSendController extends BaseController {
 		logger.info("SalaryDetailSendController.getEmployee:" + "検索結束");
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/getEmployeeSameFile", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> getEmployeeSameFile() {
@@ -136,13 +136,26 @@ public class SalaryDetailSendController extends BaseController {
 		}
 
 		// ファイル削除
-		for (int i = 0; i < emailModel.size(); i++) {
-			// 送信後削除
-			File file = new File("c:/file/salaryDetailSend/" + emailModel.get(i).getResumePath());
-			file.delete();
-		}
+		File file = new File("c:/file/salaryDetailSend"); // 文件夹路径
+		deleteFile(file);
 
 		logger.info("sendMailWithFile" + "送信結束");
 		return resulterr;
+	}
+
+	private void deleteFile(File file) {
+		// 判断是否为文件 是则删除
+		if (file.isFile()) {
+			file.delete();
+		}
+		// 不是则删除文件夹下所有文件
+		else {
+			String[] childFilePath = file.list();
+			for (String path : childFilePath) {
+				File childFile = new File(file.getAbsoluteFile() + "/" + path); // 文件夹路径
+				deleteFile(childFile);
+			}
+			file.delete();
+		}
 	}
 }
