@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
 import jp.co.lyc.cms.common.BaseController;
+import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.model.WorkRepotModel;
 import jp.co.lyc.cms.service.WorkRepotService;
 
@@ -32,6 +33,8 @@ public class WorkRepotController extends BaseController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	WorkRepotService workRepotService;
+	@Autowired
+	S3Controller s3Controller;
 	
 	/**
 	 * 勤務時間入力有り無し判断
@@ -144,6 +147,16 @@ public class WorkRepotController extends BaseController {
 		String getFilename;
 		try {
 			getFilename=upload(workRepotModel,workRepotFile);
+		} catch (Exception e) {
+			return false;
+		}
+		try {
+			S3Model s3Model = new S3Model();
+			String filePath = getFilename.replaceAll("\\\\", "/");
+			String fileKey = filePath.split("file/")[1];
+			s3Model.setFileKey(fileKey);
+			s3Model.setFilePath(filePath);
+			s3Controller.uploadFile(s3Model);
 		} catch (Exception e) {
 			return false;
 		}

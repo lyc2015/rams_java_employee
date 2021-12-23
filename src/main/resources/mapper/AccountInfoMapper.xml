@@ -99,6 +99,15 @@
 		#{accountBelongsStatus}
 	</update>
 
+	<!-- 口座情報削除 -->
+	<delete id="deleteAccount" parameterType="String">
+		DELETE FROM
+		T004AccountInfo
+		WHERE
+		employeeOrCustomerNo =
+		#{employeeOrCustomerNo}
+	</delete>
+
 	<!-- 口座情報アップデート -->
 	<update id="replaceAccount" parameterType="String">
 		REPLACE INTO
@@ -126,4 +135,13 @@
 		NOW(),
 		#{updateUser})
 	</update>
+
+	<!-- <select id="getAccountCount" parameterType="String" resultMap="map">
+		SELECT
+		count(T004.employeeOrCustomerNo)
+		FROM
+		T004AccountInfo AS T004
+		WHERE
+		employeeOrCustomerNo = #{employeeOrCustomerNo}
+	</select> -->
 </mapper>

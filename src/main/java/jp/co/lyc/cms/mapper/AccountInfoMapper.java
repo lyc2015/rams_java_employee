@@ -26,8 +26,16 @@ public interface AccountInfoMapper {
 	public void updateAccount(HashMap<String, String> sendMap);
 	
 	/**
+	 *削除
+	 * @param sendMap
+	 */
+	public void deleteAccount(HashMap<String, String> sendMap);
+	
+	/**
 	 * アップデート
 	 * @param sendMap
 	 */
 	public void replaceAccount(HashMap<String, String> sendMap);
+	
+	//public int getAccountCount(HashMap<String, String> sendMap);
 }

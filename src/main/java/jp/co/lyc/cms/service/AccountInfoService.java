@@ -18,24 +18,32 @@ public class AccountInfoService {
 
 	/**
 	 * 口座情報の検索
+	 * 
 	 * @param employeeOrCustomerNo
 	 * @param accountBelongsStatus
 	 * @return
 	 */
-	
+
 	public AccountInfoModel selectAccountInfo(String employeeNo) {
 		AccountInfoModel resultMod = bankMapper.selectAccountInfo(employeeNo);
 		return resultMod;
 	}
+
 	/**
 	 * アープデート
+	 * 
 	 * @param sendMap
 	 * @return
 	 */
 	@Transactional(rollbackFor = Exception.class)
 	public boolean update(HashMap<String, String> sendMap) {
 		try {
-			bankMapper.updateAccount(sendMap);
+			//int count = bankMapper.getAccountCount(sendMap);
+			//if (count > 0) {
+				bankMapper.updateAccount(sendMap);
+/*			} else {
+				bankMapper.insertAccount(sendMap);
+			}*/
 			return true;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -44,8 +52,29 @@ public class AccountInfoService {
 			return false;
 		}
 	}
+
+	/**
+	 * 削除
+	 * 
+	 * @param sendMap
+	 * @return
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	public boolean delete(HashMap<String, String> sendMap) {
+		try {
+			bankMapper.deleteAccount(sendMap);
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	/**
 	 * インサートとアップデートの値を設定
+	 * 
 	 * @param bankCol
 	 * @return
 	 */
@@ -58,7 +87,7 @@ public class AccountInfoService {
 		sendMap.put("bankBranchCode", bankCol.getBankBranchCode());
 		sendMap.put("accountTypeStatus", bankCol.getAccountTypeStatus());
 		sendMap.put("updateUser", bankCol.getUpdateUser());
-		sendMap.put("employeeOrCustomerNo", bankCol.getEmployeeOrCustomerNo());	
+		sendMap.put("employeeOrCustomerNo", bankCol.getEmployeeOrCustomerNo());
 		return sendMap;
 	}
 }

@@ -23,6 +23,7 @@ import com.alibaba.fastjson.TypeReference;
 
 import jp.co.lyc.cms.common.BaseController;
 import jp.co.lyc.cms.model.DataShareModel;
+import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.model.WorkRepotModel;
 import jp.co.lyc.cms.service.DataShareService;
 
@@ -33,6 +34,8 @@ public class DataShareController extends BaseController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	DataShareService dataShareService;
+	@Autowired
+	S3Controller s3Controller;
 	/**
 	 * 検索
 	 * @param topCustomerMod
@@ -91,13 +94,28 @@ public class DataShareController extends BaseController {
 	 * @param topCustomerMod
 	 * @return
 	 */
-	@RequestMapping(value = "/updateDataShares", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateDataSharesTo2", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean updateDataShares(@RequestBody ArrayList<String> fileNoList){
-		logger.info("dataShare.updateDataShare:" + "アップデート開始");
+	public boolean updateDataSharesTo2(@RequestBody ArrayList<String> fileNoList){
+		logger.info("dataShare.updateDataSharesTo2:" + "アップデート開始");
 		boolean result = false;	
-		result  = dataShareService.updateDataShares(fileNoList);
-		logger.info("dataShare.updateDataShare:" + "アップデート終了");
+		result  = dataShareService.updateDataSharesTo2(fileNoList);
+		logger.info("dataShare.updateDataSharesTo2:" + "アップデート終了");
+		return result;	
+	}
+	
+	/**
+	 * アップデート
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/updateDataSharesTo3", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean updateDataSharesTo3(@RequestBody ArrayList<String> fileNoList){
+		logger.info("dataShare.updateDataSharesTo3:" + "アップデート開始");
+		boolean result = false;	
+		result  = dataShareService.updateDataSharesTo3(fileNoList);
+		logger.info("dataShare.updateDataSharesTo3:" + "アップデート終了");
 		return result;	
 	}
 	/**
@@ -122,6 +140,16 @@ public class DataShareController extends BaseController {
 		String getFilename;
 		try {
 			getFilename=upload(dataShareFile);
+		} catch (Exception e) {
+			return null;
+		}
+		try {
+			S3Model s3Model = new S3Model();
+			String filePath = getFilename.replaceAll("\\\\", "/");
+			String fileKey = filePath.split("file/")[1];
+			s3Model.setFileKey(fileKey);
+			s3Model.setFilePath(filePath);
+			s3Controller.uploadFile(s3Model);
 		} catch (Exception e) {
 			return null;
 		}
