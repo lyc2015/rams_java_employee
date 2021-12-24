@@ -136,12 +136,12 @@
 		#{updateUser})
 	</update>
 
-	<!-- <select id="getAccountCount" parameterType="String" resultMap="map">
+	<select id="getAccountCount" parameterType="String" resultMap="AccountInfo">
 		SELECT
-		count(T004.employeeOrCustomerNo)
+		count(T004.employeeOrCustomerNo) as accountNumber
 		FROM
 		T004AccountInfo AS T004
 		WHERE
 		employeeOrCustomerNo = #{employeeOrCustomerNo}
-	</select> -->
+	</select>
 </mapper>

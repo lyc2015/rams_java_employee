@@ -68,4 +68,8 @@ public class SendInvoiceService {
 	public AccountInfoModel getAccountInfo(String bankCode) {
 		return sendInvoiceMapper.getAccountInfo(bankCode);
 	}
+
+	public void updateSendLetter(HashMap<String, String> model) {
+		sendInvoiceMapper.updateSendLetter(model);
+	}
 }

@@ -16,6 +16,15 @@ public class AccountInfoModel {
 	ArrayList<String> bankName;// 銀行名
 	String updateUser;// 更新者
 	String bankNameString;// 更新者
+	int accountNumber;
+
+	public int getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(int accountNumber) {
+		this.accountNumber = accountNumber;
+	}
 
 	public String getBankNameString() {
 		return bankNameString;

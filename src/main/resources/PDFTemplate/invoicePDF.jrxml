@@ -56,6 +56,7 @@
 		<parameter name="remark" class="java.lang.String"/>
 		<parameter name="workTimeFlag" class="java.lang.Boolean"/>
 		<parameter name="employeeNameFlag" class="java.lang.Boolean"/>
+		<parameter name="consumptionTaxAmount" class="java.lang.String"/>
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -84,6 +85,7 @@
 	<parameter name="invoiceNo" class="java.lang.String"/>
 	<parameter name="workTimeFlag" class="java.lang.Boolean"/>
 	<parameter name="employeeNameFlag" class="java.lang.Boolean"/>
+	<parameter name="consumptionTaxAmount" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -91,10 +93,10 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="160" splitType="Stretch">
+		<band height="218" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
-				<reportElement style="Style1" x="0" y="50" width="127" height="20" uuid="b863c3a5-7420-427b-ba8d-48c460ee2d10">
+				<reportElement style="Style1" x="23" y="90" width="157" height="30" uuid="b863c3a5-7420-427b-ba8d-48c460ee2d10">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -103,36 +105,48 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement>
+					<font size="18"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{customerName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="Style1" x="127" y="50" width="20" height="20" uuid="312367d7-a3d5-4f5f-8aa2-21d9e8929482"/>
+				<reportElement style="Style1" x="180" y="90" width="40" height="30" uuid="312367d7-a3d5-4f5f-8aa2-21d9e8929482"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
 				<text><![CDATA[御中]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="Style1" x="45" y="110" width="102" height="20" uuid="e09b2005-6046-4d94-be1d-4b4421bd3598">
+				<reportElement style="Style1" x="100" y="140" width="150" height="30" uuid="e09b2005-6046-4d94-be1d-4b4421bd3598">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
+				<textElement>
+					<font size="16"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="Style1" x="0" y="110" width="45" height="20" uuid="007a1b3f-9aa9-4969-a31e-ad72dee3417c">
+				<reportElement style="Style1" x="20" y="140" width="80" height="30" uuid="007a1b3f-9aa9-4969-a31e-ad72dee3417c">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
 				<text><![CDATA[請求金額]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Style1" x="420" y="50" width="40" height="20" uuid="428f46ca-bf85-470f-8e4a-2ffe86088f8b">
+				<reportElement style="Style1" x="420" y="90" width="40" height="20" uuid="428f46ca-bf85-470f-8e4a-2ffe86088f8b">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<text><![CDATA[請求番号]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="Style1" x="460" y="50" width="100" height="20" uuid="0805dba3-9d6f-4a58-8805-15591107a2fd">
+				<reportElement style="Style1" x="460" y="90" width="100" height="20" uuid="0805dba3-9d6f-4a58-8805-15591107a2fd">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -141,23 +155,28 @@
 				<textFieldExpression><![CDATA[$P{invoiceNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="Style1" x="56" y="130" width="91" height="20" uuid="86d8ab51-bde9-4751-ac9a-3150ee9238cb">
+				<reportElement style="Style1" x="100" y="170" width="150" height="30" uuid="86d8ab51-bde9-4751-ac9a-3150ee9238cb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement markup="none"/>
+				<textElement markup="none">
+					<font size="16"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{deadLine}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="Style1" x="0" y="130" width="56" height="20" uuid="a199187f-0c45-4ce3-a147-1e6c771e4dcb">
+				<reportElement style="Style1" x="20" y="170" width="80" height="30" uuid="a199187f-0c45-4ce3-a147-1e6c771e4dcb">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
+				<textElement>
+					<font size="14"/>
+				</textElement>
 				<text><![CDATA[お支払期限]]></text>
 			</staticText>
 			<textField>
-				<reportElement style="Style1" x="460" y="30" width="100" height="20" uuid="caafc2b3-c583-477f-95d9-2127d270eb45">
+				<reportElement style="Style1" x="460" y="70" width="100" height="20" uuid="caafc2b3-c583-477f-95d9-2127d270eb45">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -169,22 +188,22 @@
 				<textFieldExpression><![CDATA[$P{invoiceDate}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="Style1" x="420" y="30" width="40" height="20" uuid="a49edd85-f219-4bfd-98e8-7616352d0a40">
+				<reportElement style="Style1" x="420" y="70" width="40" height="20" uuid="a49edd85-f219-4bfd-98e8-7616352d0a40">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<text><![CDATA[請求日]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Style1" x="-20" y="-10" width="594" height="40" uuid="837f16e4-4400-4fbf-be9e-6d8e98182bc6">
+				<reportElement style="Style1" x="-20" y="30" width="594" height="40" uuid="837f16e4-4400-4fbf-be9e-6d8e98182bc6">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font size="20"/>
+					<font size="24"/>
 				</textElement>
 				<text><![CDATA[請求書]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Style1" x="360" y="80" width="200" height="80" uuid="fe187857-16d1-4483-818b-605366465c47">
+				<reportElement style="Style1" x="360" y="120" width="200" height="80" uuid="fe187857-16d1-4483-818b-605366465c47">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<text><![CDATA[ＬＹＣ株式会社
@@ -193,7 +212,7 @@
 TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 			</staticText>
 			<image>
-				<reportElement x="480" y="80" width="80" height="80" uuid="a639bce4-78fd-4c3e-b8e4-a1138722a8c3"/>
+				<reportElement x="480" y="120" width="80" height="80" uuid="a639bce4-78fd-4c3e-b8e4-a1138722a8c3"/>
 				<imageExpression><![CDATA["C:/file/stamp/LYC印鑑.png"]]></imageExpression>
 			</image>
 		</band>
@@ -201,14 +220,14 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 	<detail>
 		<band height="474" splitType="Stretch">
 			<componentElement>
-				<reportElement x="0" y="0" width="560" height="354" uuid="9621b88a-ac11-401f-b2b4-3f533590594c">
+				<reportElement x="20" y="0" width="540" height="354" uuid="9621b88a-ac11-401f-b2b4-3f533590594c">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="dataTable1Dataset" uuid="8a724569-1957-42bd-99fb-8478ac4dbd4b">
+					<datasetRun subDataset="dataTable1Dataset" uuid="c9f23dbf-7ced-4698-b5ca-ab868ccd06ee">
 						<datasetParameter name="bankInfo">
 							<datasetParameterExpression><![CDATA[$P{bankInfo}]]></datasetParameterExpression>
 						</datasetParameter>
@@ -230,9 +249,12 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 						<datasetParameter name="employeeNameFlag">
 							<datasetParameterExpression><![CDATA[$P{employeeNameFlag}]]></datasetParameterExpression>
 						</datasetParameter>
+						<datasetParameter name="consumptionTaxAmount">
+							<datasetParameterExpression><![CDATA[$P{consumptionTaxAmount}]]></datasetParameterExpression>
+						</datasetParameter>
 						<dataSourceExpression><![CDATA[$P{dataTableResource}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:columnGroup width="349" uuid="e45e6dab-5900-4952-963c-40b10f023bdf">
+					<jr:columnGroup width="300" uuid="e45e6dab-5900-4952-963c-40b10f023bdf">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [4]"/>
 						<jr:tableFooter style="Table_TD" height="200" rowSpan="1">
 							<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -243,7 +265,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<componentElement>
-								<reportElement x="0" y="0" width="349" height="80" uuid="8dc84ef9-7ba1-4c8b-bc95-360fed331773">
+								<reportElement x="0" y="0" width="300" height="100" uuid="8dc84ef9-7ba1-4c8b-bc95-360fed331773">
 									<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 									<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 									<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -336,7 +358,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								</jr:table>
 							</componentElement>
 							<componentElement>
-								<reportElement x="0" y="100" width="349" height="100" uuid="cea5a61d-d425-4fd8-a455-c9ff91817e0a">
+								<reportElement x="0" y="100" width="300" height="100" uuid="cea5a61d-d425-4fd8-a455-c9ff91817e0a">
 									<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 									<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 									<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -428,11 +450,11 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								</jr:table>
 							</componentElement>
 						</jr:tableFooter>
-						<jr:column width="140" uuid="6cf45495-9090-47b8-9cad-c386ce04fee3">
+						<jr:column width="159" uuid="6cf45495-9090-47b8-9cad-c386ce04fee3">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 							<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 								<textField>
-									<reportElement x="0" y="0" width="140" height="50" uuid="31c3e8f8-9b79-40e0-9510-0776387175bb"/>
+									<reportElement x="0" y="0" width="159" height="50" uuid="31c3e8f8-9b79-40e0-9510-0776387175bb"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -455,7 +477,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="140" height="40" uuid="54f542a3-4fb1-44d6-9b4c-7b6077a5049d"/>
+									<reportElement x="0" y="0" width="159" height="40" uuid="54f542a3-4fb1-44d6-9b4c-7b6077a5049d"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -471,11 +493,11 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="49" uuid="d5a647b6-ac14-4406-91ef-4b4e77c8c00a">
+						<jr:column width="39" uuid="d5a647b6-ac14-4406-91ef-4b4e77c8c00a">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 							<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 								<staticText>
-									<reportElement style="Table_CH" x="0" y="0" width="49" height="50" uuid="151da184-eec8-481f-bbbe-0ebd32e65643"/>
+									<reportElement style="Table_CH" x="0" y="0" width="39" height="50" uuid="151da184-eec8-481f-bbbe-0ebd32e65643"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -494,7 +516,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="49" height="40" uuid="d181eac0-e940-4fe5-ab3d-149d384d1f07"/>
+									<reportElement x="0" y="0" width="39" height="40" uuid="d181eac0-e940-4fe5-ab3d-149d384d1f07"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -509,11 +531,11 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="60" uuid="75e66610-5c6e-400c-9ef1-8dd3427fd8ba">
+						<jr:column width="41" uuid="75e66610-5c6e-400c-9ef1-8dd3427fd8ba">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 							<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 								<staticText>
-									<reportElement style="Table_CH" x="0" y="0" width="60" height="50" uuid="ab2eb7c1-8450-4c38-a999-14e7cb59ad7c"/>
+									<reportElement style="Table_CH" x="0" y="0" width="41" height="50" uuid="ab2eb7c1-8450-4c38-a999-14e7cb59ad7c"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -532,7 +554,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="60" height="40" uuid="3fe74f29-e3a2-4291-8550-4c603821821b"/>
+									<reportElement x="0" y="0" width="41" height="40" uuid="3fe74f29-e3a2-4291-8550-4c603821821b"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -547,11 +569,11 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column width="100" uuid="f64c704d-3baa-483f-962b-05dab0c0d7e6">
+						<jr:column width="61" uuid="f64c704d-3baa-483f-962b-05dab0c0d7e6">
 							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 							<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 								<staticText>
-									<reportElement style="Table_CH" x="0" y="0" width="100" height="50" uuid="6bc78de0-1555-48b4-9a86-b8456eedf8a8"/>
+									<reportElement style="Table_CH" x="0" y="0" width="61" height="50" uuid="6bc78de0-1555-48b4-9a86-b8456eedf8a8"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -570,7 +592,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<textField>
-									<reportElement x="0" y="0" width="100" height="40" uuid="aa772350-b24e-4cc5-b600-706cc490e80f"/>
+									<reportElement x="0" y="0" width="61" height="40" uuid="aa772350-b24e-4cc5-b600-706cc490e80f"/>
 									<box>
 										<pen lineWidth="0.5"/>
 										<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -586,12 +608,12 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 							</jr:detailCell>
 						</jr:column>
 					</jr:columnGroup>
-					<jr:column width="51" uuid="d28c164e-de13-4457-ade3-00ec0ae44681">
+					<jr:column width="59" uuid="d28c164e-de13-4457-ade3-00ec0ae44681">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 						<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 							<staticText>
-								<reportElement style="Table_CH" x="0" y="0" width="51" height="50" uuid="30c0b465-6ad6-4515-969f-15821a817d9d"/>
+								<reportElement style="Table_CH" x="0" y="0" width="59" height="50" uuid="30c0b465-6ad6-4515-969f-15821a817d9d"/>
 								<box>
 									<pen lineWidth="0.5"/>
 									<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -600,12 +622,12 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<text><![CDATA[下限時間
-　　単価]]></text>
+下限単価]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="40">
 							<textField>
-								<reportElement x="0" y="0" width="51" height="40" uuid="9f4e530a-bd96-4bf3-ad9d-a5356ece3870"/>
+								<reportElement x="0" y="0" width="59" height="40" uuid="9f4e530a-bd96-4bf3-ad9d-a5356ece3870"/>
 								<box>
 									<pen lineWidth="0.5"/>
 									<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -620,11 +642,11 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="60" uuid="de3e1047-d396-4faa-9eff-0126176afc61">
+					<jr:column width="71" uuid="de3e1047-d396-4faa-9eff-0126176afc61">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
 						<jr:columnHeader style="Table_CH" height="50" rowSpan="1">
 							<staticText>
-								<reportElement style="Table_CH" x="0" y="0" width="60" height="50" uuid="d438ec29-881c-4f3a-aa5b-b1c36c0bc98e"/>
+								<reportElement style="Table_CH" x="0" y="0" width="71" height="50" uuid="d438ec29-881c-4f3a-aa5b-b1c36c0bc98e"/>
 								<box>
 									<pen lineWidth="0.5"/>
 									<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -633,26 +655,29 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<text><![CDATA[上限時間
-　　単価]]></text>
+上限単価]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table_CH" height="60" rowSpan="1">
 							<staticText>
-								<reportElement style="Table_CH" x="0" y="0" width="60" height="20" uuid="ecd8c0e0-1cf2-4f1a-9731-2089702c68be"/>
+								<reportElement style="Table_CH" x="0" y="0" width="71" height="20" uuid="ecd8c0e0-1cf2-4f1a-9731-2089702c68be"/>
 								<text><![CDATA[小計]]></text>
 							</staticText>
+							<textField>
+								<reportElement style="Table_CH" x="0" y="20" width="71" height="20" uuid="9f188548-e730-4c95-9f44-ba953fff69cb"/>
+								<textElement textAlignment="Center">
+									<font size="10"/>
+								</textElement>
+								<textFieldExpression><![CDATA["消費税(" + $P{consumptionTax} + ")"]]></textFieldExpression>
+							</textField>
 							<staticText>
-								<reportElement style="Table_CH" x="0" y="20" width="60" height="20" uuid="6e28d99e-f6a7-4327-b91c-6356b724c8aa"/>
-								<text><![CDATA[消費税]]></text>
-							</staticText>
-							<staticText>
-								<reportElement style="Table_CH" x="0" y="40" width="60" height="20" uuid="aab79924-81cf-4cf6-970a-656e0d2705f1"/>
+								<reportElement style="Table_CH" x="0" y="40" width="71" height="20" uuid="ada8b163-8e86-4350-971b-880ed26ac6db"/>
 								<text><![CDATA[合計]]></text>
 							</staticText>
 						</jr:columnFooter>
 						<jr:detailCell style="Table_TD" height="40">
 							<textField>
-								<reportElement x="0" y="0" width="60" height="40" uuid="000dd108-acff-4e58-aca6-fe61db14e260"/>
+								<reportElement x="0" y="0" width="71" height="40" uuid="000dd108-acff-4e58-aca6-fe61db14e260"/>
 								<box>
 									<pen lineWidth="0.5"/>
 									<topPen lineStyle="Solid" lineColor="#000000"/>
@@ -695,7 +720,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 								<textElement textAlignment="Center">
 									<font size="10"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{consumptionTax}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$P{consumptionTaxAmount}]]></textFieldExpression>
 							</textField>
 							<textField>
 								<reportElement style="Table_TD" x="0" y="40" width="100" height="20" uuid="062a1d5f-a475-4917-a57a-85b150a86ea4"/>

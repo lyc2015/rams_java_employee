@@ -382,13 +382,23 @@ public class SendInvoiceController extends BaseController {
 			String employeeNameFlag = dutyManagementModel.get("employeeNameFlag");
 			parameters.put("employeeNameFlag", employeeNameFlag.equals("true") ? true : false);
 			parameters.put("customerName", dataList.get(0).getCustomerName());
-			parameters.put("invoiceDate", dataList.get(0).getInvoiceDate());
-			parameters.put("deadLine", dataList.get(0).getDeadLine());
+			parameters.put("invoiceDate",
+					dataList.get(0).getInvoiceDate() == null || dataList.get(0).getInvoiceDate().equals("") ? ""
+							: (dataList.get(0).getInvoiceDate().substring(0, 4) + "年"
+									+ dataList.get(0).getInvoiceDate().substring(4, 6) + "月"
+									+ dataList.get(0).getInvoiceDate().substring(6, 8) + "日"));
+			parameters.put("deadLine",
+					dataList.get(0).getDeadLine() == null || dataList.get(0).getDeadLine().equals("") ? ""
+							: (dataList.get(0).getDeadLine().substring(0, 4) + "年"
+									+ dataList.get(0).getDeadLine().substring(4, 6) + "月"
+									+ dataList.get(0).getDeadLine().substring(6, 8) + "日"));
 			parameters.put("invoiceNo", dutyManagementModel.get("invoiceNo"));
 			parameters.put("remark", dataList.get(0).getRemark());
-			parameters.put("subTotalAmount", "￥" + df
+			parameters.put("subTotalAmount", df
 					.format(Integer.parseInt((String) newDataList.get(newDataList.size() - 1).get("subTotalAmount"))));
 			parameters.put("consumptionTax", dutyManagementModel.get("taxRate") + "%");
+			parameters.put("consumptionTaxAmount", df.format(
+					Integer.parseInt((String) newDataList.get(newDataList.size() - 1).get("consumptionTaxAmount"))));
 			parameters.put("totalAmount", "￥"
 					+ df.format(Integer.parseInt((String) newDataList.get(newDataList.size() - 1).get("totalAmount"))));
 
@@ -447,14 +457,15 @@ public class SendInvoiceController extends BaseController {
 			String workPeriod = String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + "01~"
 					+ String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + day;
 
-			tempMap.put("workContents", dataList.get(i).getWorkContents());
+			tempMap.put("workContents", dataList.get(i).getWorkContents()
+					+ (dataList.get(i).getRequestUnitCode().equals("0") ? "" : "\n(税込)"));
 			tempMap.put("employeeName", dataList.get(i).getEmployeeName());
 			tempMap.put("workPeriod", dataList.get(i).getWorkPeriod());
 			tempMap.put("sumWorkTime", dataList.get(i).getSumWorkTime());
 
 			tempMap.put("requestUnit", dataList.get(i).getRequestUnitCode().equals("1") ? "件" : "人月");
 			tempMap.put("quantity", dataList.get(i).getQuantity());
-			tempMap.put("unitPrice", "￥" + df.format(Integer
+			tempMap.put("unitPrice", df.format(Integer
 					.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())));
 			String deductionsAndOvertimePayOfUnitPrice = dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice();
 			String payOffRange1 = dataList.get(i).getPayOffRange1();
@@ -481,25 +492,25 @@ public class SendInvoiceController extends BaseController {
 				payOffRange2 += "H";
 				break;
 			}
-			tempMap.put("payOffRange1",
-					deductionsAndOvertimePayOfUnitPrice == null ? ""
-							: payOffRange1 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) >= 0 ? ""
-									: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)))));
-			tempMap.put("payOffRange2",
-					deductionsAndOvertimePayOfUnitPrice == null ? ""
-							: payOffRange2 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) > 0
-									? ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)))
-									: ""));
+			tempMap.put("payOffRange1", deductionsAndOvertimePayOfUnitPrice == null ? ""
+					: payOffRange1 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) >= 0 ? ""
+							: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")));
+			tempMap.put("payOffRange2", deductionsAndOvertimePayOfUnitPrice == null ? ""
+					: payOffRange2 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) > 0
+							? ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")
+							: ""));
 			int sum = Integer.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())
 					* Integer.parseInt(dataList.get(i).getQuantity() == null ? "0" : dataList.get(i).getQuantity())
 					+ Integer.parseInt(dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice() == null ? "0"
 							: dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice());
-			tempMap.put("sum", "￥" + df.format(sum) + (dataList.get(i).getRequestUnitCode().equals("0") ? "" : "(税込)"));
+			tempMap.put("sum", df.format(sum));
 			if (dataList.get(i).getRequestUnitCode().equals("0"))
 				subTotalAmount += sum;
 			else
 				subTotalAmountNoTax += sum;
 			tempMap.put("subTotalAmount", String.valueOf(subTotalAmount + subTotalAmountNoTax));
+			tempMap.put("consumptionTaxAmount",
+					String.valueOf((int) (subTotalAmount * (Double.parseDouble(taxRate) / 100))));
 			tempMap.put("totalAmount", String.valueOf((int) (subTotalAmount * (Double.parseDouble(taxRate) / 100))
 					+ subTotalAmount + subTotalAmountNoTax));
 
@@ -529,13 +540,17 @@ public class SendInvoiceController extends BaseController {
 		emailModel.setUserName(getSession().getAttribute("employeeName").toString());
 		emailModel.setPassword("Lyc2020-0908-");
 		emailModel.setContextType("text/html;charset=utf-8");
-		String file = dutyManagementModel.get("yearAndMonth") + "_" + dutyManagementModel.get("customerNo") + "_" + dutyManagementModel.get("customerAbbreviation") + ".pdf";
+		String file = dutyManagementModel.get("yearAndMonth") + "_" + dutyManagementModel.get("customerNo") + "_"
+				+ dutyManagementModel.get("customerAbbreviation") + ".pdf";
 		String[] names = { file };
 		String[] paths = { "c:/file/certificate/" + file };
 		emailModel.setNames(names);
 		emailModel.setPaths(paths);
 		// 送信
 		utils.sendMailWithFile(emailModel);
+
+		// データ更新
+		sendInvoiceService.updateSendLetter(dutyManagementModel);
 		return requst;
 	}
 }

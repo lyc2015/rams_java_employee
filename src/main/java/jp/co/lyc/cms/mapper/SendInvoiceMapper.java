@@ -39,4 +39,6 @@ public interface SendInvoiceMapper {
 	public List<ModelClass> selectBankAccountInfo();
 
 	public AccountInfoModel getAccountInfo(String bankCode);
+
+	public void updateSendLetter(HashMap<String, String> model);
 }

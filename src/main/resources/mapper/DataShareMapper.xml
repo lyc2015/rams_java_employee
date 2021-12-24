@@ -63,7 +63,20 @@
 		fileNo = #{fileNo}
 	</update>
 
-	<update id="updateDataShares" parameterType="String">
+	<update id="updateDataSharesTo2" parameterType="String">
+		UPDATE
+		T023DataShare
+		SET
+		shareStatus = "2"
+		WHERE
+		fileNo in
+		<foreach item="item" collection="list" open="(" close=")"
+			separator=",">
+			#{item}
+		</foreach>
+	</update>
+
+	<update id="updateDataSharesTo3" parameterType="String">
 		UPDATE
 		T023DataShare
 		SET

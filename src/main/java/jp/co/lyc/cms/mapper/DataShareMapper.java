@@ -29,7 +29,9 @@ public interface DataShareMapper {
 	 */
 	public void updateDataShare(DataShareModel dataShareModel);
 
-	public void updateDataShares(ArrayList<String> fileNoList);
+	public void updateDataSharesTo2(ArrayList<String> fileNoList);
+
+	public void updateDataSharesTo3(ArrayList<String> fileNoList);
 
 	/**
 	 * ファイル名入力

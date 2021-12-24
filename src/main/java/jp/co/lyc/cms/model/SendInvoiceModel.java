@@ -19,6 +19,24 @@ public class SendInvoiceModel {
 	String systemName;
 	String DeductionsAndOvertimePayOfUnitPrice;
 	String havePDF;
+	String sendLetterDate;
+	String sendLetterStatus;
+
+	public String getSendLetterDate() {
+		return sendLetterDate;
+	}
+
+	public void setSendLetterDate(String sendLetterDate) {
+		this.sendLetterDate = sendLetterDate;
+	}
+
+	public String getSendLetterStatus() {
+		return sendLetterStatus;
+	}
+
+	public void setSendLetterStatus(String sendLetterStatus) {
+		this.sendLetterStatus = sendLetterStatus;
+	}
 
 	public String getHavePDF() {
 		return havePDF;

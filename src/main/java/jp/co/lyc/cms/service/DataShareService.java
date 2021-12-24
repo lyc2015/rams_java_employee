@@ -63,10 +63,22 @@ public class DataShareService {
 		return result;
 	}
 
-	public boolean updateDataShares(ArrayList<String> fileNoList) {
+	public boolean updateDataSharesTo2(ArrayList<String> fileNoList) {
 		boolean result = true;
 		try {
-			dataShareMapper.updateDataShares(fileNoList);
+			dataShareMapper.updateDataSharesTo2(fileNoList);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return result = false;
+		}
+		return result;
+	}
+
+	public boolean updateDataSharesTo3(ArrayList<String> fileNoList) {
+		boolean result = true;
+		try {
+			dataShareMapper.updateDataSharesTo3(fileNoList);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

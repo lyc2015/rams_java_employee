@@ -160,13 +160,16 @@ public class CustomerSalesListController {
 										.equals(MonthData.get(n).getEmployeeNo())) {
 									if (CustomerSalesListModel.get(i).getDailyCalculationStatus() != null
 											&& CustomerSalesListModel.get(i).getDailyCalculationStatus().equals("0")) {
-										Double totalCost = Double
-												.parseDouble(CustomerSalesListModel.get(i).getBpUnitPrice())
+										Double totalCost = Double.parseDouble(
+												CustomerSalesListModel.get(i).getBpUnitPrice() == null ? "0.0"
+														: CustomerSalesListModel.get(i).getBpUnitPrice())
 												* CustomerSalesListModel.get(i).getPercent();
 										DecimalFormat cost = new DecimalFormat("#.#");
 										customerEmpDe.setCost(cost.format(totalCost));
 									} else {
-										customerEmpDe.setCost(CustomerSalesListModel.get(i).getBpUnitPrice());
+										customerEmpDe
+												.setCost(CustomerSalesListModel.get(i).getBpUnitPrice() == null ? ""
+														: CustomerSalesListModel.get(i).getBpUnitPrice());
 									}
 								}
 							}
@@ -404,6 +407,13 @@ public class CustomerSalesListController {
 							|| resultData.get(i).getTotalAmount().equals("0"))) {
 				newResultData.add(resultData.get(i));
 			}
+		}
+
+		for (int i = 0; i < newResultData.size(); i++) {
+			newResultData.get(i).setCalPeoCount(newResultData.get(0).getCalPeoCount());
+			newResultData.get(i).setUnitPTotal(newResultData.get(0).getUnitPTotal());
+			newResultData.get(i).setTotalgrossProfit(newResultData.get(0).getTotalgrossProfit());
+			newResultData.get(i).setTotalSales(newResultData.get(0).getTotalSales());
 		}
 
 		// ソート(合計単価降順)

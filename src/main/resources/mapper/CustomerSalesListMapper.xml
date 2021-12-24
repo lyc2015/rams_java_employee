@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jp.co.lyc.cms.mapper.CustomerSalesListMapper">
+	<resultMap id="detailsInfo"
+		type="jp.co.lyc.cms.model.CustomerSalesListModel" />
+
+	<select id="getCustomerSalesList" parameterType="map"
+		resultMap="detailsInfo">
+		<foreach item="getYandM" collection="getYandM" index="index">
+			<if test="index != 0">
+				union all
+			</if>
+			SELECT #{getYandM} as yearAndMonth,
+			if(T007.customerAbbreviation is null || T007.customerAbbreviation =
+			"",T007.customerName,T007.customerAbbreviation) as customerName,
+			T006.customerNo,
+			T006.admissionStartDate,
+			T006.dailyCalculationStatus,
+			if(T005.employeeStatus = "5",CAST((T006.unitPrice*(1+T012.taxRate)) As
+			unsigned),CAST((T006.unitPrice) As unsigned)) As unitPrice,
+			T018.DeductionsAndOvertimePay,
+			T006.employeeNo,
+			CONCAT(T001.employeeFristName,T001.employeeLastName)as employeeName,
+			T011.bpUnitPrice,
+			M012.siteRoleName,
+			M013.stationName
+			FROM T006EmployeeSiteInfo As T006
+			left join (
+			SELECT T005.employeeNo,T005.employeeStatus FROM T005WagesInfo as T005
+			inner join (
+			SELECT employeeNo,max(reflectYearAndMonth) as reflectYearAndMonth FROM
+			T005WagesInfo
+			where reflectYearAndMonth &lt;= #{getYandM}
+			group by employeeNo
+			) as temp
+			on T005.employeeNo = temp.employeeNo
+			and T005.reflectYearAndMonth = temp.reflectYearAndMonth
+			) as T005
+			on T005.employeeNo = T006.employeeNo
+			left join T018WorkTotalTime As T018 on T018.employeeNo =T006.employeeNo
+			and #{getYandM} =T018.attendanceYearAndMonth
+			left join T007CustomerInfo As T007 on T006.customerNo =T007.customerNo
+			left join T001Employee As T001 on T006.employeeNo=T001.employeeNo
+			LEFT JOIN
+			T012Passwordreset As T012 ON T012.passwordResetId = "systemSet"
+			left join
+			(SELECT T011.* FROM T011BpInfoSupplement as T011
+			inner join (
+			select bpEmployeeNo,max(unitPriceStartMonth) as unitPriceStartMonth
+			from T011BpInfoSupplement
+			where unitPriceStartMonth &lt;= #{yearAndMonth}
+			group by bpEmployeeNo
+			) as temp
+			on T011.bpEmployeeNo =
+			temp.bpEmployeeNo
+			and T011.unitPriceStartMonth =
+			temp.unitPriceStartMonth) as T011 on
+			T006.employeeNo=T011.bpEmployeeNo
+			join T002EmployeeDetail as T002 on
+			T002.employeeNo=T006.employeeNo
+			left join M012SiteRole As M012 on M012.siteRoleCode=if(T006.siteRoleCode
+			is null || T006.siteRoleCode =
+			"",if(T002.siteRoleCode="",null,T002.siteRoleCode),T006.siteRoleCode)
+			left join M013Station as M013 on T006.stationCode =M013.stationCode
+			WHERE #{getYandM} between left(admissionStartDate,6) and
+			IFNULL(admissionEndDate,#{getYandM})
+			and (T006.systemName is null or T006.systemName != "休暇")
+			and (T002.retirementYearAndMonth = ""
+			or LEFT(T002.retirementYearAndMonth,6) &gt;= #{getYandM}
+			or T002.retirementResonClassification = "2"
+			)
+		</foreach>
+	</select>
+
+	<select id="getCustomerSalesListTwice" parameterType="map"
+		resultMap="detailsInfo">
+		<foreach item="tempList" collection="tempList" index="index">
+			<if test="index != 0">
+				union
+			</if>
+			select * from (select ${tempList.yearAndMonth} as
+			yearAndMonth,T005.employeeNo,
+			CAST((T005.totalAmount + if(#{tempList.yearAndMonth} = fristBonusMonth,fristTimeBonusAmount,0) + if(#{tempList.yearAndMonth} = secondBonusMonth,secondTimeBonusAmount,0)) As unsigned) as totalAmount,
+			T006.customerNo
+			from
+			T005WagesInfo As
+			T005
+			left join T006EmployeeSiteInfo As T006 on T006.employeeNo
+			=T005.employeeNo and #{tempList.yearAndMonth} between
+			left(admissionStartDate,6) and
+			IFNULL(admissionEndDate,#{tempList.yearAndMonth})
+			WHERE
+			T005.employeeNo=
+			#{tempList.empNo}
+			and T006.customerNo=#{tempList.customerNo}
+			and reflectYearAndMonth &lt;= #{tempList.yearAndMonth}
+			ORDER BY
+			ABS(#{tempList.yearAndMonth} - reflectYearAndMonth) ASC
+			limit 1) As
+			A${tempList.yearAndMonth}
+		</foreach>
+	</select>
+
+	<select id="getCustomerSalesListThird" parameterType="map"
+		resultMap="detailsInfo">
+		<foreach item="tempList" collection="tempList" index="index">
+			<if test="index != 0">
+				union
+			</if>
+			select * from(select ${tempList.yearAndMonth} as
+			yearAndMonth,
+			T013.employeeNo,
+			T013.totalExpenses as totalAmount,
+			T006.customerNo
+			from T013ExpensesInfo As T013
+			left join T006EmployeeSiteInfo As T006 on T006.employeeNo
+			=T013.employeeNo and #{tempList.yearAndMonth} between
+			left(admissionStartDate,6) and
+			IFNULL(admissionEndDate,#{tempList.yearAndMonth})
+			where
+			T013.employeeNo =#{tempList.empNo}
+			and expensesReflectYearAndMonth
+			&lt;=
+			#{tempList.yearAndMonth}
+			ORDER BY ABS(#{tempList.yearAndMonth}-
+			expensesReflectYearAndMonth) ASC
+			limit 1 ) As
+			B${tempList.yearAndMonth}
+		</foreach>
+	</select>
+
+</mapper>

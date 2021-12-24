@@ -37,5 +37,5 @@ public interface AccountInfoMapper {
 	 */
 	public void replaceAccount(HashMap<String, String> sendMap);
 	
-	//public int getAccountCount(HashMap<String, String> sendMap);
+	public AccountInfoModel getAccountCount(HashMap<String, String> sendMap);
 }

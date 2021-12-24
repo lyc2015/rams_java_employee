@@ -39,7 +39,8 @@
 		WHERE
 			T018.attendanceYearAndMonth >= #{yearAndMonth1} AND
 			T018.attendanceYearAndMonth &lt;= #{yearAndMonth2} AND
-			T018.employeeNo= #{employeeNo}
+			T018.employeeNo= #{employeeNo} AND
+			(T018.sumWorkTime is not null AND T018.sumWorkTime != "")
 			and T006.admissionStartDate is not null
 		ORDER BY
 			T018.attendanceYearAndMonth

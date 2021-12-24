@@ -38,12 +38,12 @@ public class AccountInfoService {
 	@Transactional(rollbackFor = Exception.class)
 	public boolean update(HashMap<String, String> sendMap) {
 		try {
-			//int count = bankMapper.getAccountCount(sendMap);
-			//if (count > 0) {
+			int count = bankMapper.getAccountCount(sendMap).getAccountNumber();
+			if (count > 0) {
 				bankMapper.updateAccount(sendMap);
-/*			} else {
+			} else {
 				bankMapper.insertAccount(sendMap);
-			}*/
+			}
 			return true;
 		} catch (Exception e) {
 			// TODO: handle exception

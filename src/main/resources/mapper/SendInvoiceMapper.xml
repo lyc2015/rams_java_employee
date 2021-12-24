@@ -40,15 +40,19 @@
 		if(T018.sumWorkTime is null ||
 		T018.sumWorkTime =
 		"",temp.workTime,T018.sumWorkTime) as
-		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice
+		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice,
+		T024.sendLetterDate,T024.sendLetterStatus
 		FROM
-		T006EmployeeSiteInfo as T006
+		T006EmployeeSiteInfo as
+		T006
 		left join T018WorkTotalTime as T018
 		on
-		T018.employeeNo = T006.employeeNo
+		T018.employeeNo =
+		T006.employeeNo
 		and T018.attendanceYearAndMonth =
 		#{yearAndMonth}
-		left join
+		left
+		join
 		(SELECT employeeNo,yearAndMonth,sum(workTime)
 		as
 		workTime FROM
@@ -56,7 +60,8 @@
 		group by employeeNo,yearAndMonth)
 		as
 		temp
-		on temp.employeeNo = T006.employeeNo
+		on
+		temp.employeeNo = T006.employeeNo
 		and temp.yearAndMonth =
 		#{yearAndMonth}
 		left join T007CustomerInfo as T007
@@ -69,7 +74,12 @@
 		on
 		T009.customerNo = T007.customerNo
 		and T009.customerDepartmentCode = "8"
-		where T006.admissionStartDate &lt;=
+		left join T024InvoiceData as T024
+		on
+		T024.customerNo = T006.customerNo
+		and T024.yearAndMonth = #{yearAndMonth}
+		where T006.admissionStartDate
+		&lt;=
 		concat(#{yearAndMonth},"31")
 		and
 		(T006.admissionEndDate &gt;=
@@ -79,7 +89,8 @@
 		and
 		T006.customerNo =
 		ifnull(#{customerNo},T006.customerNo)
-		and T018.approvalStatus = "1"
+		and
+		T018.approvalStatus = "1"
 		order by
 		T006.customerNo
 	</select>
@@ -169,7 +180,7 @@
 		T024InvoiceData VALUES (
 		#{customerNo},#{yearAndMonth},#{workContents},#{customerName},#{invoiceDate},"",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},"1",#{unitPrice},
-		"0","",now(),now(),#{updateUser}
+		"0","","","0",now(),now(),#{updateUser}
 		)
 	</insert>
 
@@ -202,7 +213,7 @@
 		T024InvoiceData VALUES (
 		#{customerNo},#{yearAndMonth},#{workContents},"","","",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},#{quantity},#{unitPrice},
-		"0","",now(),now(),#{updateUser}
+		"0","","","0",now(),now(),#{updateUser}
 		)
 	</insert>
 
@@ -266,4 +277,17 @@
 		and T004.bankCode = #{bankCode}
 	</select>
 
+	<update id="updateSendLetter" parameterType="String">
+		UPDATE
+		T024InvoiceData
+		SET
+		sendLetterDate = #{nowDate},
+		sendLetterStatus =
+		"1"
+		WHERE
+		customerNo = #{customerNo}
+		and
+		yearAndMonth =
+		#{yearAndMonth}
+	</update>
 </mapper>
