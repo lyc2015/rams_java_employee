@@ -41,4 +41,6 @@ public interface SendInvoiceMapper {
 	public AccountInfoModel getAccountInfo(String bankCode);
 
 	public void updateSendLetter(HashMap<String, String> model);
+
+	public void deleteInvoiceDataAll(HashMap<String, String> model);
 }

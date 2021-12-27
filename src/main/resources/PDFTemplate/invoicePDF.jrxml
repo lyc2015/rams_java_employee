@@ -44,6 +44,16 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
+	<style name="sumStyle" vTextAlign="Middle" fontName="游明朝標準">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{sum}.indexOf("税込") == -1]]></conditionExpression>
+			<style forecolor="#000000"/>
+		</conditionalStyle>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{sum}.indexOf("税込") != -1]]></conditionExpression>
+			<style forecolor="#59504F" fontName="黑体" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false"/>
+		</conditionalStyle>
+	</style>
 	<subDataset name="dataTable1Dataset" uuid="6344ea2a-4d91-4402-a21c-70f8e34b31e2">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<parameter name="dataTableResource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource">
@@ -622,7 +632,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<text><![CDATA[下限時間
-下限単価]]></text>
+精算単価]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="40">
@@ -655,7 +665,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 									<rightPen lineStyle="Solid" lineColor="#000000"/>
 								</box>
 								<text><![CDATA[上限時間
-上限単価]]></text>
+精算単価]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:columnFooter style="Table_CH" height="60" rowSpan="1">
@@ -732,7 +742,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 						</jr:columnFooter>
 						<jr:detailCell style="Table_TD" height="40">
 							<textField>
-								<reportElement x="0" y="0" width="100" height="40" uuid="9eca4323-0a15-4740-b7e3-b11b6bbe3b86"/>
+								<reportElement style="sumStyle" x="0" y="0" width="100" height="40" uuid="9eca4323-0a15-4740-b7e3-b11b6bbe3b86"/>
 								<box>
 									<pen lineWidth="0.5"/>
 									<topPen lineStyle="Solid" lineColor="#000000"/>

@@ -91,6 +91,7 @@
 		ifnull(#{customerNo},T006.customerNo)
 		and
 		T018.approvalStatus = "1"
+		group by T006.employeeNo
 		order by
 		T006.customerNo
 	</select>
@@ -178,7 +179,7 @@
 	<insert id="insertInvoiceData" parameterType="String">
 		INSERT INTO
 		T024InvoiceData VALUES (
-		#{customerNo},#{yearAndMonth},#{workContents},#{customerName},#{invoiceDate},"",
+		#{customerNo},#{yearAndMonth},#{workContents},#{invoiceNo},#{customerName},#{invoiceDate},"",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},"1",#{unitPrice},
 		"0","","","0",now(),now(),#{updateUser}
 		)
@@ -211,7 +212,7 @@
 	<insert id="insertNewInvoiceData" parameterType="String">
 		INSERT INTO
 		T024InvoiceData VALUES (
-		#{customerNo},#{yearAndMonth},#{workContents},"","","",
+		#{customerNo},#{yearAndMonth},#{workContents},#{invoiceNo},"","","",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},#{quantity},#{unitPrice},
 		"0","","","0",now(),now(),#{updateUser}
 		)
@@ -228,6 +229,15 @@
 		workContents = #{oldWorkContents}
 	</delete>
 
+	<delete id="deleteInvoiceDataAll" parameterType="String">
+		DELETE FROM
+		T024InvoiceData WHERE
+		customerNo = #{customerNo}
+		and
+		yearAndMonth =
+		#{yearAndMonth}
+	</delete>
+
 	<update id="updateAllInvoiceData" parameterType="String">
 		UPDATE
 		T024InvoiceData
@@ -235,6 +245,8 @@
 		customerName = #{customerName},
 		invoiceDate =
 		#{invoiceDate},
+		invoiceNo =
+		#{invoiceNo},
 		deadLine = #{deadLine},
 		bankCode = #{bankCode},
 		remark =

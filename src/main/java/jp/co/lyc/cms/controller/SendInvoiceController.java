@@ -232,7 +232,18 @@ public class SendInvoiceController extends BaseController {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("YYYYMMdd");
 				model.put("invoiceDate", dateFormat.format(date));
 				model.put("employeeNo", returnList.get(i).getEmployeeNo());
-				model.put("workPeriod", returnList.get(i).getWorkPeriod());
+				model.put("invoiceNo", dutyManagementModel.get("invoiceNo"));
+				Calendar ca = Calendar.getInstance();
+				ca.setTime(new Date());
+				ca.add(Calendar.MONTH, 1);
+				ca.set(Calendar.DAY_OF_MONTH, 0);
+				String lastDay = dateFormat.format(ca.getTime());
+				lastDay = lastDay.substring(lastDay.length() - 2, lastDay.length());
+				model.put("workPeriod",
+						returnList.get(i).getWorkPeriod() == null
+								? (dutyManagementModel.get("yearAndMonth") + "01~"
+										+ dutyManagementModel.get("yearAndMonth") + lastDay)
+								: returnList.get(i).getWorkPeriod());
 				model.put("workingTime", returnList.get(i).getWorkingTime());
 				model.put("requestUnitCode", returnList.get(i).getRequestUnitCode());
 				model.put("unitPrice", returnList.get(i).getUnitPrice());
@@ -308,6 +319,27 @@ public class SendInvoiceController extends BaseController {
 			result = false;
 		}
 		logger.info("SendInvoiceController.deleteInvoiceData:" + "削除終了");
+		return result;
+	}
+
+	/**
+	 * すべて削除
+	 * 
+	 * @param topCustomerMod
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteInvoiceDataAll", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean deleteInvoiceDataAll(@RequestBody HashMap<String, String> model) {
+		logger.info("SendInvoiceController.deleteInvoiceDataAll:" + "削除開始");
+		boolean result = false;
+		try {
+			sendInvoiceService.deleteInvoiceDataAll(model);
+			result = true;
+		} catch (Exception e) {
+			result = false;
+		}
+		logger.info("SendInvoiceController.deleteInvoiceDataAll:" + "削除終了");
 		return result;
 	}
 
@@ -457,8 +489,7 @@ public class SendInvoiceController extends BaseController {
 			String workPeriod = String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + "01~"
 					+ String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + day;
 
-			tempMap.put("workContents", dataList.get(i).getWorkContents()
-					+ (dataList.get(i).getRequestUnitCode().equals("0") ? "" : "\n(税込)"));
+			tempMap.put("workContents", dataList.get(i).getWorkContents());
 			tempMap.put("employeeName", dataList.get(i).getEmployeeName());
 			tempMap.put("workPeriod", dataList.get(i).getWorkPeriod());
 			tempMap.put("sumWorkTime", dataList.get(i).getSumWorkTime());
@@ -468,6 +499,8 @@ public class SendInvoiceController extends BaseController {
 			tempMap.put("unitPrice", df.format(Integer
 					.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())));
 			String deductionsAndOvertimePayOfUnitPrice = dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice();
+			String deductionsAndOvertimePayOfUnitPrice1 = "";
+			String deductionsAndOvertimePayOfUnitPrice2 = "";
 			String payOffRange1 = dataList.get(i).getPayOffRange1();
 			switch (payOffRange1) {
 			case "0":
@@ -477,6 +510,10 @@ public class SendInvoiceController extends BaseController {
 				payOffRange1 = "出勤日";
 				break;
 			default:
+				deductionsAndOvertimePayOfUnitPrice1 = String
+						.valueOf(Integer.parseInt(dataList.get(i).getUnitPrice()) / Integer.parseInt(payOffRange1));
+				deductionsAndOvertimePayOfUnitPrice1 = deductionsAndOvertimePayOfUnitPrice1.substring(0,
+						deductionsAndOvertimePayOfUnitPrice1.length() - 1) + "0";
 				payOffRange1 += "H";
 				break;
 			}
@@ -489,21 +526,30 @@ public class SendInvoiceController extends BaseController {
 				payOffRange2 = "出勤日";
 				break;
 			default:
+				deductionsAndOvertimePayOfUnitPrice2 = String
+						.valueOf(Integer.parseInt(dataList.get(i).getUnitPrice()) / Integer.parseInt(payOffRange2));
+				deductionsAndOvertimePayOfUnitPrice2 = deductionsAndOvertimePayOfUnitPrice2.substring(0,
+						deductionsAndOvertimePayOfUnitPrice2.length() - 1) + "0";
 				payOffRange2 += "H";
 				break;
 			}
+			/*
+			 * tempMap.put("payOffRange1", deductionsAndOvertimePayOfUnitPrice == null ? ""
+			 * : payOffRange1 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) >= 0
+			 * ? "" : ("\n" + "￥" +
+			 * df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")));
+			 */
 			tempMap.put("payOffRange1", deductionsAndOvertimePayOfUnitPrice == null ? ""
-					: payOffRange1 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) >= 0 ? ""
-							: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")));
+					: payOffRange1
+							+ ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice1)) + "/H"));
 			tempMap.put("payOffRange2", deductionsAndOvertimePayOfUnitPrice == null ? ""
-					: payOffRange2 + (Integer.parseInt(deductionsAndOvertimePayOfUnitPrice) > 0
-							? ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")
-							: ""));
+					: payOffRange2
+							+ ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice2)) + "/H"));
 			int sum = Integer.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())
 					* Integer.parseInt(dataList.get(i).getQuantity() == null ? "0" : dataList.get(i).getQuantity())
 					+ Integer.parseInt(dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice() == null ? "0"
 							: dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice());
-			tempMap.put("sum", df.format(sum));
+			tempMap.put("sum", df.format(sum) + (dataList.get(i).getRequestUnitCode().equals("0") ? "" : "(税込)"));
 			if (dataList.get(i).getRequestUnitCode().equals("0"))
 				subTotalAmount += sum;
 			else

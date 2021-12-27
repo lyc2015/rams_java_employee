@@ -20,6 +20,7 @@ import com.alibaba.fastjson.TypeReference;
 import ch.qos.logback.core.joran.conditional.IfAction;
 import jp.co.lyc.cms.common.BaseController;
 import jp.co.lyc.cms.model.CostRegistrationModel;
+import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.service.CostRegistrationService;
 
 @Controller
@@ -29,6 +30,8 @@ public class CostRegistrationController extends BaseController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Autowired
 	CostRegistrationService costRegistrationService;
+	@Autowired
+	S3Controller s3Controller;
 	/**
 	 * 
 	 * 検索
@@ -76,6 +79,18 @@ public class CostRegistrationController extends BaseController {
 				return false;
 			}
 		getFilename=upload(costRegistrationModel,costFile);
+		
+		try {
+			S3Model s3Model = new S3Model();
+			String filePath = getFilename.replaceAll("\\\\", "/");
+			String fileKey = filePath.split("file/")[1];
+			fileKey = fileKey.substring(0,fileKey.lastIndexOf("/") + 1) + costRegistrationModel.getEmployeeNo() + "_" + costRegistrationModel.getEmployeeName() + "_" + fileKey.substring(fileKey.lastIndexOf("/") + 1,fileKey.length());
+			s3Model.setFileKey(fileKey);
+			s3Model.setFilePath(filePath);
+			s3Controller.uploadFile(s3Model);
+		} catch (Exception e) {
+			return false;
+		}
 
 		costRegistrationModel.setCostFile(getFilename);
 	
@@ -104,6 +119,7 @@ public class CostRegistrationController extends BaseController {
 		}else {
 			costRegistrationModel.setCostFile(getName(costRegistrationModel, costFile));
 		}
+
 		boolean fla=costRegistrationService.updateCostRegistration(costRegistrationModel);
 		//新KEYに変更できない
 		if(!fla) {
@@ -132,6 +148,18 @@ public class CostRegistrationController extends BaseController {
 						try {
 							delete(costRegistrationModel);
 							getFilename=upload(costRegistrationModel,costFile);
+							
+							try {
+								S3Model s3Model = new S3Model();
+								String filePath = getFilename.replaceAll("\\\\", "/");
+								String fileKey = filePath.split("file/")[1];
+								fileKey = fileKey.substring(0,fileKey.lastIndexOf("/") + 1) + costRegistrationModel.getEmployeeNo() + "_" + costRegistrationModel.getEmployeeName() + "_" + fileKey.substring(fileKey.lastIndexOf("/") + 1,fileKey.length());
+								s3Model.setFileKey(fileKey);
+								s3Model.setFilePath(filePath);
+								s3Controller.uploadFile(s3Model);
+							} catch (Exception e) {
+								return false;
+							}
 							costRegistrationModel.setCostFile(getFilename);
 						} catch (Exception e) {
 							return false;

@@ -8,6 +8,7 @@ public class SendInvoiceWorkTimeModel {
 	String employeeName;
 	String customerNo;
 	String customerName;
+	String invoiceNo;
 	String systemName;
 	String unitPrice;
 	String payOffRange1;
@@ -25,6 +26,14 @@ public class SendInvoiceWorkTimeModel {
 	String quantity;
 	String bankCode;
 	String remark;
+
+	public String getInvoiceNo() {
+		return invoiceNo;
+	}
+
+	public void setInvoiceNo(String invoiceNo) {
+		this.invoiceNo = invoiceNo;
+	}
 
 	public String getShowNo() {
 		return showNo;

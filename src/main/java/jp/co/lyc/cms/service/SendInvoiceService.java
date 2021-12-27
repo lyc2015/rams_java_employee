@@ -57,6 +57,10 @@ public class SendInvoiceService {
 		sendInvoiceMapper.deleteInvoiceData(model);
 	}
 
+	public void deleteInvoiceDataAll(HashMap<String, String> model) {
+		sendInvoiceMapper.deleteInvoiceDataAll(model);
+	}
+
 	public void updateAllInvoiceData(HashMap<String, String> model) {
 		sendInvoiceMapper.updateAllInvoiceData(model);
 	}
