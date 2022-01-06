@@ -79,17 +79,18 @@ public class CostRegistrationController extends BaseController {
 				return false;
 			}
 		getFilename=upload(costRegistrationModel,costFile);
-		
-		try {
-			S3Model s3Model = new S3Model();
-			String filePath = getFilename.replaceAll("\\\\", "/");
-			String fileKey = filePath.split("file/")[1];
-			fileKey = fileKey.substring(0,fileKey.lastIndexOf("/") + 1) + costRegistrationModel.getEmployeeNo() + "_" + costRegistrationModel.getEmployeeName() + "_" + fileKey.substring(fileKey.lastIndexOf("/") + 1,fileKey.length());
-			s3Model.setFileKey(fileKey);
-			s3Model.setFilePath(filePath);
-			s3Controller.uploadFile(s3Model);
-		} catch (Exception e) {
-			return false;
+		if(!getFilename.equals("")) {
+			try {
+				S3Model s3Model = new S3Model();
+				String filePath = getFilename.replaceAll("\\\\", "/");
+				String fileKey = filePath.split("file/")[1];
+				fileKey = fileKey.substring(0,fileKey.lastIndexOf("/") + 1) + costRegistrationModel.getEmployeeNo() + "_" + costRegistrationModel.getEmployeeName() + "_" + fileKey.substring(fileKey.lastIndexOf("/") + 1,fileKey.length());
+				s3Model.setFileKey(fileKey);
+				s3Model.setFilePath(filePath);
+				s3Controller.uploadFile(s3Model);
+			} catch (Exception e) {
+				return false;
+			}
 		}
 
 		costRegistrationModel.setCostFile(getFilename);
