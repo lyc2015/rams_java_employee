@@ -303,10 +303,19 @@
 		= temp.employeeNo
 		and
 		T006.admissionStartDate = temp.admissionStartDate
+		left join T002EmployeeDetail as T002
+		on T006.employeeNo =
+		T002.employeeNo
 		where
-		T006.admissionEndDate is null
-		and (T006.typteOfContractCode is
-		null or T006.typteOfContractCode != "4")
+		(T002.employeeFormCode != "4" or
+		T002.retirementYearAndMonth &gt; now())
+		and
+		T006.admissionEndDate is
+		null
+		and
+		(T006.typteOfContractCode is
+		null or T006.typteOfContractCode !=
+		"4")
 		and
 		left(T006.admissionStartDate,6)
 		&lt;=
@@ -331,7 +340,13 @@
 		temp.employeeNo
 		and T005.reflectYearAndMonth =
 		temp.reflectYearAndMonth
-		where T005.fristBonusMonth != ""
+		left join T002EmployeeDetail as T002
+		on T005.employeeNo =
+		T002.employeeNo
+		where 
+		(T002.employeeFormCode != "4" or
+		T002.retirementYearAndMonth &gt; now())
+		and T005.fristBonusMonth != ""
 		and
 		(T005.fristBonusMonth =
 		#{bonusYearAndMonth} or T005.secondBonusMonth = #{bonusYearAndMonth});

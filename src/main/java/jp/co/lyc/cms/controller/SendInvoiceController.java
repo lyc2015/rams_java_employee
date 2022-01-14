@@ -540,11 +540,11 @@ public class SendInvoiceController extends BaseController {
 			 * df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice)) + "/H")));
 			 */
 			tempMap.put("payOffRange1", deductionsAndOvertimePayOfUnitPrice == null ? ""
-					: payOffRange1
-							+ ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice1)) + "/H"));
+					: payOffRange1 + (deductionsAndOvertimePayOfUnitPrice1.equals("") ? ""
+							: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice1)) + "/H")));
 			tempMap.put("payOffRange2", deductionsAndOvertimePayOfUnitPrice == null ? ""
-					: payOffRange2
-							+ ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice2)) + "/H"));
+					: payOffRange2 + (deductionsAndOvertimePayOfUnitPrice2.equals("") ? ""
+							: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice2))) + "/H"));
 			int sum = Integer.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())
 					* Integer.parseInt(dataList.get(i).getQuantity() == null ? "0" : dataList.get(i).getQuantity())
 					+ Integer.parseInt(dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice() == null ? "0"

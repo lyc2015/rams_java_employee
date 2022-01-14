@@ -106,27 +106,20 @@
 		<band height="218" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
-				<reportElement style="Style1" x="23" y="90" width="157" height="30" uuid="b863c3a5-7420-427b-ba8d-48c460ee2d10">
+				<reportElement style="Style1" x="23" y="90" width="377" height="30" uuid="b863c3a5-7420-427b-ba8d-48c460ee2d10">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
 					<font size="18"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{customerName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{customerName} + " 御中"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement style="Style1" x="180" y="90" width="40" height="30" uuid="312367d7-a3d5-4f5f-8aa2-21d9e8929482"/>
-				<textElement>
-					<font size="18"/>
-				</textElement>
-				<text><![CDATA[御中]]></text>
-			</staticText>
 			<textField>
 				<reportElement style="Style1" x="100" y="140" width="150" height="30" uuid="e09b2005-6046-4d94-be1d-4b4421bd3598">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -162,7 +155,7 @@
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textFieldExpression><![CDATA[$P{invoiceNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{invoiceNo} == null ? "" : $P{invoiceNo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Style1" x="100" y="170" width="150" height="30" uuid="86d8ab51-bde9-4751-ac9a-3150ee9238cb">
@@ -402,7 +395,7 @@ TEL:03-6908-5796 　 FAX: 03-6908-5741]]></text>
 												<textElement textAlignment="Left">
 													<font size="10"/>
 												</textElement>
-												<textFieldExpression><![CDATA[$P{remark}]]></textFieldExpression>
+												<textFieldExpression><![CDATA[$P{remark} == null ? "" : $P{remark}]]></textFieldExpression>
 											</textField>
 										</jr:columnFooter>
 										<jr:column width="80" uuid="bed2041d-d9a8-4963-8e7c-fa3c4e869e42">

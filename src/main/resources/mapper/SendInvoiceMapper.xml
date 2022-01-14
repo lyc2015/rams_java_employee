@@ -73,7 +73,7 @@
 		left join T009CustomerDepartmentInfo as T009
 		on
 		T009.customerNo = T007.customerNo
-		and T009.customerDepartmentCode = "8"
+		and T009.customerDepartmentCode = "7"
 		left join T024InvoiceData as T024
 		on
 		T024.customerNo = T006.customerNo
