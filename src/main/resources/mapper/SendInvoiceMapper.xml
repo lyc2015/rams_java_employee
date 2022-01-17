@@ -40,7 +40,7 @@
 		if(T018.sumWorkTime is null ||
 		T018.sumWorkTime =
 		"",temp.workTime,T018.sumWorkTime) as
-		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice,
+		sumWorkTime,T018.DeductionsAndOvertimePayOfUnitPrice,T018.workingTimeReport,
 		T024.sendLetterDate,T024.sendLetterStatus
 		FROM
 		T006EmployeeSiteInfo as

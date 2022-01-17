@@ -44,6 +44,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.tabulator.SplitCell;
 
 @Controller
 @RequestMapping(value = "/sendInvoice")
@@ -84,6 +85,8 @@ public class SendInvoiceController extends BaseController {
 			sendInvoiceWorkTimeModel.setSumWorkTime(sendInvoiceList.get(i).getSumWorkTime());
 			sendInvoiceWorkTimeModel.setDeductionsAndOvertimePayOfUnitPrice(
 					sendInvoiceList.get(i).getDeductionsAndOvertimePayOfUnitPrice());
+			sendInvoiceWorkTimeModel.setWorkingTimeReport(sendInvoiceList.get(i).getWorkingTimeReport());
+
 			sendInvoiceWorkTimeList.add(sendInvoiceWorkTimeModel);
 
 			if (i != sendInvoiceList.size() - 1
@@ -587,9 +590,18 @@ public class SendInvoiceController extends BaseController {
 		emailModel.setPassword("Lyc2020-0908-");
 		emailModel.setContextType("text/html;charset=utf-8");
 		String file = dutyManagementModel.get("yearAndMonth") + "_" + dutyManagementModel.get("customerNo") + "_"
-				+ dutyManagementModel.get("customerAbbreviation") + ".pdf";
-		String[] names = { file };
-		String[] paths = { "c:/file/certificate/" + file };
+				+ dutyManagementModel.get("customerAbbreviation") + ".pdf;;";
+		String path = "c:/file/certificate/" + file;
+
+		String report = dutyManagementModel.get("reportFile");
+		String[] reports = report.split(";;");
+		for (int i = 0; i < reports.length; i++) {
+			file += reports[i].split("/")[reports[i].split("/").length - 1] + ";;";
+			path += reports[i].replaceAll("\\\\", "/") + ";;";
+		}
+
+		String[] names = file.split(";;");
+		String[] paths = path.split(";;");
 		emailModel.setNames(names);
 		emailModel.setPaths(paths);
 		// 送信

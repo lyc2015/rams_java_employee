@@ -26,6 +26,15 @@ public class SendInvoiceWorkTimeModel {
 	String quantity;
 	String bankCode;
 	String remark;
+	String workingTimeReport;
+
+	public String getWorkingTimeReport() {
+		return workingTimeReport;
+	}
+
+	public void setWorkingTimeReport(String workingTimeReport) {
+		this.workingTimeReport = workingTimeReport;
+	}
 
 	public String getInvoiceNo() {
 		return invoiceNo;

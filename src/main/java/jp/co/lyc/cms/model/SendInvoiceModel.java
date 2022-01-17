@@ -21,6 +21,15 @@ public class SendInvoiceModel {
 	String havePDF;
 	String sendLetterDate;
 	String sendLetterStatus;
+	String workingTimeReport;
+
+	public String getWorkingTimeReport() {
+		return workingTimeReport;
+	}
+
+	public void setWorkingTimeReport(String workingTimeReport) {
+		this.workingTimeReport = workingTimeReport;
+	}
 
 	public String getSendLetterDate() {
 		return sendLetterDate;
