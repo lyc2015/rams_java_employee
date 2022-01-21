@@ -429,6 +429,7 @@ public class SalesProfitController extends BaseController {
 		logger.info("SalesProfitController.getSalesPointInfo:" + "検索結束");
 		if (siteList.size() > 0) {
 			int siteRoleNameAll = 0;
+			int BPsiteRoleNameAll = 0;
 			int profitAll = 0;
 			for (int i = 0; i < siteList.size(); i++) {
 				String yearAndMonth = siteList.get(i).getAdmissionStartDate().substring(0, 6);
@@ -573,6 +574,9 @@ public class SalesProfitController extends BaseController {
 						siteRoleNameAll += Integer.parseInt(siteList.get(i).getProfit()) - salary;
 						siteList.get(i).setSiteRoleName(
 								Integer.toString(Integer.parseInt(siteList.get(i).getProfit()) - salary));
+						if (siteList.get(i).getEmployeeNo().contains("SP")) {
+							BPsiteRoleNameAll += (Integer.parseInt(siteList.get(i).getProfit()) - salary) * 0.5;
+						}
 					} else if (siteList.get(i).getEmployeeStatus().equals("1")) {
 						employeeStatus = "協力";
 						if (siteList.get(i).getBpUnitPrice() != null) {
@@ -580,6 +584,7 @@ public class SalesProfitController extends BaseController {
 								bpSalary = Integer.parseInt(siteList.get(i).getBpUnitPrice()) * months * 10000;
 							siteList.get(i).setSalary(Integer.toString(bpSalary));
 							siteRoleNameAll += Integer.parseInt(siteList.get(i).getProfit()) - bpSalary;
+							BPsiteRoleNameAll += (Integer.parseInt(siteList.get(i).getProfit()) - bpSalary) * 0.3;
 						}
 						siteList.get(i).setSiteRoleName(
 								Integer.toString(Integer.parseInt(siteList.get(i).getProfit()) - bpSalary));
@@ -609,6 +614,7 @@ public class SalesProfitController extends BaseController {
 
 			siteList.get(0).setProfitAll(formatString((float) profitAll));
 			siteList.get(0).setSiteRoleNameAll(formatString((float) siteRoleNameAll));
+			siteList.get(0).setBpSiteRoleNameAll(formatString((float) BPsiteRoleNameAll));
 		}
 		return siteList;
 	}

@@ -32,6 +32,7 @@ public class SalesInfoModel {
 	String bpBelongCustomerCode; // 所属会社
 	String profitAll; // 売上合計
 	String siteRoleNameAll; // 粗利合計
+	String bpSiteRoleNameAll; // BP営業粗利合計
 	String bpUnitPrice; // BP単価
 	String reflectYearAndMonth; // 反映年月
 	String customerNo; // 会社番号
@@ -53,6 +54,14 @@ public class SalesInfoModel {
 	String workState; // 現場状態
 	boolean firstAdmission; // 初めての現場
 	String introducer; // 紹介者
+
+	public String getBpSiteRoleNameAll() {
+		return bpSiteRoleNameAll;
+	}
+
+	public void setBpSiteRoleNameAll(String bpSiteRoleNameAll) {
+		this.bpSiteRoleNameAll = bpSiteRoleNameAll;
+	}
 
 	public String getIntroducer() {
 		return introducer;
