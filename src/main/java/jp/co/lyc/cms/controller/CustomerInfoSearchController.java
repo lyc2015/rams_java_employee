@@ -454,6 +454,9 @@ public class CustomerInfoSearchController {
 		if (!UtilsCheckMethod.isNullOrEmpty(customerInfoMod.getContactDate())) {
 			sendMap.put("contactDate", customerInfoMod.getContactDate());
 		}
+		if (!UtilsCheckMethod.isNullOrEmpty(customerInfoMod.getSalesStaff())) {
+			sendMap.put("salesStaff", customerInfoMod.getSalesStaff());
+		}
 		logger.info("CustomerInfoController.onloadPage:" + "検索終了");
 		return customerInfoSearchService.SelectCustomerInfo(sendMap);
 	}
