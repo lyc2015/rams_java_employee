@@ -729,11 +729,15 @@
 		T002EmployeeDetail.occupationCode =
 		M014Occupation.occupationCode
 		where
-		T002EmployeeDetail.occupationCode =
+		(T002EmployeeDetail.occupationCode =
 		"4"
 		or T002EmployeeDetail.occupationCode = "1"
 		or
-		T002EmployeeDetail.occupationCode = "5";
+		T002EmployeeDetail.occupationCode = "5")
+		AND (T002EmployeeDetail.employeeFormCode !=
+		"4" or
+		T002EmployeeDetail.retirementResonClassification = "2" or
+		T002EmployeeDetail.retirementYearAndMonth &gt; now());
 	</select>
 
 	<!--フレームワーク -->
