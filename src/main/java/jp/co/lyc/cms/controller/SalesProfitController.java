@@ -457,8 +457,10 @@ public class SalesProfitController extends BaseController {
 				siteList.get(i).setEmployeeName(employeeName);
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
-				String startTime = dateFormat.format(salesProfitModel.getStartDate()).toString();
-				String endTime = dateFormat.format(salesProfitModel.getEndDate()).toString();
+				//String startTime = dateFormat.format(salesProfitModel.getStartDate()).toString();
+				//String endTime = dateFormat.format(salesProfitModel.getEndDate()).toString();
+				String startTime = salesProfitModel.getStartTime().toString();
+				String endTime = salesProfitModel.getEndTime().toString();
 				String admissionStartDate = siteList.get(i).getAdmissionStartDate().substring(0, 6);
 				String admissionEndDate = "";
 				if (siteList.get(i).getAdmissionEndDate() != null)
