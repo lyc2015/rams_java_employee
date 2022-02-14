@@ -227,6 +227,7 @@
 		#{yearAndMonth}
 		and
 		workContents = #{oldWorkContents}
+		and employeeNo = #{employeeNo}
 	</delete>
 
 	<delete id="deleteInvoiceDataAll" parameterType="String">
@@ -258,6 +259,8 @@
 		and
 		yearAndMonth =
 		#{yearAndMonth}
+		and employeeNo =
+		#{employeeNo}
 	</update>
 
 	<select id="selectBankAccountInfo"
