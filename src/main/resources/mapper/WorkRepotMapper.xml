@@ -62,7 +62,7 @@
 		SET
 		updateTime= date_add(now(), interval 9 hour),
 		sumWorkTime = #{sumWorkTime},
-		updateUser = #{employeeName}
+		updateUser = #{updateUser}
 		WHERE
 		employeeNo = #{employeeNo}
 		and attendanceYearAndMonth =
@@ -89,7 +89,7 @@
 		workingTimeReport= #{workingTimeReport},
 		updateTime= date_add(now(), interval 9 hour),
 		updateUser =
-		#{employeeName}
+		#{updateUser}
 		WHERE
 		employeeNo = #{employeeNo}
 		and

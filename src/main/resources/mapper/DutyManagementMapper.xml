@@ -12,8 +12,7 @@
 		SELECT
 		(@rowNo:=@rowNo + 1) AS rowNo,
 		t001.employeeNo,
-		concat_ws("
-		",t001.employeeFristName,t001.employeeLastName) as employeeName,
+		concat(t001.employeeFristName,t001.employeeLastName) as employeeName,
 		if(t007.customerAbbreviation is null or t007.customerAbbreviation =
 		"",t007.customerName,t007.customerAbbreviation) as customerName,
 		m013.stationName,

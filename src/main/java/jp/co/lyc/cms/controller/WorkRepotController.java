@@ -81,9 +81,12 @@ public class WorkRepotController extends BaseController {
 	 */
 	@RequestMapping(value = "/selectWorkRepot", method = RequestMethod.POST)
 	@ResponseBody
-	public List<WorkRepotModel> selectWorkRepot(WorkRepotModel workRepotModel) {
-		workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-		workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+	public List<WorkRepotModel> selectWorkRepot(@RequestBody WorkRepotModel workRepotModel) {
+		if(workRepotModel.getEmployeeNo() == null) {
+			workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+			workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		}
+		workRepotModel.setUpdateUser(getSession().getAttribute("employeeName").toString()); 
 		logger.info("WorkRepotController.selectCheckWorkRepot:" + "検索開始");
 		workRepotService.selectCheckWorkRepot(workRepotModel);
 		logger.info("WorkRepotController.selectCheckWorkRepot:" + "検索終了");
@@ -104,8 +107,11 @@ public class WorkRepotController extends BaseController {
 	@RequestMapping(value = "/updateworkRepot", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean updateWorkRepotModel(@RequestBody WorkRepotModel emp){
-		emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-		emp.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+		if(emp.getEmployeeNo() == null) {
+			emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+			emp.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+		}
+		emp.setUpdateUser(getSession().getAttribute("employeeName").toString()); 
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート開始");
 		boolean result = false;	
 		result  = workRepotService.updateWorkRepot(emp);
@@ -121,7 +127,9 @@ public class WorkRepotController extends BaseController {
 	@RequestMapping(value = "/clearworkRepot", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean clearWorkRepotModel(@RequestBody WorkRepotModel emp){
-		emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		if(emp.getEmployeeNo() == null) {
+			emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		}
 		logger.info("DutyManagementController.updateworkRepot:" + "クリア開始");
 		boolean result = false;	
 		result  = workRepotService.clearworkRepot(emp);
@@ -142,8 +150,11 @@ public class WorkRepotController extends BaseController {
 		JSONObject jsonObject = JSON.parseObject(JSONEmp);
 		WorkRepotModel workRepotModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<WorkRepotModel>() {
 		});
-		workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-		workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		if(workRepotModel.getEmployeeNo() == null) {
+			workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+			workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+		}
+		workRepotModel.setUpdateUser(getSession().getAttribute("employeeName").toString()); 	
 		String getFilename;
 		try {
 			getFilename=upload(workRepotModel,workRepotFile);

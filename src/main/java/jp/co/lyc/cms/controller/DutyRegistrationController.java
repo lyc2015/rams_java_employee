@@ -196,14 +196,21 @@ public class DutyRegistrationController extends BaseController {
 		logger.info("DutyRegistrationController.dutySelect:" + "検索開始");
 		Map<String, Object> result = new HashMap<String, Object>();
 		JSONObject jsonObject = JSON.parseObject(requestJson);
-		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		if(jsonObject.get("employeeNo") == null)
+			jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
 		jsonObject.put("breakTimeYearMonth", jsonObject.getOrDefault("yearMonth", ""));
 
 		BreakTimeModel breakTimeModel = dutyRegistrationService.selectDutyRegistration(jsonObject.getInnerMap());
 
 		result.put("breakTime", breakTimeModel);
-		result.put("employeeNo", super.getSession().getAttribute("employeeNo"));
-		result.put("employeeName", super.getSession().getAttribute("employeeName"));
+		if(jsonObject.get("employeeNo") == null)
+			result.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		else
+			result.put("employeeNo", jsonObject.get("employeeNo").toString());
+		if(jsonObject.get("employeeName") == null)
+			result.put("employeeName", super.getSession().getAttribute("employeeName"));
+		else
+			result.put("employeeName", jsonObject.get("employeeName").toString());
 		ArrayList<Map<String, Object>> dutyData = this.dutySelect(requestJson);
 		result.put("dateData", dutyData);
 		if (dutyData != null && dutyData.size() > 0) {
@@ -275,7 +282,8 @@ public class DutyRegistrationController extends BaseController {
 		ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		EmployeeWorkTimeModel[] arrEmployeeWorkTimeModel = null;
 		JSONObject jsonObject = JSON.parseObject(requestJson);
-		jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
+		if(jsonObject.get("employeeNo") == null)
+			jsonObject.put("employeeNo", super.getSession().getAttribute("employeeNo"));
 		jsonObject.put("yearAndMonth", jsonObject.getOrDefault("yearMonth", ""));
 		arrEmployeeWorkTimeModel = dutyRegistrationService.selectDuty(jsonObject.getInnerMap());
 		Map<String, Object> tempMap = new HashMap<String, Object>();
