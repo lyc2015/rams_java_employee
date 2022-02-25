@@ -45,7 +45,9 @@ public class WorkRepotController extends BaseController {
 	@ResponseBody
 	public Map<String, Object> selectWorkTime(@RequestBody WorkRepotModel workRepotModel) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		if(workRepotModel.getEmployeeNo() == null) {
+			workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		}
 		logger.info("WorkRepotController.selectWorkTime:" + "検索開始");
 		String count = workRepotService.selectWorkTime(workRepotModel);
 		if(Integer.parseInt(count) > 0)
@@ -92,6 +94,11 @@ public class WorkRepotController extends BaseController {
 		logger.info("WorkRepotController.selectCheckWorkRepot:" + "検索終了");
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索開始");
 		List<WorkRepotModel> checkMod = workRepotService.selectWorkRepot(workRepotModel);
+		if(checkMod.size() == 1){
+			WorkRepotModel tempModel = new WorkRepotModel();
+			tempModel.setAttendanceYearAndMonth(String.valueOf(Integer.parseInt(checkMod.get(0).getAttendanceYearAndMonth()) - 1));
+			checkMod.add(tempModel);
+		}
 		for(int i = 0;i < checkMod.size();i++) {
 			checkMod.get(i).setId(i);
 		}

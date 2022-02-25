@@ -83,17 +83,33 @@
 		and attendanceYearAndMonth = #{attendanceYearAndMonth}
 	</update>
 	<update id="updateWorkRepotFile" parameterType="String">
+		INSERT INTO
+		T018WorkTotalTime(
+		employeeNo,
+		attendanceYearAndMonth,
+		attendanceRegisterFlag,
+		workingTimeReport,
+		approvalStatus,
+		sentReportStatus,
+		updateTime,
+		createTime,
+		updateUser)
+		values
+		(#{employeeNo},
+		#{attendanceYearAndMonth},
+		0,
+		#{workingTimeReport},
+		0,
+		0,
+		date_add(now(), interval 9 hour),
+		date_add(now(), interval 9 hour),
+		#{updateUser})
+		ON DUPLICATE KEY
 		UPDATE
-		T018WorkTotalTime
-		SET
-		workingTimeReport= #{workingTimeReport},
-		updateTime= date_add(now(), interval 9 hour),
+		workingTimeReport = #{workingTimeReport},
+		updateTime = date_add(now(), interval 9 hour),
 		updateUser =
 		#{updateUser}
-		WHERE
-		employeeNo = #{employeeNo}
-		and
-		attendanceYearAndMonth = #{attendanceYearAndMonth}
 	</update>
 	<select id="selectWorkTime" resultMap="String"
 		parameterType="String">
