@@ -41,7 +41,8 @@ public class CostRegistrationController extends BaseController {
 	@RequestMapping(value = "/selectCostRegistration", method = RequestMethod.POST)
 	@ResponseBody
 	public List<CostRegistrationModel> selectCostRegistration(@RequestBody CostRegistrationModel costRegistrationModel) {
-		costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+		if(costRegistrationModel.getEmployeeNo() == null)
+			costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
 		logger.info("CostRegistrationController.selectCostRegistration:" + "検索開始");
 		List<CostRegistrationModel> checkMod = costRegistrationService.selectCostRegistration(costRegistrationModel);
 		logger.info("CostRegistrationController.selectCostRegistration:" + "検索終了");
@@ -69,8 +70,10 @@ public class CostRegistrationController extends BaseController {
 		JSONObject jsonObject = JSON.parseObject(JSONEmp);
 		CostRegistrationModel costRegistrationModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<CostRegistrationModel>() {
 		});
-		costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-		costRegistrationModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		if(costRegistrationModel.getEmployeeNo() == null) {
+			costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+			costRegistrationModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		}
 		costRegistrationModel.setCostFile(getName(costRegistrationModel, costFile));
 		String getFilename;
 
@@ -112,8 +115,11 @@ public class CostRegistrationController extends BaseController {
 		JSONObject jsonObject = JSON.parseObject(JSONEmp);
 		CostRegistrationModel costRegistrationModel = JSON.parseObject(jsonObject.toJSONString(), new TypeReference<CostRegistrationModel>() {
 		});
-		costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-		costRegistrationModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		if(costRegistrationModel.getEmployeeNo() == null) {
+			costRegistrationModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
+			costRegistrationModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 
+		}
+
 		String getFilename="";
 		if(costFile==null&&!costRegistrationModel.getCostClassificationCode().equals(costRegistrationModel.getOldCostClassificationCode())) {
 			costRegistrationModel.setCostFile("");
