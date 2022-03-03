@@ -492,6 +492,8 @@ public class SendInvoiceController extends BaseController {
 			String workPeriod = String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + "01~"
 					+ String.valueOf(year) + (month < 10 ? "0" + month : String.valueOf(month)) + day;
 
+			tempMap.put("rowNo", String.valueOf(dataList.get(i).getShowNo()));
+
 			tempMap.put("workContents", dataList.get(i).getWorkContents());
 			tempMap.put("employeeName", dataList.get(i).getEmployeeName());
 			tempMap.put("workPeriod", dataList.get(i).getWorkPeriod());
@@ -550,8 +552,9 @@ public class SendInvoiceController extends BaseController {
 							: ("\n" + "￥" + df.format(Integer.parseInt(deductionsAndOvertimePayOfUnitPrice2))) + "/H"));
 			int sum = Integer.parseInt(dataList.get(i).getUnitPrice().equals("") ? "0" : dataList.get(i).getUnitPrice())
 					* Integer.parseInt(dataList.get(i).getQuantity() == null ? "0" : dataList.get(i).getQuantity())
-					+ Integer.parseInt(dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice() == null ? "0"
-							: dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice());
+					+ Integer.parseInt(dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice() == null
+							|| dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice().equals("") ? "0"
+									: dataList.get(i).getDeductionsAndOvertimePayOfUnitPrice());
 			tempMap.put("sum", df.format(sum) + (dataList.get(i).getRequestUnitCode().equals("0") ? "" : "(税込)"));
 			if (dataList.get(i).getRequestUnitCode().equals("0"))
 				subTotalAmount += sum;
