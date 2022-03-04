@@ -588,7 +588,7 @@ public class SendInvoiceController extends BaseController {
 		emailModel.setMailTitle(dutyManagementModel.get("mailTitle"));
 		emailModel.setMailConfirmContont(dutyManagementModel.get("mailConfirmContont"));
 		emailModel.setMailFrom(dutyManagementModel.get("mailFrom"));
-		emailModel.setSelectedmail(dutyManagementModel.get("mail"));
+		emailModel.setSelectedmail(dutyManagementModel.get("mail").replaceAll(";", ","));
 		emailModel.setUserName(getSession().getAttribute("employeeName").toString());
 		emailModel.setPassword("Lyc2020-0908-");
 		emailModel.setContextType("text/html;charset=utf-8");
