@@ -259,8 +259,6 @@
 		and
 		yearAndMonth =
 		#{yearAndMonth}
-		and employeeNo =
-		#{employeeNo}
 	</update>
 
 	<select id="selectBankAccountInfo"

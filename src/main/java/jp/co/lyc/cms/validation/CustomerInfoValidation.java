@@ -107,10 +107,11 @@ public class CustomerInfoValidation implements Validator {
 										errors.rejectValue("customerDepartmentList", "", StatusCodeToMsgMap
 												.getErrMsgbyCodeReplace("MSG013", (j + 1 + ""), "お客様部門メールの枠数"));
 									}
-									if (!UtilsCheckMethod.checkMail(a.getCustomerDepartmentMail())) {
-										errors.rejectValue("customerDepartmentList", "", StatusCodeToMsgMap
-												.getErrMsgbyCodeReplace("MSG015", (j + 1 + ""), "お客様部門メール"));
-									}
+									/*
+									 * if (!UtilsCheckMethod.checkMail(a.getCustomerDepartmentMail())) {
+									 * errors.rejectValue("customerDepartmentList", "", StatusCodeToMsgMap
+									 * .getErrMsgbyCodeReplace("MSG015", (j + 1 + ""), "お客様部門メール")); }
+									 */
 								}
 							}
 						}

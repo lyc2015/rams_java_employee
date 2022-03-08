@@ -75,11 +75,35 @@
 	</insert>
 	<!-- 口座情報アップデート -->
 	<update id="updateAccount" parameterType="String">
-		UPDATE T004AccountInfo
-		SET
-		<if test="bankCode != null">
+		INSERT INTO
+		T004AccountInfo(
+		employeeOrCustomerNo,
+		accountBelongsStatus,
+		bankCode,
+		bankBranchCode,
+		accountNo,
+		accountName,
+		accountTypeStatus,
+		updateTime,
+		createTime,
+		updateUser
+		)
+		VALUE(
+		#{employeeOrCustomerNo},
+		#{accountBelongsStatus},
+		#{bankCode},
+		#{bankBranchCode},
+		#{accountNo},
+		#{accountName},
+		#{accountTypeStatus},
+		NOW(),
+		NOW(),
+		#{updateUser})
+		on DUPLICATE key
+		UPDATE
+		<!-- <if test="bankCode != null">
 			bankCode = #{bankCode},
-		</if>
+		</if> -->
 		<if test="bankBranchCode != null">
 			bankBranchCode = #{bankBranchCode},
 		</if>
@@ -92,11 +116,6 @@
 		accountTypeStatus = #{accountTypeStatus},
 		updateTime = NOW(),
 		updateUser = #{updateUser}
-		WHERE
-		employeeOrCustomerNo =
-		#{employeeOrCustomerNo}
-		AND accountBelongsStatus =
-		#{accountBelongsStatus}
 	</update>
 
 	<!-- 口座情報削除 -->

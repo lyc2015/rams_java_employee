@@ -1,6 +1,7 @@
 package jp.co.lyc.cms.service;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,8 +25,8 @@ public class AccountInfoService {
 	 * @return
 	 */
 
-	public AccountInfoModel selectAccountInfo(String employeeNo) {
-		AccountInfoModel resultMod = bankMapper.selectAccountInfo(employeeNo);
+	public List<AccountInfoModel> selectAccountInfo(String employeeNo) {
+		List<AccountInfoModel> resultMod = bankMapper.selectAccountInfo(employeeNo);
 		return resultMod;
 	}
 

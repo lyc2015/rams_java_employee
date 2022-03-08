@@ -1,6 +1,8 @@
 package jp.co.lyc.cms.mapper;
 
 import java.util.HashMap;
+import java.util.List;
+
 import jp.co.lyc.cms.model.AccountInfoModel;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,7 +15,7 @@ public interface AccountInfoMapper {
 	 * @param accountBelongsStatus
 	 * @return
 	 */
-	public AccountInfoModel selectAccountInfo(String employeeOrCustomerNo);
+	public List<AccountInfoModel> selectAccountInfo(String employeeOrCustomerNo);
 	/**
 	 * インサート
 	 * @param sendMap
