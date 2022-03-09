@@ -103,7 +103,7 @@ public class CustomerInfoValidation implements Validator {
 									}
 								}
 								if (!UtilsCheckMethod.isNullOrEmpty(a.getCustomerDepartmentMail())) {
-									if (a.getCustomerDepartmentMail().length() > 50) {
+									if (a.getCustomerDepartmentMail().length() > 200) {
 										errors.rejectValue("customerDepartmentList", "", StatusCodeToMsgMap
 												.getErrMsgbyCodeReplace("MSG013", (j + 1 + ""), "お客様部門メールの枠数"));
 									}
