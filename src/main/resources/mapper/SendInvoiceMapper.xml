@@ -178,7 +178,9 @@
 
 	<insert id="insertInvoiceData" parameterType="String">
 		INSERT INTO
-		T024InvoiceData VALUES (
+		T024InvoiceData
+		(customerNo,yearAndMonth,workContents,invoiceNo,customerName,invoiceDate,deadLine,employeeNo,workPeriod,workingTime,requestUnitCode,quantity,unitPrice,bankCode,remark,sendLetterDate,sendLetterStatus,updateTime,createTime,updateUser)
+		VALUES (
 		#{customerNo},#{yearAndMonth},#{workContents},#{invoiceNo},#{customerName},#{invoiceDate},"",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},"1",#{unitPrice},
 		"0","","","0",now(),now(),#{updateUser}
@@ -211,7 +213,9 @@
 
 	<insert id="insertNewInvoiceData" parameterType="String">
 		INSERT INTO
-		T024InvoiceData VALUES (
+		T024InvoiceData
+		(customerNo,yearAndMonth,workContents,invoiceNo,customerName,invoiceDate,deadLine,employeeNo,workPeriod,workingTime,requestUnitCode,quantity,unitPrice,bankCode,remark,sendLetterDate,sendLetterStatus,updateTime,createTime,updateUser)
+		VALUES (
 		#{customerNo},#{yearAndMonth},#{workContents},#{invoiceNo},"","","",
 		#{employeeNo},#{workPeriod},#{workingTime},#{requestUnitCode},#{quantity},#{unitPrice},
 		"0","","","0",now(),now(),#{updateUser}
@@ -227,7 +231,8 @@
 		#{yearAndMonth}
 		and
 		workContents = #{oldWorkContents}
-		and employeeNo = #{employeeNo}
+		and employeeNo =
+		#{employeeNo}
 	</delete>
 
 	<delete id="deleteInvoiceDataAll" parameterType="String">

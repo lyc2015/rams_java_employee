@@ -22,8 +22,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 
 import jp.co.lyc.cms.common.BaseController;
+import jp.co.lyc.cms.model.DutyManagementModel;
 import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.model.WorkRepotModel;
+import jp.co.lyc.cms.service.DutyManagementService;
 import jp.co.lyc.cms.service.WorkRepotService;
 
 @Controller
@@ -35,6 +37,8 @@ public class WorkRepotController extends BaseController {
 	WorkRepotService workRepotService;
 	@Autowired
 	S3Controller s3Controller;
+	@Autowired
+	DutyManagementService dutyManagementService;
 	
 	/**
 	 * 勤務時間入力有り無し判断
@@ -103,6 +107,17 @@ public class WorkRepotController extends BaseController {
 			checkMod.get(i).setId(i);
 		}
 		logger.info("WorkRepotController.selectWorkRepot:" + "検索終了");
+		for(int i = 0;i < checkMod.size();i++) {
+			if(checkMod.get(i).getSumWorkTime()== null ||checkMod.get(i).getSumWorkTime().equals("")) {
+				HashMap<String, String> dutyManagementModel = new HashMap<String, String>();
+				dutyManagementModel.put("yearAndMonth", checkMod.get(i).getAttendanceYearAndMonth());
+				List<DutyManagementModel> workTimeList = dutyManagementService.selectWorkTime(dutyManagementModel);
+				if(workTimeList.size() > 0) {
+					checkMod.get(i).setSumWorkTime(workTimeList.get(0).getWorkTime());
+				}
+			}
+		}
+
 		return checkMod;
 	}
 
