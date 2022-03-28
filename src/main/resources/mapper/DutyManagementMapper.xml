@@ -149,7 +149,7 @@
 
 	<select id="selectWorkTime" resultMap="DutyManagement"
 		parameterType="String">
-		SELECT employeeNo,yearAndMonth,sum(workTime) as workTime
+		SELECT employeeNo,yearAndMonth,sum(workTime) as workTime,updateTime,updateUser
 		FROM T016EmployeeWorkTime
 		where yearAndMonth = #{yearAndMonth}
 		group by

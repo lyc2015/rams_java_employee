@@ -105,7 +105,7 @@ public class DutyRegistrationController extends BaseController {
 			tempJsonObject.put("customer", jsonObject.getOrDefault("customer", ""));
 			tempJsonObject.put("siteResponsiblePerson", jsonObject.getOrDefault("siteResponsiblePerson", ""));
 			tempJsonObject.put("systemName", jsonObject.getOrDefault("systemName", ""));
-			tempJsonObject.put("updateUser", super.getSession().getAttribute("employeeNo"));
+			tempJsonObject.put("updateUser", super.getSession().getAttribute("employeeName"));
 			EmployeeWorkTimeModel employeeWorkTimeModel = EmployeeWorkTimeModel
 					.fromHashMap(tempJsonObject.getInnerMap());
 			EmployeeWorkTimeModel[] checkMod = dutyRegistrationService.selectDuty(employeeWorkTimeModel.toHashMap());

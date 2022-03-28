@@ -112,8 +112,13 @@ public class WorkRepotController extends BaseController {
 				HashMap<String, String> dutyManagementModel = new HashMap<String, String>();
 				dutyManagementModel.put("yearAndMonth", checkMod.get(i).getAttendanceYearAndMonth());
 				List<DutyManagementModel> workTimeList = dutyManagementService.selectWorkTime(dutyManagementModel);
-				if(workTimeList.size() > 0) {
-					checkMod.get(i).setSumWorkTime(workTimeList.get(0).getWorkTime());
+				for(int j = 0;j < workTimeList.size();j++) {
+					if(workTimeList.get(j).getEmployeeNo().equals(workRepotModel.getEmployeeNo())){
+						checkMod.get(i).setSumWorkTime(workTimeList.get(j).getWorkTime().replace(".0", ""));
+						checkMod.get(i).setUpdateTime(workTimeList.get(j).getUpdateTime());
+						checkMod.get(i).setUpdateUser(workTimeList.get(j).getUpdateUser());
+						break;
+					}
 				}
 			}
 		}
