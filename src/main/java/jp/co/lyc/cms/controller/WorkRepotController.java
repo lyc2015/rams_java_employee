@@ -123,7 +123,49 @@ public class WorkRepotController extends BaseController {
 			}
 		}
 
+		int sumMonth = getMonths(checkMod.get(0).getAttendanceYearAndMonth(), checkMod.get(checkMod.size() - 1).getAttendanceYearAndMonth());
+		if(checkMod.size() != sumMonth) {
+			List<WorkRepotModel> returnMod = new ArrayList<WorkRepotModel>();
+			String yearAndMonth = checkMod.get(checkMod.size() - 1).getAttendanceYearAndMonth();
+			for(int i = 0; i < sumMonth; i++) {
+				int year = Integer.parseInt(yearAndMonth.substring(0,4));
+				int month = Integer.parseInt(yearAndMonth.substring(4,6)) + i;
+				String attendanceYearAndMonth = (month > 12 ? String.valueOf(year + 1) + (month - 12 < 10 ? ("0" + String.valueOf(month - 12)) : String.valueOf(month - 12)) : String.valueOf(year) + (month < 10 ? ("0" + String.valueOf(month)) : String.valueOf(month)));
+				WorkRepotModel tempModel = new WorkRepotModel();
+				tempModel.setAttendanceYearAndMonth(attendanceYearAndMonth);
+				boolean flag = false;
+				for(int j = 0;j < checkMod.size(); j++) {
+					if(checkMod.get(j).getAttendanceYearAndMonth().equals(attendanceYearAndMonth)) {
+						returnMod.add(checkMod.get(j));
+						flag = true;
+						break;
+					}
+				}
+				if(!flag) {
+					returnMod.add(tempModel);
+				}
+			}
+			checkMod = new ArrayList<WorkRepotModel>();
+			for(int i = 0; i < returnMod.size(); i++) {
+				checkMod.add(returnMod.get(returnMod.size()- i - 1));
+			}
+		}
 		return checkMod;
+	}
+	
+	public int getMonths(String bigDate,String smallDate) {
+		int bigYear = Integer.parseInt(bigDate.substring(0,4));
+		int smallYear = Integer.parseInt(smallDate.substring(0,4));
+		int bigMonth = Integer.parseInt(bigDate.substring(4,6));
+		int smallMonth = Integer.parseInt(smallDate.substring(4,6));
+		int month = 0;
+		if(bigYear > smallYear) {
+			month = 12 + (bigMonth - smallMonth) + 1;
+		}else if(bigYear == smallYear){
+			month = (bigMonth - smallYear) + 1;
+		}
+		
+		return month;
 	}
 
 	/**
