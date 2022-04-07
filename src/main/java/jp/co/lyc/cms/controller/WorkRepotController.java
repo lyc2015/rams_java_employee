@@ -162,7 +162,7 @@ public class WorkRepotController extends BaseController {
 		if(bigYear > smallYear) {
 			month = 12 + (bigMonth - smallMonth) + 1;
 		}else if(bigYear == smallYear){
-			month = (bigMonth - smallYear) + 1;
+			month = (bigMonth - smallMonth) + 1;
 		}
 		
 		return month;
