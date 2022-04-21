@@ -142,6 +142,7 @@ and
 		T001Employee T001
 	LEFT JOIN T011BpInfoSupplement T011
 		ON T001.employeeNo = T011.bpEmployeeNo
+	group by employeeNo
     </select>
     <!-- 要員追加機能の新規　20201216 　張棟　END -->
     
