@@ -44,7 +44,7 @@ public class S3Controller extends BaseController {
 	@Autowired
 	S3AccessKeyMapper s3AccessKeyMapper;
 
-	final String BUCKET_NAME = "ramsdatabase"; // 【你的bucket名字】
+	final String BUCKET_NAME = "newramsdatabase"; // 【你的bucket名字】
 	String AWS_ACCESS_KEY = " "; // 【你的 acfcess_key】
 	String AWS_SECRET_KEY = " "; // 【你的 aws_secret_key】
 
