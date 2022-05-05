@@ -507,7 +507,7 @@ public class EmployeeInfoController extends BaseController {
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
 			} else {
-				if (!resumeInfo1Key.equals("")) {
+				if (!resumeInfo1Key.equals("") && emp.getResumeName1().equals("")) {
 					String deletefileKey = resumeInfo1Key.split("/file/")[1];
 					s3Model.setFileKey(deletefileKey);
 					s3Controller.deleteFile(s3Model);
@@ -525,11 +525,17 @@ public class EmployeeInfoController extends BaseController {
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
 			} else {
-				if (!resumeInfo2Key.equals("")) {
+				if (!resumeInfo2Key.equals("") && emp.getResumeName2().equals("")) {
 					String deletefileKey = resumeInfo2Key.split("/file/")[1];
 					s3Model.setFileKey(deletefileKey);
 					s3Controller.deleteFile(s3Model);
 				}
+			}
+			if (emp.getResumeName1().equals("") && emp.getResumeName2().equals("")) {
+				String deletefileKey = resumeInfo2Key.split("/file/")[1].substring(0,
+						resumeInfo2Key.split("/file/")[1].lastIndexOf("/") + 1);
+				s3Model.setFileKey(deletefileKey);
+				s3Controller.deleteFolder(s3Model);
 			}
 			result = employeeInfoService.updateEmployee(sendMap);
 			if (!emp.getNewEmployeeNo().equals(emp.getEmployeeNo())) {
