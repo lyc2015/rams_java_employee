@@ -39,7 +39,7 @@ public class WorkRepotController extends BaseController {
 	S3Controller s3Controller;
 	@Autowired
 	DutyManagementService dutyManagementService;
-	
+ 
 	/**
 	 * 勤務時間入力有り無し判断
 	 * @param topCustomerMod
@@ -79,7 +79,7 @@ public class WorkRepotController extends BaseController {
 
 		return result;
 	}
-	
+ 
 	/**
 	 * 登録ボタン
 	 * @param topCustomerMod
@@ -115,6 +115,7 @@ public class WorkRepotController extends BaseController {
 				for(int j = 0;j < workTimeList.size();j++) {
 					if(workTimeList.get(j).getEmployeeNo().equals(workRepotModel.getEmployeeNo())){
 						checkMod.get(i).setSumWorkTime(workTimeList.get(j).getWorkTime().replace(".0", ""));
+						checkMod.get(i).setIsByEveryDay(true);
 						checkMod.get(i).setUpdateTime(workTimeList.get(j).getUpdateTime());
 						checkMod.get(i).setUpdateUser(workTimeList.get(j).getUpdateUser());
 						break;
@@ -123,16 +124,17 @@ public class WorkRepotController extends BaseController {
 			}
 		}
 
-		int sumMonth = getMonths(checkMod.get(0).getAttendanceYearAndMonth(), checkMod.get(checkMod.size() - 1).getAttendanceYearAndMonth());
-		if(checkMod.size() != sumMonth) {
+		int sumMonth = getMonths(checkMod.get(0).getAttendanceYearAndMonth(),
+				checkMod.get(checkMod.size() - 1).getAttendanceYearAndMonth());
+		if (checkMod.size() != sumMonth) {
+			logger.info("WorkRepotController.selectWorkRepot: 数据不匹配" + "sumMonth: "+sumMonth+",listSize: "+checkMod.size());
 			List<WorkRepotModel> returnMod = new ArrayList<WorkRepotModel>();
 			String yearAndMonth = checkMod.get(checkMod.size() - 1).getAttendanceYearAndMonth();
 			for(int i = 0; i < sumMonth; i++) {
-				int year = Integer.parseInt(yearAndMonth.substring(0,4));
-				int month = Integer.parseInt(yearAndMonth.substring(4,6)) + i;
-				String attendanceYearAndMonth = (month > 12 ? String.valueOf(year + 1) + (month - 12 < 10 ? ("0" + String.valueOf(month - 12)) : String.valueOf(month - 12)) : String.valueOf(year) + (month < 10 ? ("0" + String.valueOf(month)) : String.valueOf(month)));
+				String attendanceYearAndMonth = getAttendanceYearAndMonth(yearAndMonth, i);
 				WorkRepotModel tempModel = new WorkRepotModel();
 				tempModel.setAttendanceYearAndMonth(attendanceYearAndMonth);
+				tempModel.setEmployeeNo(workRepotModel.getEmployeeNo());
 				boolean flag = false;
 				for(int j = 0;j < checkMod.size(); j++) {
 					if(checkMod.get(j).getAttendanceYearAndMonth().equals(attendanceYearAndMonth)) {
@@ -142,6 +144,8 @@ public class WorkRepotController extends BaseController {
 					}
 				}
 				if(!flag) {
+					workRepotService.insertWorkRepotByYearAndMonth(tempModel);
+					logger.info("WorkRepotController.selectWorkRepot:" + "新增数据, attendanceYearAndMonth: "+tempModel.getAttendanceYearAndMonth()+ "employeeNo: "+tempModel.getEmployeeNo());
 					returnMod.add(tempModel);
 				}
 			}
@@ -152,19 +156,51 @@ public class WorkRepotController extends BaseController {
 		}
 		return checkMod;
 	}
-	
-	public int getMonths(String bigDate,String smallDate) {
-		int bigYear = Integer.parseInt(bigDate.substring(0,4));
-		int smallYear = Integer.parseInt(smallDate.substring(0,4));
-		int bigMonth = Integer.parseInt(bigDate.substring(4,6));
-		int smallMonth = Integer.parseInt(smallDate.substring(4,6));
+ 
+  /**
+   * getAttendanceYearAndMonth
+   * @param yearAndMonth
+   * @param i
+   * @return
+   */
+	public String getAttendanceYearAndMonth(String yearAndMonth, int i) {
+		String attendanceYearAndMonth = "";
+		int year = Integer.parseInt(yearAndMonth.substring(0, 4));
+		int month = Integer.parseInt(yearAndMonth.substring(4, 6)) + i;
+		// 202008 4--> 12 2020 24 > 202201 35 -> 2 ..11 202202
+		int yearSa = month / 12;
+		int monthSa = month % 12;
+
+		if (monthSa == 0) {
+			monthSa = 12;
+			yearSa--;
+		}
+		if (monthSa < 10) {
+			attendanceYearAndMonth = String.valueOf(year + yearSa) + ("0" + String.valueOf(monthSa));
+		} else {
+			attendanceYearAndMonth = String.valueOf(year + yearSa) + String.valueOf(monthSa);
+		}
+
+		return attendanceYearAndMonth;
+	}
+
+	public int getMonths(String bigDate, String smallDate) {
+		int bigYear = Integer.parseInt(bigDate.substring(0, 4));
+		int smallYear = Integer.parseInt(smallDate.substring(0, 4));
+		int bigMonth = Integer.parseInt(bigDate.substring(4, 6));
+		int smallMonth = Integer.parseInt(smallDate.substring(4, 6));
 		int month = 0;
 		if(bigYear > smallYear) {
-			month = 12 + (bigMonth - smallMonth) + 1;
-		}else if(bigYear == smallYear){
+
+			if (bigMonth > smallMonth) {
+				month = (bigYear - smallYear) * 12 + (bigMonth - smallMonth) + 1;
+			} else {
+				month = (bigYear - smallYear) * 12 + (bigMonth - smallMonth + 1);
+			}
+		} else if (bigYear == smallYear) {
 			month = (bigMonth - smallMonth) + 1;
 		}
-		
+
 		return month;
 	}
 
@@ -178,16 +214,16 @@ public class WorkRepotController extends BaseController {
 	public boolean updateWorkRepotModel(@RequestBody WorkRepotModel emp){
 		if(emp.getEmployeeNo() == null) {
 			emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-			emp.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+			emp.setEmployeeName(getSession().getAttribute("employeeName").toString());  
 		}
 		emp.setUpdateUser(getSession().getAttribute("employeeName").toString()); 
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート開始");
-		boolean result = false;	
+		boolean result = false; 
 		result  = workRepotService.updateWorkRepot(emp);
 		logger.info("DutyManagementController.updateworkRepot:" + "アップデート終了");
-		return result;	
+		return result; 
 	}
-	
+ 
 	/**
 	 * ファイルをクリア
 	 * @param topCustomerMod
@@ -200,10 +236,10 @@ public class WorkRepotController extends BaseController {
 			emp.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
 		}
 		logger.info("DutyManagementController.updateworkRepot:" + "クリア開始");
-		boolean result = false;	
+		boolean result = false; 
 		result  = workRepotService.clearworkRepot(emp);
 		logger.info("DutyManagementController.updateworkRepot:" + "クリア終了");
-		return result;	
+		return result; 
 	}
 	/**
 	 * 作業報告書アップロード
@@ -221,9 +257,9 @@ public class WorkRepotController extends BaseController {
 		});
 		if(workRepotModel.getEmployeeNo() == null) {
 			workRepotModel.setEmployeeNo(getSession().getAttribute("employeeNo").toString());
-			workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString()); 	
+			workRepotModel.setEmployeeName(getSession().getAttribute("employeeName").toString());  
 		}
-		workRepotModel.setUpdateUser(getSession().getAttribute("employeeName").toString()); 	
+		workRepotModel.setUpdateUser(getSession().getAttribute("employeeName").toString());  
 		String getFilename;
 		try {
 			getFilename=upload(workRepotModel,workRepotFile);
@@ -245,7 +281,7 @@ public class WorkRepotController extends BaseController {
 		logger.info("WorkRepotController.insertWorkRepot:" + "追加結束");
 		return result;
 	}
-	
+ 
 	public final static String UPLOAD_PATH_PREFIX = "C:"+File.separator+"file"+File.separator;
 	public String upload(WorkRepotModel workRepotModel,MultipartFile workRepotFile) {
 		if (workRepotFile== null) {

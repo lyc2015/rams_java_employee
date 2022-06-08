@@ -26,6 +26,17 @@ public class WorkRepotService {
 	}
 
 	/**
+	 * 画面情報検索 本月
+	 * 
+	 * @param TopCustomerNo
+	 * @return
+	 */
+
+	public void insertWorkRepotByYearAndMonth(WorkRepotModel workRepotModel) {
+		workRepotMapper.insertWorkRepotByYearAndMonth(workRepotModel);
+	}
+	
+	/**
 	 * 画面情報検索
 	 * 
 	 * @param TopCustomerNo

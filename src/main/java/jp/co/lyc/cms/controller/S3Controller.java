@@ -110,19 +110,26 @@ public class S3Controller extends BaseController {
 
 	@RequestMapping(value = "/downloadFile", method = RequestMethod.POST)
 	@ResponseBody
-	public void downloadFile(@RequestBody S3Model model) {
-		setKey();
-		AmazonS3 s3 = new AmazonS3Client(new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY));
-		String folderPath = model.getDownLoadPath().substring(0, model.getDownLoadPath().lastIndexOf("//"));
-		File folder = new File(folderPath);
-		if (!folder.exists() && !folder.isDirectory()) {
-			folder.mkdirs();
-			System.out.println("创建文件夹");
-		} else {
-			System.out.println("文件夹已存在");
+	public boolean downloadFile(@RequestBody S3Model model) {
+		try {
+			setKey();
+			AmazonS3 s3 = new AmazonS3Client(new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY));
+			String folderPath = model.getDownLoadPath().substring(0, model.getDownLoadPath().lastIndexOf("//"));
+			File folder = new File(folderPath);
+			if (!folder.exists() && !folder.isDirectory()) {
+				folder.mkdirs();
+				System.out.println("创建文件夹");
+			} else {
+				System.out.println("文件夹已存在");
+			}
+			String key = model.getFileKey().replaceAll("\\+","\\%2B");
+			amazonS3Downloading(s3, BUCKET_NAME, key, model.getDownLoadPath());
+			return true;
+		}catch(AmazonS3Exception e){
+			e.printStackTrace();
+			return false;
 		}
-		String key = model.getFileKey().replaceAll("\\+","\\%2B");
-		amazonS3Downloading(s3, BUCKET_NAME, key, model.getDownLoadPath());
+		
 	}
 
 	public static void amazonS3Downloading(AmazonS3 s3Client, String bucketName, String key, String targetFilePath) {

@@ -15,6 +15,7 @@ public interface WorkRepotMapper {
 	 * @return
 	 */
 	public void selectCheckWorkRepot(WorkRepotModel workRepotModel);
+	public void insertWorkRepotByYearAndMonth(WorkRepotModel workRepotModel);
 
 	public List<WorkRepotModel> selectWorkRepot(WorkRepotModel workRepotModel);
 
