@@ -144,9 +144,15 @@ public class WorkRepotController extends BaseController {
 					}
 				}
 				if(!flag) {
-					workRepotService.insertWorkRepotByYearAndMonth(tempModel);
-					logger.info("WorkRepotController.selectWorkRepot:" + "新增数据, attendanceYearAndMonth: "+tempModel.getAttendanceYearAndMonth()+ "employeeNo: "+tempModel.getEmployeeNo());
-					returnMod.add(tempModel);
+					try {
+						logger.info("WorkRepotController.selectWorkRepot:" + "新增数据, attendanceYearAndMonth: "+tempModel.getAttendanceYearAndMonth()+ "employeeNo: "+tempModel.getEmployeeNo());
+						workRepotService.insertWorkRepotByYearAndMonth(tempModel);					
+					}catch(Exception e) {
+						e.printStackTrace();
+						logger.info("WorkRepotController.selectWorkRepot:" + "新增失败");
+					}finally {
+						returnMod.add(tempModel);
+					}
 				}
 			}
 			checkMod = new ArrayList<WorkRepotModel>();
