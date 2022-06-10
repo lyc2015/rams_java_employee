@@ -13,6 +13,15 @@ public class WorkRepotModel {
 	String updateUser;
 	String updateTime;
 	String approvalStatus;
+	Boolean isByEveryDay;
+	public Boolean getIsByEveryDay() {
+		return isByEveryDay;
+	}
+
+	public void setIsByEveryDay(Boolean isByEveryDay) {
+		this.isByEveryDay = isByEveryDay;
+	}
+
 	MultipartFile workRepotFile;
 
 	public int getId() {
