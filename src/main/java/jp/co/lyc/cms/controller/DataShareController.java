@@ -200,7 +200,9 @@ public class DataShareController extends BaseController {
 	public boolean deleteDataShare(@RequestBody DataShareModel dataShareModel){
 		logger.info("dataShare.deleteDataShare:" + "削除開始");
 		boolean result = false;	
-		result  = dataShareService.deleteDataShare(dataShareModel.getFileNo());
+		if(dataShareModel.getFileNo()!=null & !dataShareModel.getFileNo().equals("")){
+			result  = dataShareService.deleteDataShare(dataShareModel.getFileNo());
+		}
 		logger.info("dataShare.deleteDataShare:" + "削除終了");
 		return result;	
 	}
