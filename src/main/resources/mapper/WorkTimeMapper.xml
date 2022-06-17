@@ -9,7 +9,7 @@
 			T006.stationCode as stationName,
 			if(T006.payOffRange1 = "0","固定",concat(if(T006.payOffRange1 = "1","出勤日",concat(ifnull(T006.payOffRange1,""),"H"))," - ",if(T006.payOffRange2 = "1","出勤日",concat(ifnull(T006.payOffRange2,""),"H")))) as payOffRange,
 			concat(T018.attendanceDays,"日") attendanceDays,
-			concat(T018.sumWorkTime,"H") sumWorkTime,
+			concat(T0.sumWorkTime,"H") sumWorkTime,
 			concat("NO.",T0.workTimeRank) workTimeRank,
 			concat(T1.averageSumWorkTime,"H") averageSumWorkTime,
 			T2.carCost,
@@ -17,8 +17,28 @@
 		FROM
 			T018WorkTotalTime T018
 		LEFT JOIN
-			(select row_number()over(partition by attendanceYearAndMonth order by sumWorkTime desc) as workTimeRank,
-			sumWorkTime,employeeNo,attendanceYearAndMonth from T018WorkTotalTime)T0
+		    (SELECT 
+		    employeeNo, yearAndMonth, SUM(workTime) AS sumWorkTime
+			FROM
+			    T016EmployeeWorkTime
+			WHERE
+			    employeeNo = 'LYC001'
+			GROUP BY yearAndMonth) AS T016
+		ON T016.employeeNo = T018.employeeNo AND T016.yearAndMonth = T018.attendanceYearAndMonth
+		LEFT JOIN
+			(select row_number()over(partition by tempT018.attendanceYearAndMonth order by if(tempT016.sumWorkTime is null,convert(tempT018.sumWorkTime,SIGNED),convert(tempT016.sumWorkTime,SIGNED)) DESC) as workTimeRank,isFromInput,
+			if(tempT016.sumWorkTime is null,tempT018.sumWorkTime,tempT016.sumWorkTime) sumWorkTime,tempT018.employeeNo,tempT018.attendanceYearAndMonth 
+            from T018WorkTotalTime AS tempT018
+            left JOIN
+            				(SELECT 
+					employeeNo, yearAndMonth, SUM(workTime) AS sumWorkTime,true isFromInput
+				FROM
+					T016EmployeeWorkTime
+
+				GROUP BY employeeNo,yearAndMonth) AS tempT016
+			ON tempT016.employeeNo = tempT018.employeeNo AND tempT016.yearAndMonth = tempT018.attendanceYearAndMonth 
+            where tempT016.sumWorkTime is not null or  tempT018.sumWorkTime is not null
+            )T0
 			ON T018.attendanceYearAndMonth=T0.attendanceYearAndMonth AND T018.employeeNo=T0.employeeNo
 		LEFT JOIN
 			(select round(avg(sumWorkTime)) as averageSumWorkTime,attendanceYearAndMonth from T018WorkTotalTime group by attendanceYearAndMonth)T1
@@ -39,8 +59,7 @@
 		WHERE
 			T018.attendanceYearAndMonth >= #{yearAndMonth1} AND
 			T018.attendanceYearAndMonth &lt;= #{yearAndMonth2} AND
-			T018.employeeNo= #{employeeNo} AND
-			(T018.sumWorkTime is not null AND T018.sumWorkTime != "")
+			T018.employeeNo= #{employeeNo} 
 			and T006.admissionStartDate is not null
 		ORDER BY
 			T018.attendanceYearAndMonth
