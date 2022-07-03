@@ -147,4 +147,7 @@ public class DutyRegistrationService {
 	public String selectWorkRepot(Map<String, Object> sendMap) {
 		return dutyRegistrationMapper.selectWorkRepot(sendMap);	
 	}
+	public String getApprovalStatus(Map<String, Object> sendMap) {
+		return dutyRegistrationMapper.getApprovalStatus(sendMap);	
+	}
 }
