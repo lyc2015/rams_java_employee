@@ -201,7 +201,9 @@ public class DutyRegistrationController extends BaseController {
 		jsonObject.put("breakTimeYearMonth", jsonObject.getOrDefault("yearMonth", ""));
 
 		BreakTimeModel breakTimeModel = dutyRegistrationService.selectDutyRegistration(jsonObject.getInnerMap());
-
+		String approvalStatus = dutyRegistrationService.getApprovalStatus(jsonObject.getInnerMap());
+		result.put("approvalStatus", approvalStatus);
+		
 		result.put("breakTime", breakTimeModel);
 		if (jsonObject.get("employeeNo") == null)
 			result.put("employeeNo", super.getSession().getAttribute("employeeNo"));
