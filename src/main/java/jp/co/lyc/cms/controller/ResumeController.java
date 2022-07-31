@@ -102,6 +102,14 @@ public class ResumeController extends BaseController {
 		String newFile1 = "";
 		String newFile2 = "";
 		S3Model s3Model = new S3Model();
+		// file存在チェック
+		String lv1Path = UPLOAD_PATH_PREFIX_resumeInfo + resumeModel.getEmployeeNo() + "_"
+				+ resumeModel.getEmployeeName();
+		File lv1File = new File(lv1Path);
+		if (!lv1File.isDirectory()) {
+			lv1File.mkdirs();
+		}
+		//
 		if (filePath1 != null) {
 			String resumeInfo = resumeModel.getResumeInfo1();
 			String originalFilename = filePath1.getOriginalFilename();
