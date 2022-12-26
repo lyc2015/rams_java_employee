@@ -35,6 +35,18 @@
 		ORDER BY
 		happendDate
 	</select>
+	
+	<select id="selectApprovalStatus" resultMap="CostRegistration"
+		parameterType="String">
+		SELECT
+		approvalStatus
+		FROM
+		T018WorkTotalTime
+		WHERE
+		employeeNo = #{employeeNo} AND
+		attendanceYearAndMonth = #{yearMonth}
+	</select>
+	
 	<select id="selectCheckCostRegistration"
 		resultMap="CostRegistration" parameterType="map">
 		SELECT
@@ -83,8 +95,8 @@
 		#{cost},
 		#{remark},
 		#{costFile},
-		NOW(),
-		NOW(),
+		date_add(now(), interval 9 hour),
+		date_add(now(), interval 9 hour),
 		#{employeeName})
 	</insert>
 	<update id="updateCostRegistration" parameterType="map">
@@ -103,7 +115,7 @@
 		cost = ifnull(#{cost},cost),
 		remark = ifnull(#{remark},remark),
 		costFile = ifnull(#{costFile},costFile),
-		updateTime = now(),
+		updateTime = date_add(now(), interval 9 hour),
 		createTime = createTime,
 		updateUser = ifnull(#{employeeName},updateUser)
 		WHERE

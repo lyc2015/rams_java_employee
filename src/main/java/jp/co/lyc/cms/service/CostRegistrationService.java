@@ -81,4 +81,9 @@ public class CostRegistrationService {
 		}
 		return result;
 	}
+
+	public CostRegistrationModel selectApprovalStatus(CostRegistrationModel costRegistrationModel) {
+		CostRegistrationModel resultMod = costRegistrationMapper.selectApprovalStatus(costRegistrationModel);
+		return resultMod;
+	}
 }

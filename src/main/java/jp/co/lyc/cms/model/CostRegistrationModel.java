@@ -26,6 +26,7 @@ public class CostRegistrationModel {
 	String updateUser;
 	String updateTime;
 	String createTime;
+	String approvalStatus;
 	boolean changeFile;
 
 	public String getCostTotal() {
@@ -234,6 +235,14 @@ public class CostRegistrationModel {
 
 	public void setOldCostFile(String oldCostFile) {
 		this.oldCostFile = oldCostFile;
+	}
+
+	public String getApprovalStatus() {
+		return approvalStatus;
+	}
+
+	public void setApprovalStatus(String approvalStatus) {
+		this.approvalStatus = approvalStatus;
 	}
 
 }

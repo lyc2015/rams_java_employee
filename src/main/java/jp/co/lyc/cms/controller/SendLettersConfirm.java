@@ -1,5 +1,6 @@
 package jp.co.lyc.cms.controller;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,13 +21,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 import jp.co.lyc.cms.common.BaseController;
 import jp.co.lyc.cms.model.AllEmployName;
 import jp.co.lyc.cms.model.EmailModel;
 import jp.co.lyc.cms.model.EmployeeModel;
+import jp.co.lyc.cms.model.ResultModel;
+import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.model.SalesSituationModel;
 import jp.co.lyc.cms.model.SendLettersConfirmModel;
 import jp.co.lyc.cms.service.CustomerInfoService;
@@ -49,6 +57,9 @@ public class SendLettersConfirm extends BaseController {
 
 	@Autowired
 	CustomerInfoService customerInfoService;
+	
+	@Autowired
+	S3Controller s3Controller;
 
 	/**
 	 * データを取得
@@ -99,11 +110,12 @@ public class SendLettersConfirm extends BaseController {
 			} else {
 				sendLettersConfirmModelList.get(j).setResumeInfoName("");
 			}
-
+ 
 			if (sendLettersConfirmModelList.get(j).getUnitPrice() != null
 					&& !sendLettersConfirmModelList.get(j).getUnitPrice().equals("")) {
-				sendLettersConfirmModelList.get(j).setUnitPrice(
-						String.valueOf(Integer.parseInt(sendLettersConfirmModelList.get(j).getUnitPrice()) / 10000));
+        // 统一向前端传円，而不是万円
+				// sendLettersConfirmModelList.get(j).setUnitPrice(
+				// 		String.valueOf(Double.parseDouble(sendLettersConfirmModelList.get(j).getUnitPrice()) / 10000));
 			}
 		}
 		logger.info("getSalesEmps" + "検索結束");
@@ -115,12 +127,12 @@ public class SendLettersConfirm extends BaseController {
 	public void updateSalesSentence(@RequestBody SendLettersConfirmModel model) {
 
 		logger.info("updateSalesSentence:" + "更新開始");
-		if (model.getUnitPrice() != null && !model.getUnitPrice().equals(""))
-			model.setUnitPrice(String.valueOf(Integer.parseInt(model.getUnitPrice()) * 10000));
+//		if (model.getUnitPrice() != null && !model.getUnitPrice().equals(""))
+//			model.setUnitPrice(String.valueOf(Double.parseDouble(model.getUnitPrice()) * 10000));
 		model.setUpdateUser(getSession().getAttribute("employeeName").toString());
-		sendLettersConfirmService.updateSalesSentence(model);
+		sendLettersConfirmService.updateSalesSentence(model); 
 		logger.info("updateSalesSentence" + "更新結束");
-	}
+	} 
 
 	@RequestMapping(value = "/getAllEmpsWithResume", method = RequestMethod.POST)
 	@ResponseBody
@@ -177,14 +189,15 @@ public class SendLettersConfirm extends BaseController {
 	}
 
 	@RequestMapping(value = "/sendMailWithFile", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> sendMailWithFile(@RequestBody EmailModel emailModel) {
-		String errorsMessage = "";
-		Map<String, Object> resulterr = new HashMap<>();
-		if (emailModel.getMailFrom() == null || emailModel.getMailFrom().equals("")) {
-			errorsMessage = "登録者メールアドレス入力されてない、確認してください。";
+	@ResponseBody 
+	public ResultModel sendMailWithFile(@RequestParam(value = "emailModel") String JSONEmailModel,@RequestParam(value = "myfiles") MultipartFile[] files) {
+		ResultModel resulterr = new ResultModel();
+		EmailModel emailModel = JSON.parseObject(JSONEmailModel, new TypeReference<EmailModel>() {
+		});
 
-			resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
+		
+		if (emailModel.getMailFrom() == null || emailModel.getMailFrom().equals("")) {
+			resulterr.setErrMsg("登録者メールアドレス入力されてない、確認してください。");
 			return resulterr;
 		}
 
@@ -195,33 +208,30 @@ public class SendLettersConfirm extends BaseController {
 		// 受信人のメール
 		emailModel.setUserName(getSession().getAttribute("employeeName").toString());
 		emailModel.setPassword("Lyc2020-0908-");
+		emailModel.setFiles(files);
 		// emailModel.setFromAddress(model.getMailFrom());
 		emailModel.setContextType("text/html;charset=utf-8");
 		if (emailModel.getPaths() != null) {
 			for (int i = 0; i < emailModel.getPaths().length; i++) {
 				if (emailModel.getPaths()[i].equals(" ")) {
-					errorsMessage = "添付ファイルが存在していない。";
-
-					resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
+					resulterr.setErrMsg("添付ファイルが存在していない。");
 					return resulterr;
 				}
 			}
 		}
-		try {
-			// checkEmail(emailModel.getSelectedmail());
-			if (emailModel.getPaths() == null || emailModel.getPaths().length == 0)
-				utils.EmailSend(emailModel);
-			else
-				utils.sendMailWithFile(emailModel);
-		} catch (Exception e) {
-			errorsMessage = "送信エラー発生しました。";
-
-			resulterr.put("errorsMessage", errorsMessage);// エラーメッセージ
+		// checkEmail(emailModel.getSelectedmail());
+		if ((emailModel.getPaths() == null || emailModel.getPaths().length == 0)&&(files == null || files.length == 0))
+			resulterr = utils.EmailSend(emailModel);
+		else  {
+			resulterr = utils.sendMailWithFile(emailModel);
+		}
+		if(resulterr.getResult() == false) {
 			return resulterr;
 		}
 
 		customerInfoService.updateCustomerNo(emailModel.getSelectedCustomer());
 		logger.info("sendMailWithFile" + "送信結束");
+    resulterr.setSuccess();
 		return resulterr;
 	}
 
@@ -266,5 +276,54 @@ public class SendLettersConfirm extends BaseController {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	/**
+	 * 履歴書アップロード
+	 * 
+	 * @param
+	 * @return boolean
+---	 */
+	@RequestMapping(value = "/uploadTempFile", method = RequestMethod.POST)
+	@ResponseBody
+	public String uploadTempFile(@RequestParam(value = "dataShareFile", required = false) MultipartFile dataShareFile) throws Exception {
+		String getFilename;
+		try {
+			getFilename=upload(dataShareFile);
+		} catch (Exception e) {
+			return null;
+		}
+		try {
+			S3Model s3Model = new S3Model();
+			String filePath = getFilename.replaceAll("\\\\", "/");
+			String fileKey = filePath.split("file/")[1];
+			s3Model.setFileKey(fileKey);
+			s3Model.setFilePath(filePath);
+			s3Controller.uploadFile(s3Model);
+		} catch (Exception e) {
+			return null;
+		}
+		return null;
+	}
+	
+	public final static String UPLOAD_PATH_PREFIX = "C:"+File.separator+"file"+File.separator;
+	public String upload(MultipartFile workRepotFile) {
+		if (workRepotFile== null) {
+			return "";
+		}
+		String realPath = new String(UPLOAD_PATH_PREFIX + "履歴書/Tmp_File");
+		File file = new File(realPath);
+		if (!file.isDirectory()) {
+			file.mkdirs();
+		}
+		String fileName =workRepotFile.getOriginalFilename();
+		try {
+			File newFile = new File(file.getAbsolutePath() + File.separator + fileName);
+			workRepotFile.transferTo(newFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+		return realPath + "/" + fileName;
 	}
 }
