@@ -50,7 +50,7 @@
 	<select id="selectCheckCostRegistration"
 		resultMap="CostRegistration" parameterType="map">
 		SELECT
-		employeeNo
+		employeeNo,costClassificationCode
 		FROM
 		T020CostInfo
 		WHERE
@@ -123,6 +123,7 @@
 		and yearMonth = #{yearMonth}
 		and happendDate = #{oldHappendDate}
 		and costClassificationCode = #{oldCostClassificationCode}
+		and createTime = #{createTime}
 	</update>
 	<delete id="deleteCostRegistration" parameterType="map">
 		DELETE FROM
@@ -135,5 +136,6 @@
 		happendDate = #{oldHappendDate}
 		AND
 		costClassificationCode = #{oldCostClassificationCode}
+		and createTime = #{createTime}
 	</delete>
 </mapper>

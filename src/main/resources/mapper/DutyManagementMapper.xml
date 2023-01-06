@@ -5,15 +5,28 @@
 		type="jp.co.lyc.cms.model.DutyManagementModel" />
 	<resultMap id="CostRegistration"
 		type="jp.co.lyc.cms.model.CostRegistrationModel" />
-	<resultMap id="String"
-		type="java.lang.String" />
+	<resultMap id="String" type="java.lang.String" />
 	<select id="selectDutyManagement" resultMap="DutyManagement"
 		parameterType="String">
 		SELECT
-		(@rowNo:=@rowNo + 1) AS rowNo,
+		t002.employeeStatus,
+		t011.bpBelongCustomerAbbreviation,
+		t011.bpBelongCustomerCode,
+		T018.sumWorkTime as workTimeInputTotal,
+		T016.workTime as workTimeInputSingle,
+		<!-- workTime　稼働時間 入力優先 -->
+		if(T016.workTime is null ,T018.sumWorkTime,T016.workTime) workTime,
+		<!-- checkSection 0:未登録 1:upload 2:入力 -->
+		if(T016.workTime is null and T018.sumWorkTime is
+		null,'0',if(T016.workTime is not null,'2','1'))checkSection,
+		if(T018.approvalStatus=1,"1","0")approvalStatus,
+		(@rowNo:=@rowNo + 1)
+		AS rowNo,
 		t001.employeeNo,
-		concat(t001.employeeFristName,t001.employeeLastName) as employeeName,
-		if(t007.customerAbbreviation is null or t007.customerAbbreviation =
+		concat(t001.employeeFristName,t001.employeeLastName)
+		as employeeName,
+		if(t007.customerAbbreviation is null or
+		t007.customerAbbreviation =
 		"",t007.customerName,t007.customerAbbreviation) as customerName,
 		m013.stationName,
 		if(t006.payOffRange1 is null or t006.payOffRange1 =
@@ -21,25 +34,48 @@
 		"1","出勤日",concat_ws("-",if(t006.payOffRange1 =
 		"1","出勤日",t006.payOffRange1),if(t006.payOffRange2 =
 		"1","出勤日",t006.payOffRange2)))) as payOffRange,
-		T018.sumWorkTime
-		workTime,
 		T018.workingTimeReport,
 		if(T018.DeductionsAndOvertimePay is
-		null or T018.DeductionsAndOvertimePay =
-		"",if(T018.sumWorkTime>t006.payOffRange2,round(t005.salary/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t005.salary/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePay)deductionsAndOvertimePay,
+		null or
+		T018.DeductionsAndOvertimePay =
+		"",if(if(T016.workTime is null
+		,T018.sumWorkTime,T016.workTime)>t006.payOffRange2,round(t005.salary/t006.payOffRange2*(if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime)-t006.payOffRange2)),if(t006.payOffRange1>if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime),round(t005.salary/t006.payOffRange1*(if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime)-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePay)deductionsAndOvertimePay,
 		if(T018.DeductionsAndOvertimePayOfUnitPrice is null or
 		T018.DeductionsAndOvertimePayOfUnitPrice =
-		"",if(T018.sumWorkTime>t006.payOffRange2,round(t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2)),if(t006.payOffRange1>T018.sumWorkTime,round(t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePayOfUnitPrice)deductionsAndOvertimePayOfUnitPrice,
+		"",if(if(T016.workTime is
+		null
+		,T018.sumWorkTime,T016.workTime)>t006.payOffRange2,round(t006.unitPrice/t006.payOffRange2*(if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime)-t006.payOffRange2)),if(t006.payOffRange1>if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime),round(t006.unitPrice/t006.payOffRange1*(if(T016.workTime
+		is null
+		,T018.sumWorkTime,T016.workTime)-t006.payOffRange1)),0)),T018.DeductionsAndOvertimePayOfUnitPrice)deductionsAndOvertimePayOfUnitPrice,
 		<!-- FORMAT(if(T018.sumWorkTime>t006.payOffRange2,t006.unitPrice/t006.payOffRange2*(T018.sumWorkTime-t006.payOffRange2),if(t006.payOffRange1>T018.sumWorkTime,t006.unitPrice/t006.payOffRange1*(T018.sumWorkTime-t006.payOffRange1),0)),0)deductionsAndOvertimePayOfUnitPrice, -->
-		if(T016.employeeWorkTimeHaveData=1,'0',if(T018.attendanceRegisterFlag=1,'1','2'))checkSection,
 		T018.updateTime,
-		if(T018.approvalStatus=1,"1","0")approvalStatus,
-		T018.approvalUser
+		T018.approvalUser,
+		t006.customerNo
 		FROM
-		T001Employee as t001
-		left join
+		T001Employee as
+		t001
+		#T002EmployeeDetail
+		inner JOIN
+		(select
+		T002EmployeeDetail.employeeStatus,T002EmployeeDetail.employeeNo FROM
+		T002EmployeeDetail) as t002
+		on
+		t002.employeeNo = t001.employeeNo
+		left
+		join
 		(SELECT
-		employeeNo,max(reflectYearAndMonth),salary FROM T005WagesInfo where
+		employeeNo,max(reflectYearAndMonth),salary FROM
+		T005WagesInfo where
 		reflectYearAndMonth&lt;=#{yearAndMonth} group by
 		T005WagesInfo.employeeNo)t005 on t001.employeeNo=t005.employeeNo
 		inner
@@ -81,42 +117,84 @@
 		left join
 		M013Station as m013 on
 		t006.stationCode=m013.stationCode
-		left join
+		# BP所属customer
+		LEFT JOIN
 		(SELECT
-		employeeNo,updateTime,yearAndMonth,1 as
-		employeeWorkTimeHaveData FROM
-		T016EmployeeWorkTime group by
-		employeeNo)T016 on
-		t001.employeeNo=T016.employeeNo and
-		T016.yearAndMonth=#{yearAndMonth}
-		left join
+		DISTINCT T007CustomerInfo.customerAbbreviation AS
+		bpBelongCustomerAbbreviation,
+		T011BpInfoSupplement.bpEmployeeNo,
+		T011BpInfoSupplement.bpBelongCustomerCode
+		FROM
+		T011BpInfoSupplement
+		INNER JOIN T007CustomerInfo ON
+		T011BpInfoSupplement.bpBelongCustomerCode =
+		T007CustomerInfo.customerNo) AS t011 ON t001.employeeNo =
+		t011.bpEmployeeNo
+		LEFT JOIN
+		(SELECT
+		SUM(T016EmployeeWorkTime.workTime) AS
+		workTime,
+		T016EmployeeWorkTime.employeeNo,
+		T016EmployeeWorkTime.yearAndMonth
+		FROM
+		T016EmployeeWorkTime
+		WHERE
+		T016EmployeeWorkTime.yearAndMonth =
+		#{yearAndMonth} group by T016EmployeeWorkTime.employeeNo) AS T016 ON
+		t001.employeeNo = T016.employeeNo
+		left
+		join
 		T018WorkTotalTime as T018 on
 		t001.employeeNo=T018.employeeNo
 		and
 		T018.attendanceYearAndMonth=#{yearAndMonth}
 		,(SELECT @rowNo:=0) AS
 		rowNo
+
 		WHERE
 		(T018.attendanceYearAndMonth = #{yearAndMonth}
 		or
 		T018.attendanceYearAndMonth is null)
-		and left(t001.employeeNo,2) !=
-		"BP"
-		<if test="approvalStatus == 0">
+		<!-- 社員区分 -->
+		<if test="employeeStatus == -1">
+			and (t002.employeeStatus=1 or t002.employeeStatus=2 or t002.employeeStatus=0)
 		</if>
+		<if test="employeeStatus == 1">
+			and t002.employeeStatus=1
+		</if>
+		<if test="employeeStatus == 0">
+			and t002.employeeStatus=0
+		</if>
+		<if test="employeeStatus == 2">
+			and t002.employeeStatus=2
+		</if>
+		<!-- ステータス 1未登録 2登録済 3未承認 4承認済 -->
+		
 		<if test="approvalStatus == 1">
-			and T018.approvalStatus is null
+			and (T016.workTime is null
+			and T018.sumWorkTime is null)
 		</if>
 		<if test="approvalStatus == 2">
-			and T018.approvalStatus is not null
+			and (T018.sumWorkTime is not null OR T016.workTime is not
+			null)
 		</if>
 		<if test="approvalStatus == 3">
-			and T018.approvalStatus = "0"
+			AND ((T018.sumWorkTime is not null OR T016.workTime is not
+			null)
+			AND T018.approvalStatus = '0')
 		</if>
 		<if test="approvalStatus == 4">
 			and T018.approvalStatus = "1"
 		</if>
-		order by t001.employeeNo,T018.attendanceYearAndMonth desc
+		<if test="employeeNo!=null">
+			AND t002.employeeNo=#{employeeNo}
+		</if>
+		order BY CASE WHEN t002.employeeStatus=0
+		THEN 0
+		WHEN t002.employeeStatus=2
+		THEN 1
+		WHEN t002.employeeStatus=1
+		THEN 2 end,t001.employeeNo
 	</select>
 
 	<select id="selectCostRegistration" resultMap="CostRegistration"
@@ -149,9 +227,11 @@
 
 	<select id="selectWorkTime" resultMap="DutyManagement"
 		parameterType="String">
-		SELECT employeeNo,yearAndMonth,sum(workTime) as workTime,updateTime,updateUser
+		SELECT employeeNo,yearAndMonth,sum(workTime) as
+		workTime,updateTime,updateUser
 		FROM T016EmployeeWorkTime
-		where yearAndMonth = #{yearAndMonth}
+		where
+		yearAndMonth = #{yearAndMonth}
 		group by
 		employeeNo
 	</select>

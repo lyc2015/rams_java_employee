@@ -26,6 +26,7 @@ public class SalesContent implements Serializable {
 	String japaneaseConversationLevel;
 	String englishConversationLevel;
 	String yearsOfExperience;
+	String comeToJapanYearAndMonth;
 	String projectPhase;
 	String developLanguageCode6;
 	String developLanguageCode7;
@@ -44,6 +45,14 @@ public class SalesContent implements Serializable {
 	String beginMonth;
 
 	String tempDate;
+
+	public String getComeToJapanYearAndMonth() {
+		return comeToJapanYearAndMonth;
+	}
+
+	public void setComeToJapanYearAndMonth(String comeToJapanYearAndMonth) {
+		this.comeToJapanYearAndMonth = comeToJapanYearAndMonth;
+	}
 
 	public String getEmployeeStatus() {
 		return employeeStatus;
