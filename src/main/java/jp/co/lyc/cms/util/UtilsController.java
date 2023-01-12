@@ -61,7 +61,6 @@ import com.sun.mail.util.MailSSLSocketFactory;
 import jp.co.lyc.cms.model.EmailModel;
 import jp.co.lyc.cms.model.EmployeeModel;
 import jp.co.lyc.cms.model.ModelClass;
-import jp.co.lyc.cms.model.ResultModel;
 import jp.co.lyc.cms.service.UtilsService;
 import net.sf.json.JSONObject;
 
@@ -283,7 +282,7 @@ public class UtilsController {
 		List<ModelClass> list = utilsService.getBankInfo();
 		return list;
 	}
-
+	
 	/**
 	 * 銀行支店名、支店番号取得
 	 * 
@@ -1232,8 +1231,8 @@ public class UtilsController {
 	 * 
 	 * @param emailMod
 	 */
-	public ResultModel EmailSend(EmailModel emailMod) {
-		ResultModel resulterr = new ResultModel();
+	public void EmailSend(EmailModel emailMod) {
+
 		Session session = null;
 		try {
 			// 创建一个资源文件
@@ -1271,9 +1270,8 @@ public class UtilsController {
 			// 设置主题内容
 			message.setSubject(emailMod.getMailTitle());
 			// message.setContent(emailMod.getContext(), "text/html;charset=utf-8");
-
+			String[] addresssCC = emailMod.getSelectedMailCC();
 			if (emailMod.getSelectedMailCC() != null) {
-				String[] addresssCC = emailMod.getSelectedMailCC();
 				int lenCC = addresssCC.length;
 				Address[] addsCC = new Address[lenCC];
 				for (int i = 0; i < lenCC; i++) {
@@ -1314,21 +1312,16 @@ public class UtilsController {
 			// 发送邮件
 			transport.sendMessage(message, message.getAllRecipients());
 			// transport.close();
-			resulterr.setSuccess();
 		} catch (GeneralSecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resulterr.setErrMsg(e.getMessage());
 		} catch (NoSuchProviderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resulterr.setErrMsg(e.getMessage());
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resulterr.setErrMsg(e.getMessage());
 		}
-		return resulterr;
 	}
 
 	/**
@@ -1337,8 +1330,8 @@ public class UtilsController {
 	 * @param emailMod
 	 * @param path
 	 */
-	public ResultModel sendMailWithFile(EmailModel emailMod) {
-		ResultModel resultModel = new ResultModel();// 戻す
+	public void sendMailWithFile(EmailModel emailMod) {
+
 		Session session = null;
 		try {
 			// 创建一个资源文件
@@ -1395,40 +1388,20 @@ public class UtilsController {
 			contentPart.setContent(mailConfirmContont, "text/plain;charset=UTF-8");
 			multipart.addBodyPart(contentPart);
 
-			if (emailMod.getPaths() != null && emailMod.getPaths().length != 0) {
-				for (int i = 0; i < emailMod.getPaths().length; i++) {
-					// 添加附件
-					MimeBodyPart filePart = new MimeBodyPart();
-					DataSource source = new FileDataSource(emailMod.getPaths()[i]);
-					// DataSource source = new
-					// FileDataSource("C:\\file\\履歴書\\LYC168_営業文章\\営業EE_aaa.xls");
-					// 添加附件的内容
-					filePart.setDataHandler(new DataHandler(source));
-					// 添加附件的标题
-					String filenames = MimeUtility.encodeText(source.getName());
-					filenames = filenames.replace("\\r", "").replace("\\n", "").replace(" ", "");
-					filePart.setFileName(filenames);
-					multipart.addBodyPart(filePart);
-				}
+			for (int i = 0; i < emailMod.getPaths().length; i++) {
+				// 添加附件
+				MimeBodyPart filePart = new MimeBodyPart();
+				DataSource source = new FileDataSource(emailMod.getPaths()[i]);
+				// DataSource source = new
+				// FileDataSource("C:\\file\\履歴書\\LYC168_営業文章\\営業EE_aaa.xls");
+				// 添加附件的内容
+				filePart.setDataHandler(new DataHandler(source));
+				// 添加附件的标题
+				String filenames = MimeUtility.encodeText(source.getName());
+				filenames = filenames.replace("\\r", "").replace("\\n", "").replace(" ", "");
+				filePart.setFileName(filenames);
+				multipart.addBodyPart(filePart);
 			}
-			// 处理附件
-			MultipartFile[] files = emailMod.getFiles();
-			if (files != null && files.length != 0) {
-				for (int i = 0; i < files.length; i++) {
-					// 添加附件的标题
-					String filenames = files[i].getOriginalFilename();
-					// 添加附件
-					MimeBodyPart filePart = new MimeBodyPart();
-					File file = MultipartFileToFile(files[i]);
-					DataSource source = new FileDataSource(file);
-					// 添加附件的内容
-					filePart.setDataHandler(new DataHandler(source));
-					filenames = filenames.replace("\\r", "").replace("\\n", "").replace(" ", "");
-					filePart.setFileName(filenames);
-					multipart.addBodyPart(filePart);
-				}
-			}
-
 			// multipart.addBodyPart(filePart);
 			multipart.setSubType("mixed");
 			// 将multipart对象放到message中
@@ -1439,10 +1412,6 @@ public class UtilsController {
 			for (int i = 0; i < addresss.length; i++) {
 				if (!addresss[i].equals(""))
 					len++;
-			}
-			if (len == 0) {
-				resultModel.setErrMsg("Invalid Addresses");
-				return resultModel;
 			}
 			Address[] adds = new Address[len];
 			len = 0;
@@ -1457,47 +1426,20 @@ public class UtilsController {
 			// 发送邮件
 			transport.sendMessage(message, message.getAllRecipients());
 			// transport.close();
-			resultModel.setSuccess();
 		} catch (GeneralSecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resultModel.setErrMsg(e.getMessage());
 		} catch (NoSuchProviderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resultModel.setErrMsg(e.getMessage());
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resultModel.setErrMsg(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			resultModel.setErrMsg(e.getMessage());
 		}
-		return resultModel;
-	}
 
-	/**
-	 * 将MultipartFile转换为File
-	 * 
-	 * @param multiFile
-	 * @return
-	 */
-	private File MultipartFileToFile(MultipartFile multiFile) {
-		// 获取文件名
-		String fileName = multiFile.getOriginalFilename();
-		// 获取文件后缀
-		String prefix = fileName.substring(fileName.lastIndexOf("."));
-		// 若须要防止生成的临时文件重复,能够在文件名后添加随机码
-		try {
-			File file = File.createTempFile(fileName, prefix);
-			multiFile.transferTo(file);
-			return file;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
