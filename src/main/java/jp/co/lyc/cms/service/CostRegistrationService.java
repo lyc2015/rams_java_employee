@@ -39,9 +39,10 @@ public class CostRegistrationService {
 					|| !costRegistrationModel.getHappendDate().equals(costRegistrationModel.getOldHappendDate())) {
 				List<CostRegistrationModel> resultMod = costRegistrationMapper
 						.selectCheckCostRegistration(costRegistrationModel);
-				if (resultMod.size() > 0 && resultMod.get(0).getCostClassificationCode().equals("0")) {
-					return false;
-				}
+				/*
+				 * if (resultMod.size() > 0 &&
+				 * resultMod.get(0).getCostClassificationCode().equals("0")) { return false; }
+				 */
 			}
 		}
 		try {
@@ -57,9 +58,10 @@ public class CostRegistrationService {
 	public boolean insertCostRegistration(CostRegistrationModel costRegistrationModel) {
 		List<CostRegistrationModel> resultMod = costRegistrationMapper
 				.selectCheckCostRegistration(costRegistrationModel);
-		if (resultMod.size() > 0 && resultMod.get(0).getCostClassificationCode().equals("0")) {
-			return false;
-		}
+		/*
+		 * if (resultMod.size() > 0 &&
+		 * resultMod.get(0).getCostClassificationCode().equals("0")) { return false; }
+		 */
 		try {
 			costRegistrationMapper.insertCostRegistration(costRegistrationModel);
 		} catch (Exception e) {
