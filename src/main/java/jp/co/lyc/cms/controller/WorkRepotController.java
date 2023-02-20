@@ -103,6 +103,8 @@ public class WorkRepotController extends BaseController {
 			String attendanceYearAndMonth = "";
 			if(String.valueOf(Integer.parseInt(checkMod.get(0).getAttendanceYearAndMonth()) - 1).substring(4,6).equals("00")) {
 				attendanceYearAndMonth = String.valueOf(Integer.parseInt(checkMod.get(0).getAttendanceYearAndMonth().substring(0,4)) - 1) + "12";
+			}else {
+				attendanceYearAndMonth = String.valueOf(Integer.parseInt(checkMod.get(0).getAttendanceYearAndMonth()) - 1);
 			}
 			tempModel.setAttendanceYearAndMonth(attendanceYearAndMonth);
 			checkMod.add(tempModel);
