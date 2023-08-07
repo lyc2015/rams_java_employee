@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,7 +270,8 @@ public class EmployeeInfoController extends BaseController {
 				s3Model.setFilePath(filePath);
 				s3Controller.uploadFile(s3Model);
 			}
-			employeeInfoService.insertEmployee((HashMap<String, Object>) sendMap);
+			result = employeeInfoService.insertEmployee((HashMap<String, Object>) sendMap);
+
 		} catch (Exception e) {
 			resultMap.put("result", false);
 			return resultMap;
@@ -420,7 +422,10 @@ public class EmployeeInfoController extends BaseController {
 			@RequestParam(value = "resumeInfo1URL", required = false) String resumeInfo1URL,
 			@RequestParam(value = "resumeInfo1Key", required = false) String resumeInfo1Key,
 			@RequestParam(value = "resumeInfo2URL", required = false) String resumeInfo2URL,
-			@RequestParam(value = "resumeInfo2Key", required = false) String resumeInfo2Key,
+			/*
+			 * @RequestParam(value = "resumeInfo2Key", required = false) String
+			 * resumeInfo2Key,
+			 */
 			@RequestParam(value = "residentCardInfoURL", required = false) String residentCardInfoURL,
 			@RequestParam(value = "passportInfoURL", required = false) String passportInfoURL) throws Exception {
 		logger.info("GetEmployeeInfoController.updateEmployee:" + "修正開始");
@@ -513,36 +518,38 @@ public class EmployeeInfoController extends BaseController {
 					s3Controller.deleteFile(s3Model);
 				}
 			}
-			if (sendMap.get("resumeInfo2") != null && sendMap.get("resumeInfo2") != "") {
-				if (!resumeInfo2URL.equals("")) {
-					String deletefileKey = resumeInfo2URL.split("/file/")[1];
-					s3Model.setFileKey(deletefileKey);
-					s3Controller.deleteFile(s3Model);
-				}
-				String filePath = sendMap.get("resumeInfo2").toString();
-				String fileKey = filePath.split("file/")[1];
-				s3Model.setFileKey(fileKey);
-				s3Model.setFilePath(filePath);
-				s3Controller.uploadFile(s3Model);
-			} else {
-				if (!resumeInfo2Key.equals("") && emp.getResumeName2().equals("")) {
-					String deletefileKey = resumeInfo2Key.split("/file/")[1];
-					s3Model.setFileKey(deletefileKey);
-					s3Controller.deleteFile(s3Model);
-				}
-			}
-			if (emp.getResumeName1().equals("") && emp.getResumeName2().equals("")) {
-				String deletefileKey = resumeInfo2Key.split("/file/")[1].substring(0,
-						resumeInfo2Key.split("/file/")[1].lastIndexOf("/") + 1);
-				s3Model.setFileKey(deletefileKey);
-				s3Controller.deleteFolder(s3Model);
-			}
+			/*
+			 * if (sendMap.get("resumeInfo2") != null && sendMap.get("resumeInfo2") != "") {
+			 * if (!resumeInfo2URL.equals("")) { String deletefileKey =
+			 * resumeInfo2URL.split("/file/")[1]; s3Model.setFileKey(deletefileKey);
+			 * s3Controller.deleteFile(s3Model); } String filePath =
+			 * sendMap.get("resumeInfo2").toString(); String fileKey =
+			 * filePath.split("file/")[1]; s3Model.setFileKey(fileKey);
+			 * s3Model.setFilePath(filePath); s3Controller.uploadFile(s3Model); } else { if
+			 * (!StringUtils.isBlank(resumeInfo2Key) &&
+			 * StringUtils.isBlank(emp.getResumeName2())) { String deletefileKey =
+			 * resumeInfo2Key.split("/file/")[1]; s3Model.setFileKey(deletefileKey);
+			 * s3Controller.deleteFile(s3Model); } }
+			 */
+			/*
+			 * if (StringUtils.isBlank(emp.getResumeName1()) &&
+			 * StringUtils.isBlank(emp.getResumeName2())) { if (!resumeInfo2Key.equals(""))
+			 * { String deletefileKey = resumeInfo2Key.split("/file/")[1].substring(0,
+			 * resumeInfo2Key.split("/file/")[1].lastIndexOf("/") + 1);
+			 * s3Model.setFileKey(deletefileKey); s3Controller.deleteFolder(s3Model); } if
+			 * (!resumeInfo1Key.equals("")) { String deletefileKey =
+			 * resumeInfo1Key.split("/file/")[1].substring(0,
+			 * resumeInfo2Key.split("/file/")[1].lastIndexOf("/") + 1);
+			 * s3Model.setFileKey(deletefileKey); s3Controller.deleteFolder(s3Model); } }
+			 */
 			result = employeeInfoService.updateEmployee(sendMap);
 			if (!emp.getNewEmployeeNo().equals(emp.getEmployeeNo())) {
 				wagesInfoService.updateEmpInfo(emp.getEmployeeNo(), emp.getNewEmployeeNo());
 			}
 		} catch (Exception e) {
 			resultMap.put("result", false);
+			resultMap.put("errorsMessage", "修正異常");
+			logger.info("GetEmployeeInfoController.updateEmployee:" + "修正異常" + e);
 			return resultMap;
 		}
 		resultMap.put("result", result);

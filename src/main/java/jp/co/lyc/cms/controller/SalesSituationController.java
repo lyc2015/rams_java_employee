@@ -7,18 +7,18 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,6 +28,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.http.util.TextUtils;
 import org.castor.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +47,20 @@ import com.amazonaws.util.StringUtils;
 
 import ch.qos.logback.core.joran.conditional.IfAction;
 import jp.co.lyc.cms.common.BaseController;
+import jp.co.lyc.cms.mapper.EmployeeInfoMapper;
+import jp.co.lyc.cms.mapper.SiteInfoMapper;
 import jp.co.lyc.cms.model.SalesSituationModel;
+import jp.co.lyc.cms.model.SiteModel;
 import jp.co.lyc.cms.model.BpInfoModel;
 import jp.co.lyc.cms.model.MasterModel;
+import jp.co.lyc.cms.model.ModelClass;
 import jp.co.lyc.cms.model.S3Model;
 import jp.co.lyc.cms.model.SalesContent;
+import jp.co.lyc.cms.service.EmployeeInfoService;
 import jp.co.lyc.cms.service.SalesSituationService;
 import jp.co.lyc.cms.service.UtilsService;
 import jp.co.lyc.cms.util.StatusCodeToMsgMap;
+import jp.co.lyc.cms.util.UtilsController;
 import jp.co.lyc.cms.validation.SalesSituationValidation;
 import software.amazon.ion.impl.PrivateScalarConversions.ValueVariant;
 
@@ -72,10 +79,209 @@ public class SalesSituationController extends BaseController {
 	@Autowired
 	UtilsService utilsService;
 
+	@Autowired
+	UtilsController utilsController;
+
+	@Autowired
+	EmployeeInfoService employeeInfoService;
+	
+	@Autowired
+	EmployeeInfoMapper employeeInfoMapper;
+	
+	@Autowired
+	SiteInfoMapper siteInfoMapper;
+	
 	// 12月
 	public static final String DECEMBER = "12";
 	// 1月
 	public static final String JANUARY = "01";
+
+
+	/**
+	 * month minus
+	 * @param 202304
+	 * @return 202303
+	 */
+	public Date minusMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, -1);
+		Date returnDate = calendar.getTime();
+		return returnDate;
+	}
+	
+	/**
+	 * Finish データを取得
+	 *
+	 */
+
+	@RequestMapping(value = "/getSalesSituationFinish", method = RequestMethod.POST)
+	@ResponseBody
+	public List<SalesSituationModel> getSalesSituationFinish(@RequestBody SalesSituationModel model)
+			throws ParseException {
+		List<SalesSituationModel> resultList = new ArrayList<SalesSituationModel>();
+		// 社员
+		{
+			// 休假
+			// T006EmployeeSiteInfo.workstate=3, 更新时间=T006EmployeeSiteInfo.updateTime
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+			String dateHoliday = "";
+			try {
+				Date date = sdf.parse(model.getSalesYearAndMonth());
+				dateHoliday = new SimpleDateFormat("yyyyMM").format(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			List<SalesSituationModel> temp = salesSituationService.getEmployeeHoliday(dateHoliday);
+			if (null != temp && temp.size() > 0) {
+				for (int i = 0; i < temp.size(); i++) {
+					SalesSituationModel employeeHoliday = temp.get(i);
+					List<SalesSituationModel> salesSituationRecent = salesSituationService.getEmployeeHolidayRecentSite(employeeHoliday.getEmployeeNo());
+					if (null != salesSituationRecent && salesSituationRecent.size() > 0) {
+						if (salesSituationRecent.size() >= 2) {
+							// 显示休假前的一条现场记录
+							resultList.add(salesSituationRecent.get(1));
+						} else if (salesSituationRecent.size() == 1) {
+							resultList.add(salesSituationRecent.get(0));
+						}
+					}
+				}
+			}
+		}
+		
+		{
+			// 离职
+			// T002EmployeeDetail.employeeFormCode=4, 更新时间=retirementYearAndMonth
+			// 先获取离职的employee list
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+			String dateRetire = "";
+			try {
+				Date date = sdf.parse(model.getSalesYearAndMonth());
+				date = minusMonth(date);
+				dateRetire = new SimpleDateFormat("yyyyMM").format(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			List<SalesSituationModel> temp = salesSituationService.getEmployeeRetire(dateRetire);
+			List<String> employeeNoList = new ArrayList<String>();
+			
+			if (null != temp && temp.size() > 0) {
+				// 如果resultList 已经存在同个员工,休假的状态的话,离职状态优先,对休假进行覆盖
+				if (null != resultList && resultList.size() > 0) {
+					for (int i = 0; i < resultList.size(); i++) {
+						SalesSituationModel employeeHoliday = resultList.get(i);
+						for (int j = 0; j < temp.size(); j++) {
+							SalesSituationModel employeeRetire = temp.get(j);
+							if (null != employeeHoliday.getEmployeeNo() && null != employeeRetire.getEmployeeNo() && employeeRetire.getEmployeeNo().equals(employeeHoliday.getEmployeeNo())) {
+								resultList.remove(i);
+							}
+						}
+					}
+				}
+
+				for (int i = 0; i < temp.size(); i++) {
+					SalesSituationModel employeeRetire = temp.get(i);
+					employeeNoList.add(employeeRetire.getEmployeeNo());
+					resultList.add(employeeRetire);
+				}
+			}
+			// 在获取unitPrice和addmissionStartDate
+			if (null != employeeNoList && employeeNoList.size() > 0) {
+				List<SalesSituationModel> tempWithPriceAndDate = salesSituationService.getEmployeeRetireSiteInfo(employeeNoList);
+				if (null != tempWithPriceAndDate && tempWithPriceAndDate.size() > 0) {
+					for (int i = 0; i < resultList.size(); i++) {
+						SalesSituationModel employeeHolidayAndRetire = resultList.get(i);
+						for (int j = 0; j < tempWithPriceAndDate.size(); j++) {
+							SalesSituationModel employeeWithPriceAndDate = tempWithPriceAndDate.get(j);
+							if (null != employeeWithPriceAndDate.getEmployeeNo() && null != employeeHolidayAndRetire.getEmployeeNo() && employeeHolidayAndRetire.getEmployeeNo().equals(employeeWithPriceAndDate.getEmployeeNo())) {
+								employeeHolidayAndRetire.setUnitPrice(employeeWithPriceAndDate.getUnitPrice());
+								employeeHolidayAndRetire.setAdmissionStartDate(employeeWithPriceAndDate.getAdmissionStartDate());
+								employeeHolidayAndRetire.setAdmissionPeriodDate(employeeWithPriceAndDate.getAdmissionPeriodDate());
+								employeeHolidayAndRetire.setCustomer(employeeWithPriceAndDate.getCustomer());
+								if (TextUtils.isEmpty(employeeWithPriceAndDate.getAdmissionPeriodDate()) && "0".equals(employeeWithPriceAndDate.getWorkState())) {
+									employeeHolidayAndRetire.setAdmissionPeriodDate(getDifMonthByRetire(employeeWithPriceAndDate.getAdmissionStartDate(), employeeHolidayAndRetire.getRetirementYearAndMonth()));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// 协力
+		{
+			// 终了且所属确定 T011BpInfoSupplement.bpSalesProgressCode=4 && T006EmployeeSiteInfo.workstate=1, 更新时间=bpOtherCompanyAdmissionEndDate
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+			String dateBpConfirm = "";
+			try {
+				Date date = sdf.parse(model.getSalesYearAndMonth());
+				date = minusMonth(date);
+				dateBpConfirm = new SimpleDateFormat("yyyyMM").format(date);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			List<SalesSituationModel> employeeList = salesSituationService.getBpEmployeeConfirmNoList();
+			if (null != employeeList && employeeList.size() > 0) {
+				List<String> employeeNoList = new ArrayList<String>();
+				for (int i = 0; i < employeeList.size(); i++) {
+					employeeNoList.add(employeeList.get(i).getEmployeeNo());
+				}
+				List<SalesSituationModel> temp = salesSituationService.getBpEmployeeConfirm(employeeNoList, dateBpConfirm);
+				if (null != temp && temp.size() > 0) {
+					for (int i = 0; i < temp.size(); i++) {
+						SalesSituationModel newEmployee = temp.get(i);
+						for (int j = 0; j < employeeList.size(); j++) {
+							SalesSituationModel oldEmployee = employeeList.get(j);
+							if (null != oldEmployee.getEmployeeNo() && null != newEmployee.getEmployeeNo() && oldEmployee.getEmployeeNo().equals(newEmployee.getEmployeeNo())) {
+								newEmployee.setCustomerAbbreviation(oldEmployee.getCustomerAbbreviation());
+							}
+						}
+					}
+					resultList.addAll(temp);
+				}
+			}
+		}
+		
+		// 处理名字和番号
+		if (null != resultList && resultList.size() > 0) {
+			for (int i = 0; i < resultList.size(); i++) {
+				resultList.get(i).setRowNo(i + 1);
+				resultList.get(i).setEmployeeName(resultList.get(i).getEmployeeFristName() + resultList.get(i).getEmployeeLastName());
+
+				if (resultList.get(i).getEmployeeNo().substring(0, 3).equals("BPR")) {
+					resultList.get(i).setEmployeeName(resultList.get(i).getEmployeeName() + "(BPR)");
+				} else if (resultList.get(i).getEmployeeNo().substring(0, 2).equals("BP")) {
+					resultList.get(i).setEmployeeName(resultList.get(i).getEmployeeName());
+				} else if (resultList.get(i).getEmployeeNo().substring(0, 2).equals("SP")) {
+					resultList.get(i).setEmployeeName(resultList.get(i).getEmployeeName() + "(SP)");
+				} else if (resultList.get(i).getEmployeeNo().substring(0, 2).equals("SC")) {
+					resultList.get(i).setEmployeeName(resultList.get(i).getEmployeeName() + "(SC)");
+				}
+			}
+		}
+
+		return resultList;
+	}
+
+	
+	private String getDifMonthByRetire(String admissionStartDate, String retirementYearAndMonth) {
+		if (!TextUtils.isEmpty(admissionStartDate) && !TextUtils.isEmpty(retirementYearAndMonth)) {
+			try {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+				LocalDate startDate = LocalDate.parse(admissionStartDate, formatter);
+				LocalDate retireDate = LocalDate.parse(retirementYearAndMonth, formatter);
+				
+				Period p = Period.between(startDate, retireDate);
+				int months = p.getYears() * 12 + p.getMonths();
+				if (months > 0) {
+					return String.valueOf(months);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
 
 	/**
 	 * データを取得 ffff
@@ -144,12 +350,65 @@ public class SalesSituationController extends BaseController {
 			}
 		}
 
+		ArrayList<ModelClass> dropDownGetJapaneseLevelList = new ArrayList<ModelClass>();
+		ArrayList<ModelClass> dropDownGetJapaneaseConversationLevelList = new ArrayList<ModelClass>();
+		
+		// 日本語等级，例： N1，N2，N3
+		try {
+			Method methodGetJapaneseLevel = utilsController.getClass().getMethod("getJapaneseLevel");
+			dropDownGetJapaneseLevelList = (ArrayList<ModelClass>)methodGetJapaneseLevel.invoke(utilsController);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// 日本語会话等级，例： N1流暢，N1弱い
+		try {
+			Method methodGetJapaneaseConversationLevel = utilsController.getClass().getMethod("getJapaneaseConversationLevel");
+			dropDownGetJapaneaseConversationLevelList = (ArrayList<ModelClass>)methodGetJapaneaseConversationLevel.invoke(utilsController);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 		for (int i = 0; i < salesSituationList.size(); i++) {
+			// 日本語
+			String japaneaseLevelDes = "";
+			if (!TextUtils.isEmpty(salesSituationList.get(i).getJapaneaseConversationLevel())) {
+				// 从营业文章中查询
+				try {
+					if (null != salesSituationList.get(i).getJapaneaseConversationLevel()) {
+						String japaneaseConversationLevelName = dropDownGetJapaneaseConversationLevelList.get(Integer.parseInt(salesSituationList.get(i).getJapaneaseConversationLevel())).getName();
+						japaneaseLevelDes = japaneaseConversationLevelName;
+						if (japaneaseLevelDes.endsWith("業務確認")) {
+							japaneaseLevelDes = japaneaseLevelDes.substring(0, japaneaseLevelDes.length() - 5);
+						}
+						if ("読み書き".equals(japaneaseLevelDes) || "書き読み".equals(japaneaseLevelDes)) {
+							japaneaseLevelDes = "読書";
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(TextUtils.isEmpty(japaneaseLevelDes)) {
+				// 从个人情报中查询
+				try {
+					if (null != salesSituationList.get(i).getJapaneseLevelCode()) {
+						String japaneseLevelCodeName = dropDownGetJapaneseLevelList.get(Integer.parseInt(salesSituationList.get(i).getJapaneseLevelCode())).getName();
+						japaneaseLevelDes = japaneseLevelCodeName;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			salesSituationList.get(i).setJapaneaseLevelDesc(japaneaseLevelDes);
+
 			// 社員名
 			if (salesSituationList.get(i).getEmployeeNo().substring(0, 3).equals("BPR")) {
 				salesSituationList.get(i).setEmployeeName(salesSituationList.get(i).getEmployeeName() + "(BPR)");
 			} else if (salesSituationList.get(i).getEmployeeNo().substring(0, 2).equals("BP")) {
-				salesSituationList.get(i).setEmployeeName(salesSituationList.get(i).getEmployeeName() + "(BP)");
+				salesSituationList.get(i).setEmployeeName(salesSituationList.get(i).getEmployeeName());
 			} else if (salesSituationList.get(i).getEmployeeNo().substring(0, 2).equals("SP")) {
 				salesSituationList.get(i).setEmployeeName(salesSituationList.get(i).getEmployeeName() + "(SP)");
 			} else if (salesSituationList.get(i).getEmployeeNo().substring(0, 2).equals("SC")) {
@@ -165,6 +424,7 @@ public class SalesSituationController extends BaseController {
 						+ "." + resumetemp.split("/")[resumetemp.split("/").length - 1].split(
 								"\\.")[resumetemp.split("/")[resumetemp.split("/").length - 1].split("\\.").length - 1];
 				salesSituationList.get(i).setResumeName1(resumeName);
+				salesSituationList.get(i).setResume1Date(salesSituationList.get(i).getResume1Date());
 			}
 
 			if (salesSituationList.get(i).getResumeInfo2() != null
@@ -229,8 +489,14 @@ public class SalesSituationController extends BaseController {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
 					String curDate = sdf.format(date);
 					if (Integer.parseInt(model.getSalesYearAndMonth()) <= Integer.parseInt(curDate)) {
-						salesSituationList.get(i)
-								.setSalesProgressCode(T010SalesSituationList.get(j).getSalesProgressCode());
+						/*
+						 * if (salesSituationList.get(i).getEmployeeNo().startsWith("BP")) {
+						 * salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).
+						 * getBpSalesProgressCode()); } else {
+						 * salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).
+						 * getSalesProgressCode()); }
+						 */
+						salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).getSalesProgressCode());
 						salesSituationList.get(i)
 								.setSalesDateUpdate(T010SalesSituationList.get(j).getSalesYearAndMonth());
 						salesSituationList.get(i).setInterviewDate1(T010SalesSituationList.get(j).getInterviewDate1());
@@ -241,10 +507,7 @@ public class SalesSituationController extends BaseController {
 						salesSituationList.get(i).setStationCode2(T010SalesSituationList.get(j).getStationCode2());
 						salesSituationList.get(i)
 								.setInterviewCustomer2(T010SalesSituationList.get(j).getInterviewCustomer2());
-						salesSituationList.get(i)
-								.setHopeLowestPrice(T010SalesSituationList.get(j).getHopeLowestPrice());
-						salesSituationList.get(i)
-								.setHopeHighestPrice(T010SalesSituationList.get(j).getHopeHighestPrice());
+						salesSituationList.get(i).setHopeRemark(T010SalesSituationList.get(j).getHopeRemark());
 						salesSituationList.get(i)
 								.setCustomerContractStatus(T010SalesSituationList.get(j).getCustomerContractStatus());
 						salesSituationList.get(i).setRemark1(T010SalesSituationList.get(j).getRemark1());
@@ -261,8 +524,14 @@ public class SalesSituationController extends BaseController {
 								|| (salesSituationList.get(i).getAdmissionEndDate() != null
 										&& Integer.parseInt(salesSituationList.get(i).getAdmissionEndDate().substring(0,
 												6)) == Integer.parseInt(model.getSalesYearAndMonth()))) {
-							salesSituationList.get(i)
-									.setSalesProgressCode(T010SalesSituationList.get(j).getSalesProgressCode());
+							/*
+							 * if (salesSituationList.get(i).getEmployeeNo().startsWith("BP")) {
+							 * salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).
+							 * getBpSalesProgressCode()); } else {
+							 * salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).
+							 * getSalesProgressCode()); }
+							 */
+							salesSituationList.get(i).setSalesProgressCode(T010SalesSituationList.get(j).getSalesProgressCode());
 							salesSituationList.get(i)
 									.setSalesDateUpdate(T010SalesSituationList.get(j).getSalesYearAndMonth());
 							salesSituationList.get(i)
@@ -275,10 +544,7 @@ public class SalesSituationController extends BaseController {
 							salesSituationList.get(i).setStationCode2(T010SalesSituationList.get(j).getStationCode2());
 							salesSituationList.get(i)
 									.setInterviewCustomer2(T010SalesSituationList.get(j).getInterviewCustomer2());
-							salesSituationList.get(i)
-									.setHopeLowestPrice(T010SalesSituationList.get(j).getHopeLowestPrice());
-							salesSituationList.get(i)
-									.setHopeHighestPrice(T010SalesSituationList.get(j).getHopeHighestPrice());
+							salesSituationList.get(i).setHopeRemark(T010SalesSituationList.get(j).getHopeRemark());
 							salesSituationList.get(i).setCustomerContractStatus(
 									T010SalesSituationList.get(j).getCustomerContractStatus());
 							salesSituationList.get(i).setRemark1(T010SalesSituationList.get(j).getRemark1());
@@ -310,6 +576,7 @@ public class SalesSituationController extends BaseController {
 				i--;
 			}
 		}
+		
 		for (int i = 0; i < salesSituationList.size(); i++) {
 			if (salesSituationList.get(i).getSalesProgressCode() != null
 					&& !(salesSituationList.get(i).getSalesProgressCode().equals("1")
@@ -358,10 +625,17 @@ public class SalesSituationController extends BaseController {
 
 					if (salesSituationListTemp.get(i).getEmployeeNo()
 							.equals(T011BpInfoSupplementList.get(j).getBpEmployeeNo())) {
-
-						salesSituationListTemp.remove(i);
-						i--;
-						break;
+						if(T011BpInfoSupplementList.get(j).getBpSalesProgressCode().equals("4")) {
+							if(salesSituationListTemp.get(i).getSalesDateUpdate() == null || !salesSituationListTemp.get(i).getSalesDateUpdate().equals(model.getSalesYearAndMonth())) {
+								salesSituationListTemp.remove(i);
+								i--;
+								break;
+							}
+						}else{
+							salesSituationListTemp.remove(i);
+							i--;
+							break;
+						}
 					}
 				}
 			}
@@ -415,10 +689,15 @@ public class SalesSituationController extends BaseController {
 					|| salesSituationListTemp.get(i).getAdmissionEndDate().equals("")) {
 				if (salesSituationListTemp.get(i).getSalesProgressCode() == null
 						|| salesSituationListTemp.get(i).getSalesProgressCode().equals("")) {
-					salesSituationListTemp.get(i).setSalesProgressCode("2");
+					if(!salesSituationListTemp.get(i).getEmployeeStatus().equals("1")) {
+						salesSituationListTemp.get(i).setSalesProgressCode("2");
+					}
+					
 				}
 			}
 		}
+		//salesSituationListTemp=salesSituationListTemp.stream()
+				//.sorted(Comparator.comparing(SalesSituationModel::getSalesPriorityStatus)).collect(Collectors.toList());
 		return salesSituationListTemp;
 	}
 
@@ -530,8 +809,7 @@ public class SalesSituationController extends BaseController {
 					salesSituationList.get(i).setStationCode2(T010SalesSituationList.get(j).getStationCode2());
 					salesSituationList.get(i)
 							.setInterviewCustomer2(T010SalesSituationList.get(j).getInterviewCustomer2());
-					salesSituationList.get(i).setHopeLowestPrice(T010SalesSituationList.get(j).getHopeLowestPrice());
-					salesSituationList.get(i).setHopeHighestPrice(T010SalesSituationList.get(j).getHopeHighestPrice());
+					salesSituationList.get(i).setHopeRemark(T010SalesSituationList.get(j).getHopeRemark());
 					salesSituationList.get(i)
 							.setCustomerContractStatus(T010SalesSituationList.get(j).getCustomerContractStatus());
 					salesSituationList.get(i).setRemark1(T010SalesSituationList.get(j).getRemark1());
@@ -1005,6 +1283,12 @@ public class SalesSituationController extends BaseController {
 		model.setBeginMonth(model.getTempDate());
 		try {
 			index = salesSituationService.updateSalesSentence(model);
+			// 個人情報情報の最寄駅情報を同期更新  lxf-20230412
+			Map<String, Object> sendMap=new HashMap<>();
+			sendMap.put("employeeNo", model.getEmployeeNo());
+			sendMap.put("stationCode", model.getStationCode());
+			sendMap.put("updateUser", (String) getSession().getAttribute("employeeName"));
+			employeeInfoMapper.updateAddressInfo(sendMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1046,9 +1330,10 @@ public class SalesSituationController extends BaseController {
 				if (model.getSalesProgressCode().equals("1")) {
 					String nextAdmission = salesSituationService.getEmpNextAdmission(model.getEmployeeNo());
 					if (nextAdmission != null && nextAdmission.equals("0")) {
-						errorsMessage += "稼働中の現場存在しています、現場データをチェックしてください。";
-						result.put("errorsMessage", errorsMessage);
-						return result;
+						salesSituationService.updateEmpNextAdmission(model);
+//						errorsMessage += "稼働中の現場存在しています、現場データをチェックしてください。";
+//						result.put("errorsMessage", errorsMessage);
+//						return result;
 					} else {
 						salesSituationService.insertEmpNextAdmission(model);
 					}
@@ -1066,6 +1351,20 @@ public class SalesSituationController extends BaseController {
 				errorsMessage += "を入力してください。";
 				result.put("errorsMessage", errorsMessage);
 				return result;
+			}
+		}
+		
+		//進歩为空时 判断是否删除稼动中现场
+		if (model.getSalesProgressCode() != null && (model.getSalesProgressCode().equals(""))) {
+			List<SiteModel> siteList = new ArrayList<SiteModel>();
+			siteList = salesSituationService.getEmpLastAdmission(model.getEmployeeNo());
+			//最后一个现场开始时间为下个月 且稼动中时 删除现场
+			if(siteList.get(siteList.size() - 1).getAdmissionStartDate().substring(0,6).equals(model.getAdmissionEndDate())
+					&& siteList.get(siteList.size() - 1).getWorkState().equals("0")) {
+				Map<String, Object> sendMap = new HashMap<String, Object>();
+				sendMap.put("employeeNo", model.getEmployeeNo());
+				sendMap.put("admissionStartDate", siteList.get(siteList.size() - 1).getAdmissionStartDate());
+				siteInfoMapper.deleteSiteInfo(sendMap);
 			}
 		}
 

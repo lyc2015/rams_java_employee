@@ -51,7 +51,11 @@ public class CostRegistrationController extends BaseController {
 		List<CostRegistrationModel> checkMod = costRegistrationService.selectCostRegistration(costRegistrationModel);
 		CostRegistrationModel approvalStatus = costRegistrationService.selectApprovalStatus(costRegistrationModel);
 		for (int i = 0; i < checkMod.size(); i++) {
-			checkMod.get(i).setApprovalStatus(approvalStatus.getApprovalStatus());
+			if(approvalStatus == null) {
+				checkMod.get(i).setApprovalStatus("0");
+			}else {
+				checkMod.get(i).setApprovalStatus(approvalStatus.getApprovalStatus());
+			}
 		}
 		logger.info("CostRegistrationController.selectCostRegistration:" + "検索終了");
 		return checkMod;

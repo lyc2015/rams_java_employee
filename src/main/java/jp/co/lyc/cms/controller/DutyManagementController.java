@@ -40,20 +40,20 @@ public class DutyManagementController extends BaseController {
 		logger.info("DutyManagementController.selectDutyManagement:" + "検索開始");
 		logger.info(dutyManagementModel.toString());
 		List<DutyManagementModel> checkMod = dutyManagementService.selectDutyManagement(dutyManagementModel);
-		List<DutyManagementModel> workTimeList = dutyManagementService.selectWorkTime(dutyManagementModel);
+//		List<DutyManagementModel> workTimeList = dutyManagementService.selectWorkTime(dutyManagementModel);
 		List<CostRegistrationModel> costRegistrationModelList = dutyManagementService
 				.selectCostRegistration(dutyManagementModel);
-		for (int i = 0; i < checkMod.size(); i++) {
-			for (int j = 0; j < workTimeList.size(); j++) {
-				if (checkMod.get(i).getEmployeeNo().equals(workTimeList.get(j).getEmployeeNo())) {
-					if (checkMod.get(i).getWorkTime() == null || checkMod.get(i).getWorkTime().equals("")) {
-						String workTime = workTimeList.get(j).getWorkTime();
-						if (workTime != null)
-							checkMod.get(i).setWorkTime(workTime.replace(".0", ""));
-					}
-				}
-			}
-		}
+//		for (int i = 0; i < checkMod.size(); i++) {
+//			for (int j = 0; j < workTimeList.size(); j++) {
+//				if (checkMod.get(i).getEmployeeNo().equals(workTimeList.get(j).getEmployeeNo())) {
+//					if (checkMod.get(i).getWorkTime() == null || checkMod.get(i).getWorkTime().equals("")) {
+//						String workTime = workTimeList.get(j).getWorkTime();
+//						if (workTime != null)
+//							checkMod.get(i).setWorkTime(workTime.replace(".0", ""));
+//					}
+//				}
+//			}
+//		}
 
 		for (int i = 0; i < checkMod.size(); i++) {
 			if (checkMod.get(i).getDeductionsAndOvertimePay() != null) {
@@ -85,12 +85,12 @@ public class DutyManagementController extends BaseController {
 					newCostRegistrationModelList.add(costRegistrationModel);
 				}
 			}
-			int cost = 0;
-			int costTotal = 0;
+			double cost = 0;
+			double costTotal = 0;
 			for (int j = 0; j < newCostRegistrationModelList.size(); j++) {
-				cost += Integer.parseInt(newCostRegistrationModelList.get(j).getCost());
+				cost += Double.parseDouble(newCostRegistrationModelList.get(j).getCost());
 				if (!newCostRegistrationModelList.get(j).getCostClassificationCode().equals("0")) {
-					costTotal += Integer.parseInt(newCostRegistrationModelList.get(j).getCost());
+					costTotal += Double.parseDouble(newCostRegistrationModelList.get(j).getCost());
 				}
 				if (j == newCostRegistrationModelList.size() - 1) {
 					newCostRegistrationModelList.get(j).setCostTotal(String.valueOf(costTotal));

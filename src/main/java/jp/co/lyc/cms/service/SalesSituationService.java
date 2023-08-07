@@ -10,15 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import jp.co.lyc.cms.mapper.SalesSituationMapper;
+import jp.co.lyc.cms.mapper.SiteInfoMapper;
 import jp.co.lyc.cms.model.BpInfoModel;
 import jp.co.lyc.cms.model.SalesContent;
 import jp.co.lyc.cms.model.SalesSituationModel;
+import jp.co.lyc.cms.model.SiteModel;
 
 @Component
 public class SalesSituationService {
 
 	@Autowired
 	SalesSituationMapper salesSituationMapper;
+	@Autowired
+	SiteInfoMapper siteInfoMapper;
 
 	public String getEmpNextAdmission(String employeeNo) {
 		return salesSituationMapper.getEmpNextAdmission(employeeNo);
@@ -111,6 +115,10 @@ public class SalesSituationService {
 		return salesSituationMapper.getPersonalSalesInfo(empNo);
 	}
 
+	public List<SalesSituationModel> getT010SalesSituationLatestByemployeeNo(String empNo) {
+		return salesSituationMapper.getT010SalesSituationLatestByemployeeNo(empNo);
+	}
+
 	public List<SalesSituationModel> getPersonalSalesInfoFromT019(String empNo) {
 		return salesSituationMapper.getPersonalSalesInfoFromT019(empNo);
 	}
@@ -121,6 +129,10 @@ public class SalesSituationService {
 
 	public int updateSalesSentence(SalesContent model) {
 		return salesSituationMapper.updateSalesSentence(model);
+	}
+	
+	public void updateSalesSentenceByemployeeNo(SalesContent model) {
+		salesSituationMapper.updateSalesSentenceByemployeeNo(model);
 	}
 
 	public int getCount(String empNo) {
@@ -178,4 +190,35 @@ public class SalesSituationService {
 		String reStr = sdf.format(dt1);
 		return reStr;
 	}
+
+
+	public List<SalesSituationModel> getEmployeeHoliday(String date) {
+		return salesSituationMapper.getEmployeeHoliday(date);
+	}
+
+	public List<SalesSituationModel> getEmployeeHolidayRecentSite(String employeeNo) {
+		return salesSituationMapper.getEmployeeHolidayRecentSite(employeeNo);
+	}
+	
+	public List<SalesSituationModel> getEmployeeRetire(String date) {
+		return salesSituationMapper.getEmployeeRetire(date);
+	}
+
+	public List<SalesSituationModel> getEmployeeRetireSiteInfo(List<String> employeeNoList) {
+		return salesSituationMapper.getEmployeeRetireSiteInfo(employeeNoList);
+	}
+
+	public List<SalesSituationModel> getBpEmployeeConfirmNoList() {
+		return salesSituationMapper.getBpEmployeeConfirmNoList();
+	}
+	
+	public List<SalesSituationModel> getBpEmployeeConfirm(List<String> employeeNoList, String date) {
+		return salesSituationMapper.getBpEmployeeConfirm(employeeNoList, date);
+	}
+
+	public List<SiteModel> getEmpLastAdmission(String employeeNo) {
+		List<SiteModel> siteList = siteInfoMapper.getSiteInfo(employeeNo);
+		return siteList;
+	}
+	
 }
