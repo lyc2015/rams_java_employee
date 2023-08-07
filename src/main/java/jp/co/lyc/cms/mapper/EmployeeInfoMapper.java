@@ -129,6 +129,13 @@ public interface EmployeeInfoMapper {
 	 * @param emp
 	 */
 	public void updateAddressInfo(Map<String, Object> sendMap);
+	
+	/**
+	 * 得意言語を修正
+	 * 
+	 * @param emp
+	 */
+	public void updateDevelopLanguageCode(Map<String, Object> sendMap);
 
 	/**
 	 * ログイン認証番号の電話番号存在チェック
@@ -179,4 +186,12 @@ public interface EmployeeInfoMapper {
 	 * @param sendMap
 	 */
 	public void deletebpInfo(String bpEmployeeNo, String unitPriceStartMonth);
+
+	/**
+	 * 营业信息削除
+	 * 
+	 * @param sendMap
+	 */
+	public void deleteSalesSentence(Map<String, Object> sendMap);
+	
 }
