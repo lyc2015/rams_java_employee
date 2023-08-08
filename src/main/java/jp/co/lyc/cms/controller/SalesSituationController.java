@@ -680,6 +680,10 @@ public class SalesSituationController extends BaseController {
 		for (int i = 0; i < salesSituationListTemp.size(); i++) {
 			salesSituationListTemp.get(i).setRowNo(i + 1);
 
+			String resumeDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+					.format(salesSituationListTemp.get(i).getResume1Date());
+			salesSituationListTemp.get(i).setResumeDate(resumeDate);
+
 			// 面談情報
 			SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
 			sdf.applyPattern("yyyyMMdd");// a为am/pm的标记
@@ -718,6 +722,7 @@ public class SalesSituationController extends BaseController {
 		}
 		// salesSituationListTemp=salesSituationListTemp.stream()
 		// .sorted(Comparator.comparing(SalesSituationModel::getSalesPriorityStatus)).collect(Collectors.toList());
+
 		return salesSituationListTemp;
 	}
 

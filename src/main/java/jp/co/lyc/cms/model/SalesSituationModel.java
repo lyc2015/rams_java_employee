@@ -22,6 +22,9 @@ public class SalesSituationModel implements Serializable {
 	String salesDateUpdate;
 
 	String employeeNo;
+	String employeeFristName;
+	String employeeLastName;
+
 	String salesYearAndMonth;
 	String intoCompanyYearAndMonth;
 	String interviewDate1;
@@ -33,7 +36,9 @@ public class SalesSituationModel implements Serializable {
 	String interviewCustomer2;
 	String hopeLowestPrice;
 	String hopeHighestPrice;
+	String hopeRemark;
 	String salesProgressCode;
+	String bpSalesProgressCode;
 	String remark;
 	String remark1;
 	String remark2;
@@ -55,11 +60,14 @@ public class SalesSituationModel implements Serializable {
 	String salesPriorityStatus;
 	String customer;
 	String admissionStartDate;
+	String admissionPeriodDate;
 	String customerNo;
 	String admissionEndDate;
 	String scheduledEndDate;
 	String resumeInfo1;// 履歴書情報1
 	String resumeInfo2;// 履歴書情報2
+	Date resume1Date;
+	String resumeDate;
 	String resumeName1;// 履歴書情報1
 	String resumeName2;// 履歴書情報2
 	int rowNo;//
@@ -81,6 +89,7 @@ public class SalesSituationModel implements Serializable {
 	String englishLevelCode;
 	String age;
 	String japaneaseConversationLevel;
+	String japaneaseLevelDesc;
 	String englishConversationLevel;
 	String developLanguage1;
 	String developLanguage2;
@@ -110,6 +119,9 @@ public class SalesSituationModel implements Serializable {
 	String bpUnitPrice;
 	String bpOtherCompanyAdmissionEndDate;
 	String customerAbbreviation;
+	String finishReason;
+	String workState;
+	String retirementYearAndMonth;
 
 	public String getComeToJapanYearAndMonth() {
 		return comeToJapanYearAndMonth;
@@ -261,6 +273,22 @@ public class SalesSituationModel implements Serializable {
 
 	public void setResumeName1(String resumeName1) {
 		this.resumeName1 = resumeName1;
+	}
+
+	public Date getResume1Date() {
+		return resume1Date;
+	}
+
+	public void setResume1Date(Date resume1Date) {
+		this.resume1Date = resume1Date;
+	}
+
+	public String getResumeDate() {
+		return resumeDate;
+	}
+
+	public void setResumeDate(String resumeDate) {
+		this.resumeDate = resumeDate;
 	}
 
 	public String getResumeName2() {
@@ -427,6 +455,14 @@ public class SalesSituationModel implements Serializable {
 
 	public void setJapaneaseConversationLevel(String japaneaseConversationLevel) {
 		this.japaneaseConversationLevel = japaneaseConversationLevel;
+	}
+
+	public String getJapaneaseLevelDesc() {
+		return japaneaseLevelDesc;
+	}
+
+	public void setJapaneaseLevelDesc(String japaneaseLevelDesc) {
+		this.japaneaseLevelDesc = japaneaseLevelDesc;
 	}
 
 	public String getEnglishConversationLevel() {
@@ -823,6 +859,70 @@ public class SalesSituationModel implements Serializable {
 
 	public void setScheduledEndDate(String scheduledEndDate) {
 		this.scheduledEndDate = scheduledEndDate;
+	}
+
+	public String getHopeRemark() {
+		return hopeRemark;
+	}
+
+	public void setHopeRemark(String hopeRemark) {
+		this.hopeRemark = hopeRemark;
+	}
+
+	public String getFinishReason() {
+		return finishReason;
+	}
+
+	public void setFinishReason(String finishReason) {
+		this.finishReason = finishReason;
+	}
+
+	public String getEmployeeFristName() {
+		return employeeFristName;
+	}
+
+	public void setEmployeeFristName(String employeeFristName) {
+		this.employeeFristName = employeeFristName;
+	}
+
+	public String getEmployeeLastName() {
+		return employeeLastName;
+	}
+
+	public void setEmployeeLastName(String employeeLastName) {
+		this.employeeLastName = employeeLastName;
+	}
+
+	public String getAdmissionPeriodDate() {
+		return admissionPeriodDate;
+	}
+
+	public void setAdmissionPeriodDate(String admissionPeriodDate) {
+		this.admissionPeriodDate = admissionPeriodDate;
+	}
+
+	public String getWorkState() {
+		return workState;
+	}
+
+	public void setWorkState(String workState) {
+		this.workState = workState;
+	}
+
+	public String getRetirementYearAndMonth() {
+		return retirementYearAndMonth;
+	}
+
+	public void setRetirementYearAndMonth(String retirementYearAndMonth) {
+		this.retirementYearAndMonth = retirementYearAndMonth;
+	}
+
+	public String getBpSalesProgressCode() {
+		return bpSalesProgressCode;
+	}
+
+	public void setBpSalesProgressCode(String bpSalesProgressCode) {
+		this.bpSalesProgressCode = bpSalesProgressCode;
 	}
 
 }
