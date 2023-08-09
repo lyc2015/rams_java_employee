@@ -680,8 +680,13 @@ public class SalesSituationController extends BaseController {
 		for (int i = 0; i < salesSituationListTemp.size(); i++) {
 			salesSituationListTemp.get(i).setRowNo(i + 1);
 
+			//服务器与本地差9小时 
+			Date resume1Date = salesSituationListTemp.get(i).getResume1Date();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(resume1Date);
+			cal.add(Calendar.HOUR, 9);
 			String resumeDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-					.format(salesSituationListTemp.get(i).getResume1Date());
+					.format(cal.getTime());
 			salesSituationListTemp.get(i).setResumeDate(resumeDate);
 
 			// 面談情報
